@@ -2,160 +2,201 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes" />
-  <title>RK Verse · Admin</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.5, user-scalable=yes" />
+  <meta name="theme-color" content="#1e293b" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <link rel="manifest" href="manifest.json" />
+  <link rel="apple-touch-icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>👑</text></svg>" />
+  <title>RK Verse · Admin Panel</title>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" />
   <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,400;14..32,500;14..32,600;14..32,700&display=swap" rel="stylesheet" />
   <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
   <style>
     * { margin:0; padding:0; box-sizing:border-box; font-family:'Inter',sans-serif; }
-    body { background:#e8f5e9; color:#0f172a; min-height:100vh; padding:12px 12px 80px 12px; display:flex; justify-content:center; }
-    .app { max-width:480px; width:100%; margin:0 auto; }
+    body { background:#f0f4f8; color:#1a2332; min-height:100vh; padding:16px; display:flex; justify-content:center; }
+    .app { max-width:1200px; width:100%; margin:0 auto; }
 
-    .spinner { display:inline-block; width:20px; height:20px; border:3px solid #e2e8f0; border-radius:50%; border-top-color:#0f172a; animation:spin 0.6s linear infinite; margin-right:8px; }
+    .spinner { display:inline-block; width:20px; height:20px; border:3px solid #e2e8f0; border-radius:50%; border-top-color:#2563eb; animation:spin 0.6s linear infinite; margin-right:8px; }
     @keyframes spin { to { transform:rotate(360deg); } }
     .loader-overlay { position:fixed; top:0; left:0; right:0; bottom:0; background:rgba(255,255,255,0.85); display:flex; align-items:center; justify-content:center; z-index:999; backdrop-filter:blur(4px); }
     .loader-box { background:#fff; padding:30px 40px; border-radius:20px; box-shadow:0 20px 60px rgba(0,0,0,0.1); text-align:center; }
     .loader-box .spinner { width:40px; height:40px; border-width:4px; }
     .loader-box p { margin-top:12px; color:#64748b; font-size:0.9rem; }
 
-    /* LOGIN - Green/Blue Theme */
-    #loginPage { background:#fff; padding:32px 24px; border-radius:28px; box-shadow:0 20px 60px rgba(0,0,0,0.08); text-align:center; margin-top:20px; border:2px solid #4caf50; }
-    #loginPage .logo-big { width:72px; height:72px; background:linear-gradient(135deg,#1b5e20,#0d47a1); border-radius:20px; display:flex; align-items:center; justify-content:center; margin:0 auto 16px; font-size:32px; color:#fff; }
-    #loginPage h1 { font-size:1.8rem; font-weight:700; background:linear-gradient(135deg,#1b5e20,#0d47a1); -webkit-background-clip:text; -webkit-text-fill-color:transparent; }
-    #loginPage p { color:#64748b; margin:8px 0 24px; font-size:0.95rem; }
-    #loginPage .input-group { margin-bottom:14px; text-align:left; position:relative; }
-    #loginPage .input-group label { font-size:0.8rem; font-weight:500; color:#1b5e20; display:block; margin-bottom:4px; }
-    #loginPage .input-group input { width:100%; padding:12px 16px; border:2px solid #c8e6c9; border-radius:12px; font-size:0.95rem; background:#f1f8e9; transition:0.2s; -webkit-appearance:none; appearance:none; padding-right:45px; }
-    #loginPage .input-group input:focus { outline:none; border-color:#4caf50; background:#fff; box-shadow:0 0 0 4px rgba(76,175,80,0.1); }
-    #loginPage .password-toggle { position:absolute; right:14px; top:38px; cursor:pointer; color:#4caf50; font-size:1.1rem; background:none; border:none; z-index:2; }
-    #loginPage .login-btn { width:100%; padding:14px; background:linear-gradient(135deg,#1b5e20,#0d47a1); color:#fff; border:none; border-radius:40px; font-weight:600; font-size:1rem; cursor:pointer; transition:0.3s; display:flex; align-items:center; justify-content:center; gap:10px; -webkit-tap-highlight-color:transparent; box-shadow:0 4px 15px rgba(27,94,32,0.3); }
+    /* LOGIN */
+    #loginPage { background:#fff; padding:40px 32px; border-radius:24px; box-shadow:0 20px 60px rgba(0,0,0,0.08); text-align:center; max-width:420px; margin:40px auto; border:1px solid #e2e8f0; }
+    #loginPage .logo-big { width:72px; height:72px; background:linear-gradient(135deg,#2563eb,#7c3aed); border-radius:20px; display:flex; align-items:center; justify-content:center; margin:0 auto 16px; font-size:32px; color:#fff; }
+    #loginPage h1 { font-size:1.8rem; font-weight:700; background:linear-gradient(135deg,#2563eb,#7c3aed); -webkit-background-clip:text; -webkit-text-fill-color:transparent; }
+    #loginPage p { color:#64748b; margin:8px 0 28px; font-size:0.95rem; }
+    #loginPage .input-group { margin-bottom:16px; text-align:left; position:relative; }
+    #loginPage .input-group label { font-size:0.8rem; font-weight:600; color:#1e293b; display:block; margin-bottom:4px; }
+    #loginPage .input-group input { width:100%; padding:12px 16px; border:2px solid #e2e8f0; border-radius:12px; font-size:0.95rem; background:#f8fafc; transition:0.2s; -webkit-appearance:none; appearance:none; padding-right:45px; }
+    #loginPage .input-group input:focus { outline:none; border-color:#2563eb; background:#fff; box-shadow:0 0 0 4px rgba(37,99,235,0.1); }
+    #loginPage .password-toggle { position:absolute; right:14px; top:38px; cursor:pointer; color:#2563eb; font-size:1.1rem; background:none; border:none; z-index:2; }
+    #loginPage .login-btn { width:100%; padding:14px; background:linear-gradient(135deg,#2563eb,#7c3aed); color:#fff; border:none; border-radius:40px; font-weight:600; font-size:1rem; cursor:pointer; transition:0.3s; display:flex; align-items:center; justify-content:center; gap:10px; -webkit-tap-highlight-color:transparent; box-shadow:0 4px 15px rgba(37,99,235,0.3); }
     #loginPage .login-btn:active { transform:scale(0.97); }
     #loginPage .login-btn:disabled { opacity:0.6; cursor:not-allowed; transform:none; }
-    #loginPage .login-error { color:#d32f2f; font-size:0.85rem; margin-top:12px; min-height:24px; }
+    #loginPage .login-error { color:#dc2626; font-size:0.85rem; margin-top:12px; min-height:24px; }
 
     #dashboard { display:none; }
 
     /* HEADER */
-    .header { background:linear-gradient(135deg,#1b5e20,#0d47a1); color:#fff; padding:8px 16px; border-radius:20px; display:flex; align-items:center; justify-content:space-between; gap:10px; margin-bottom:16px; box-shadow:0 4px 16px rgba(27,94,32,0.2); flex-wrap:nowrap; }
-    .logo-area { display:flex; align-items:center; gap:8px; flex-shrink:0; }
-    .logo-box { width:32px; height:32px; background:rgba(255,255,255,0.2); border-radius:8px; display:flex; align-items:center; justify-content:center; font-weight:700; font-size:14px; color:#fff; flex-shrink:0; }
-    .logo-area h1 { font-size:1.1rem; font-weight:700; color:#fff; background:none; -webkit-text-fill-color:#fff; letter-spacing:-0.3px; white-space:nowrap; }
-    .logo-area h1 span { color:#a5d6a7; -webkit-text-fill-color:#a5d6a7; }
-    .user-badge { display:flex; align-items:center; gap:6px; background:rgba(255,255,255,0.15); padding:4px 10px 4px 8px; border-radius:30px; flex-shrink:0; backdrop-filter:blur(4px); }
-    .user-badge i { font-size:0.9rem; color:#a5d6a7; }
-    .user-badge .name { font-weight:500; font-size:0.75rem; white-space:nowrap; max-width:80px; overflow:hidden; text-overflow:ellipsis; }
-    .user-badge .role { font-size:0.6rem; background:rgba(255,255,255,0.2); padding:2px 8px; border-radius:20px; color:#a5d6a7; white-space:nowrap; }
+    .header { background:linear-gradient(135deg,#1e293b,#0f172a); color:#fff; padding:12px 24px; border-radius:16px; display:flex; align-items:center; justify-content:space-between; gap:16px; margin-bottom:20px; box-shadow:0 4px 16px rgba(0,0,0,0.1); flex-wrap:wrap; }
+    .logo-area { display:flex; align-items:center; gap:12px; flex-shrink:0; }
+    .logo-box { width:40px; height:40px; background:linear-gradient(135deg,#2563eb,#7c3aed); border-radius:10px; display:flex; align-items:center; justify-content:center; font-weight:700; font-size:18px; color:#fff; flex-shrink:0; }
+    .logo-area h1 { font-size:1.3rem; font-weight:700; color:#fff; letter-spacing:-0.3px; }
+    .logo-area h1 span { color:#818cf8; }
+    .user-badge { display:flex; align-items:center; gap:10px; background:rgba(255,255,255,0.1); padding:6px 16px 6px 12px; border-radius:30px; flex-shrink:0; backdrop-filter:blur(4px); border:1px solid rgba(255,255,255,0.05); }
+    .user-badge i { font-size:1rem; color:#818cf8; }
+    .user-badge .name { font-weight:500; font-size:0.85rem; }
+    .user-badge .role { font-size:0.65rem; background:rgba(255,255,255,0.15); padding:2px 10px; border-radius:20px; color:#94a3b8; }
 
-    /* BOTTOM NAV - Green/Blue Theme */
-    .bottom-nav { position:fixed; bottom:0; left:0; right:0; background:#fff; display:flex; justify-content:space-around; align-items:center; padding:6px 0 env(safe-area-inset-bottom,8px); box-shadow:0 -4px 20px rgba(0,0,0,0.06); border-top:2px solid #4caf50; z-index:100; max-width:480px; margin:0 auto; }
+    /* TOP NAV */
+    .top-nav { background:#fff; border-radius:16px; padding:8px 16px; margin-bottom:20px; display:flex; flex-wrap:wrap; align-items:center; gap:4px; box-shadow:0 2px 8px rgba(0,0,0,0.04); border:1px solid #e2e8f0; }
+    .top-nav button { background:none; border:none; padding:8px 18px; border-radius:10px; font-size:0.85rem; font-weight:500; color:#64748b; cursor:pointer; transition:0.2s; display:flex; align-items:center; gap:8px; -webkit-tap-highlight-color:transparent; }
+    .top-nav button:hover { background:#f1f5f9; color:#1e293b; }
+    .top-nav button.active { background:#2563eb; color:#fff; box-shadow:0 2px 8px rgba(37,99,235,0.2); }
+    .top-nav button.active i { color:#fff; }
+    .top-nav button i { font-size:0.9rem; color:#94a3b8; }
+    .top-nav button.logout-btn { color:#dc2626; margin-left:auto; }
+    .top-nav button.logout-btn i { color:#dc2626; }
+    .top-nav button.logout-btn:hover { background:#fef2f2; }
+    .top-nav button.hidden { display:none; }
+
+    /* BOTTOM NAV */
+    .bottom-nav { display:none; position:fixed; bottom:0; left:0; right:0; background:#fff; justify-content:space-around; align-items:center; padding:6px 0 env(safe-area-inset-bottom,8px); box-shadow:0 -4px 20px rgba(0,0,0,0.06); border-top:1px solid #e2e8f0; z-index:100; max-width:1200px; margin:0 auto; }
     .bottom-nav button { background:none; border:none; display:flex; flex-direction:column; align-items:center; gap:2px; padding:6px 10px; font-size:0.55rem; font-weight:500; color:#94a3b8; cursor:pointer; transition:0.2s; border-radius:12px; min-width:44px; -webkit-tap-highlight-color:transparent; }
     .bottom-nav button:active { transform:scale(0.92); }
     .bottom-nav button i { font-size:1.1rem; color:#94a3b8; transition:0.2s; }
-    .bottom-nav button.active { color:#1b5e20; }
-    .bottom-nav button.active i { color:#1b5e20; }
-    .bottom-nav button.logout-btn-nav { color:#d32f2f; }
-    .bottom-nav button.logout-btn-nav i { color:#d32f2f; }
+    .bottom-nav button.active { color:#2563eb; }
+    .bottom-nav button.active i { color:#2563eb; }
+    .bottom-nav button.logout-btn-nav { color:#dc2626; }
+    .bottom-nav button.logout-btn-nav i { color:#dc2626; }
     .bottom-nav button.hidden { display:none; }
 
-    /* STATS CARDS - Green/Blue */
-    .stats-grid { display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-bottom:16px; }
-    .stat-card { background:#fff; border-radius:16px; padding:14px 12px; box-shadow:0 2px 8px rgba(0,0,0,0.04); border:2px solid #c8e6c9; transition:0.2s; position:relative; overflow:hidden; }
-    .stat-card::before { content:''; position:absolute; top:0; left:0; right:0; height:3px; background:linear-gradient(90deg,#4caf50,#2196f3); }
-    .stat-card:nth-child(2)::before { background:linear-gradient(90deg,#2196f3,#4caf50); }
-    .stat-card:nth-child(3)::before { background:linear-gradient(90deg,#ff5722,#ff9800); }
-    .stat-card:nth-child(4)::before { background:linear-gradient(90deg,#ff9800,#ffc107); }
-    .stat-card:nth-child(5)::before { background:linear-gradient(90deg,#4caf50,#2196f3); }
-    .stat-card .num { font-size:1.6rem; font-weight:700; color:#1b5e20; }
-    .stat-card .label { font-size:0.65rem; color:#64748b; margin-top:2px; display:flex; align-items:center; gap:4px; }
-    .stat-card .label i { font-size:0.7rem; color:#4caf50; }
+    /* STATS */
+    .stats-grid { display:grid; grid-template-columns:repeat(auto-fit, minmax(150px, 1fr)); gap:16px; margin-bottom:20px; }
+    .stat-card { background:#fff; border-radius:16px; padding:16px; box-shadow:0 2px 8px rgba(0,0,0,0.04); border:1px solid #e2e8f0; transition:0.2s; position:relative; overflow:hidden; }
+    .stat-card:hover { transform:translateY(-2px); box-shadow:0 8px 25px rgba(0,0,0,0.06); }
+    .stat-card::before { content:''; position:absolute; top:0; left:0; right:0; height:3px; background:linear-gradient(90deg,#2563eb,#7c3aed); }
+    .stat-card:nth-child(2)::before { background:linear-gradient(90deg,#22c55e,#16a34a); }
+    .stat-card:nth-child(3)::before { background:linear-gradient(90deg,#ef4444,#dc2626); }
+    .stat-card:nth-child(4)::before { background:linear-gradient(90deg,#f59e0b,#d97706); }
+    .stat-card:nth-child(5)::before { background:linear-gradient(90deg,#8b5cf6,#7c3aed); }
+    .stat-card .num { font-size:1.8rem; font-weight:700; color:#0f172a; }
+    .stat-card .label { font-size:0.7rem; color:#64748b; margin-top:4px; display:flex; align-items:center; gap:6px; }
+    .stat-card .label i { font-size:0.75rem; color:#2563eb; }
     .stat-card.full { grid-column:1/-1; }
 
-    .sheet-header-card { background:#fff; padding:10px 14px; border-radius:14px; margin-bottom:10px; border-left:4px solid #4caf50; box-shadow:0 2px 8px rgba(0,0,0,0.04); display:flex; justify-content:space-between; align-items:center; border:2px solid #c8e6c9; border-left-width:4px; }
-    .sheet-header-card h3 { font-size:0.9rem; font-weight:600; display:flex; align-items:center; gap:6px; color:#1b5e20; }
-    .sheet-header-card h3 i { color:#4caf50; }
-    .sheet-header-card .badge { background:#c8e6c9; padding:2px 10px; border-radius:30px; font-size:0.65rem; font-weight:500; color:#1b5e20; }
+    .sheet-header-card { background:#fff; padding:12px 18px; border-radius:12px; margin-bottom:12px; border-left:4px solid #2563eb; box-shadow:0 2px 8px rgba(0,0,0,0.04); display:flex; justify-content:space-between; align-items:center; border:1px solid #e2e8f0; border-left-width:4px; }
+    .sheet-header-card h3 { font-size:0.95rem; font-weight:600; display:flex; align-items:center; gap:8px; color:#1e293b; }
+    .sheet-header-card h3 i { color:#2563eb; }
+    .sheet-header-card .badge { background:#e2e8f0; padding:2px 12px; border-radius:30px; font-size:0.65rem; font-weight:500; color:#475569; }
 
-    .data-card-list { display:flex; flex-direction:column; gap:6px; margin-bottom:14px; }
-    .data-item { background:#fff; padding:10px 12px; border-radius:12px; border:2px solid #e8f5e9; display:flex; flex-wrap:wrap; align-items:center; justify-content:space-between; gap:4px; box-shadow:0 1px 4px rgba(0,0,0,0.02); transition:0.2s; }
-    .data-item:hover { border-color:#4caf50; }
-    .data-item .main { display:flex; flex-direction:column; gap:1px; flex:1; min-width:80px; }
-    .data-item .main .title { font-weight:600; font-size:0.8rem; color:#0d47a1; }
-    .data-item .main .sub { font-size:0.65rem; color:#64748b; }
-    .status-badge { padding:2px 10px; border-radius:30px; font-size:0.6rem; font-weight:600; white-space:nowrap; }
-    .status-badge.approved { background:#c8e6c9; color:#1b5e20; }
-    .status-badge.rejected { background:#ffcdd2; color:#b71c1c; }
-    .status-badge.pending { background:#fff3e0; color:#e65100; }
-    .status-badge.paid { background:#bbdefb; color:#0d47a1; }
-    .empty-state { text-align:center; padding:20px 0; color:#94a3b8; font-size:0.8rem; }
+    .data-card-list { display:flex; flex-direction:column; gap:8px; margin-bottom:16px; }
+    .data-item { background:#fff; padding:12px 16px; border-radius:12px; border:1px solid #e2e8f0; display:flex; flex-wrap:wrap; align-items:center; justify-content:space-between; gap:8px; box-shadow:0 1px 4px rgba(0,0,0,0.02); transition:0.2s; }
+    .data-item:hover { border-color:#2563eb; }
+    .data-item .main { display:flex; flex-direction:column; gap:2px; flex:1; min-width:100px; }
+    .data-item .main .title { font-weight:600; font-size:0.85rem; color:#0f172a; }
+    .data-item .main .sub { font-size:0.7rem; color:#64748b; }
+    .status-badge { padding:2px 12px; border-radius:30px; font-size:0.6rem; font-weight:600; white-space:nowrap; }
+    .status-badge.approved { background:#dcfce7; color:#166534; }
+    .status-badge.rejected { background:#fee2e2; color:#991b1b; }
+    .status-badge.pending { background:#fef3c7; color:#92400e; }
+    .status-badge.paid { background:#dbeafe; color:#1e40af; }
+    .empty-state { text-align:center; padding:24px 0; color:#94a3b8; font-size:0.85rem; }
 
-    /* FORM */
-    .form-card { background:#fff; padding:14px; border-radius:14px; margin-bottom:14px; border:2px solid #c8e6c9; }
-    .form-card .field { margin-bottom:10px; position:relative; }
-    .form-card .field label { font-size:0.7rem; font-weight:500; color:#1b5e20; display:block; margin-bottom:2px; }
-    .form-card .field input, .form-card .field select, .form-card .field textarea { width:100%; padding:8px 12px; border:2px solid #e8f5e9; border-radius:8px; font-size:0.8rem; background:#fafafa; transition:0.2s; -webkit-appearance:none; appearance:none; }
-    .form-card .field input:focus, .form-card .field select:focus, .form-card .field textarea:focus { outline:none; border-color:#4caf50; background:#fff; box-shadow:0 0 0 4px rgba(76,175,80,0.1); }
-    .form-card .field textarea { min-height:40px; resize:vertical; }
-    .form-card .password-toggle { position:absolute; right:12px; bottom:10px; cursor:pointer; color:#4caf50; background:none; border:none; font-size:0.9rem; }
+    .form-card { background:#fff; padding:16px; border-radius:12px; margin-bottom:16px; border:1px solid #e2e8f0; }
+    .form-card .field { margin-bottom:12px; position:relative; }
+    .form-card .field label { font-size:0.75rem; font-weight:600; color:#1e293b; display:block; margin-bottom:4px; }
+    .form-card .field input, .form-card .field select, .form-card .field textarea { width:100%; padding:10px 14px; border:2px solid #e2e8f0; border-radius:8px; font-size:0.85rem; background:#f8fafc; transition:0.2s; -webkit-appearance:none; appearance:none; }
+    .form-card .field input:focus, .form-card .field select:focus, .form-card .field textarea:focus { outline:none; border-color:#2563eb; background:#fff; box-shadow:0 0 0 4px rgba(37,99,235,0.08); }
+    .form-card .field textarea { min-height:50px; resize:vertical; }
 
-    .btn { padding:8px 16px; border:none; border-radius:30px; font-weight:600; font-size:0.8rem; cursor:pointer; transition:0.3s; display:inline-flex; align-items:center; gap:5px; width:100%; justify-content:center; margin-top:2px; -webkit-tap-highlight-color:transparent; }
+    .btn { padding:10px 20px; border:none; border-radius:30px; font-weight:600; font-size:0.85rem; cursor:pointer; transition:0.3s; display:inline-flex; align-items:center; gap:8px; justify-content:center; -webkit-tap-highlight-color:transparent; }
     .btn:active { transform:scale(0.97); }
     .btn:disabled { opacity:0.6; cursor:not-allowed; transform:none; }
-    .btn-primary { background:linear-gradient(135deg,#1b5e20,#0d47a1); color:#fff; box-shadow:0 4px 15px rgba(27,94,32,0.2); }
-    .btn-primary:hover:not(:disabled) { box-shadow:0 6px 20px rgba(27,94,32,0.3); transform:translateY(-1px); }
-    .btn-success { background:linear-gradient(135deg,#2e7d32,#1b5e20); color:#fff; box-shadow:0 4px 15px rgba(46,125,50,0.2); }
-    .btn-success:hover:not(:disabled) { box-shadow:0 6px 20px rgba(46,125,50,0.3); transform:translateY(-1px); }
-    .btn-danger { background:linear-gradient(135deg,#c62828,#b71c1c); color:#fff; box-shadow:0 4px 15px rgba(198,40,40,0.2); }
-    .btn-danger:hover:not(:disabled) { box-shadow:0 6px 20px rgba(198,40,40,0.3); transform:translateY(-1px); }
-    .btn-warning { background:linear-gradient(135deg,#e65100,#f57c00); color:#fff; }
-    .btn-outline { background:transparent; border:2px solid #4caf50; color:#1b5e20; }
-    .btn-group { display:flex; gap:6px; flex-wrap:wrap; }
-    .btn-group .btn { flex:1; min-width:70px; }
+    .btn-primary { background:linear-gradient(135deg,#2563eb,#7c3aed); color:#fff; box-shadow:0 4px 15px rgba(37,99,235,0.2); }
+    .btn-primary:hover:not(:disabled) { box-shadow:0 6px 25px rgba(37,99,235,0.3); transform:translateY(-1px); }
+    .btn-success { background:linear-gradient(135deg,#22c55e,#16a34a); color:#fff; box-shadow:0 4px 15px rgba(34,197,94,0.2); }
+    .btn-success:hover:not(:disabled) { box-shadow:0 6px 25px rgba(34,197,94,0.3); transform:translateY(-1px); }
+    .btn-danger { background:linear-gradient(135deg,#ef4444,#dc2626); color:#fff; box-shadow:0 4px 15px rgba(239,68,68,0.2); }
+    .btn-danger:hover:not(:disabled) { box-shadow:0 6px 25px rgba(239,68,68,0.3); transform:translateY(-1px); }
+    .btn-warning { background:linear-gradient(135deg,#f59e0b,#d97706); color:#fff; }
+    .btn-outline { background:transparent; border:2px solid #2563eb; color:#2563eb; }
+    .btn-group { display:flex; gap:8px; flex-wrap:wrap; }
+    .btn-group .btn { flex:1; min-width:80px; }
 
     .page { display:none; }
     .page.active { display:block; }
 
-    .profile-card { background:#fff; padding:16px; border-radius:16px; text-align:center; border:2px solid #c8e6c9; }
-    .profile-card .avatar { width:60px; height:60px; background:linear-gradient(135deg,#1b5e20,#0d47a1); border-radius:50%; display:flex; align-items:center; justify-content:center; margin:0 auto 10px; font-size:28px; color:#fff; }
+    .profile-card { background:#fff; padding:24px; border-radius:16px; text-align:center; border:1px solid #e2e8f0; max-width:500px; margin:0 auto; }
+    .profile-card .avatar { width:80px; height:80px; background:linear-gradient(135deg,#2563eb,#7c3aed); border-radius:50%; display:flex; align-items:center; justify-content:center; margin:0 auto 12px; font-size:32px; color:#fff; }
 
-    .action-btns { display:flex; gap:4px; flex-wrap:wrap; }
-    .action-btns .btn-sm { padding:2px 10px; font-size:0.6rem; border-radius:20px; border:none; cursor:pointer; font-weight:600; transition:0.2s; -webkit-tap-highlight-color:transparent; }
+    .action-btns { display:flex; gap:6px; flex-wrap:wrap; }
+    .action-btns .btn-sm { padding:4px 14px; font-size:0.65rem; border-radius:20px; border:none; cursor:pointer; font-weight:600; transition:0.2s; -webkit-tap-highlight-color:transparent; }
     .action-btns .btn-sm:active { transform:scale(0.92); }
-    .btn-sm.approve { background:#c8e6c9; color:#1b5e20; }
-    .btn-sm.approve:hover { background:#a5d6a7; }
-    .btn-sm.reject { background:#ffcdd2; color:#b71c1c; }
-    .btn-sm.reject:hover { background:#ef9a9a; }
+    .btn-sm.approve { background:#dcfce7; color:#166534; }
+    .btn-sm.approve:hover { background:#bbf7d0; }
+    .btn-sm.reject { background:#fee2e2; color:#991b1b; }
+    .btn-sm.reject:hover { background:#fecaca; }
 
-    .toast { position:fixed; top:20px; left:50%; transform:translateX(-50%); background:#1b5e20; color:#fff; padding:12px 24px; border-radius:12px; font-size:0.85rem; font-weight:500; z-index:1000; box-shadow:0 8px 30px rgba(0,0,0,0.2); opacity:0; transition:opacity 0.3s ease; pointer-events:none; max-width:90%; border:2px solid #a5d6a7; }
+    .toast { position:fixed; top:20px; left:50%; transform:translateX(-50%); background:#0f172a; color:#fff; padding:12px 24px; border-radius:12px; font-size:0.85rem; font-weight:500; z-index:1000; box-shadow:0 8px 30px rgba(0,0,0,0.2); opacity:0; transition:opacity 0.3s ease; pointer-events:none; max-width:90%; }
     .toast.show { opacity:1; }
 
-    .deo-note { background:#e8f5e9; padding:10px 14px; border-radius:10px; font-size:0.75rem; color:#1b5e20; border-left:3px solid #4caf50; margin-bottom:12px; }
+    .deo-note { background:#eff6ff; padding:12px 16px; border-radius:10px; font-size:0.8rem; color:#1e40af; border-left:3px solid #2563eb; margin-bottom:12px; }
 
-    .withdraw-card { background:linear-gradient(135deg,#1b5e20,#0d47a1); color:#fff; padding:16px; border-radius:16px; margin-bottom:14px; border:2px solid #4caf50; }
-    .withdraw-card .amount-display { font-size:2.2rem; font-weight:700; color:#a5d6a7; }
-    .withdraw-card .label { font-size:0.7rem; color:#bbdefb; }
-    .withdraw-grid { display:grid; grid-template-columns:1fr 1fr 1fr; gap:8px; margin-top:10px; }
-    .withdraw-grid .item { background:rgba(255,255,255,0.1); padding:8px; border-radius:10px; text-align:center; }
-    .withdraw-grid .item .num { font-size:1.2rem; font-weight:600; color:#a5d6a7; }
-    .withdraw-grid .item .lbl { font-size:0.6rem; color:#bbdefb; }
+    .withdraw-card { background:linear-gradient(135deg,#1e293b,#0f172a); color:#fff; padding:20px; border-radius:16px; margin-bottom:16px; border:1px solid #334155; }
+    .withdraw-card .amount-display { font-size:2.4rem; font-weight:700; color:#818cf8; }
+    .withdraw-card .label { font-size:0.75rem; color:#94a3b8; }
+    .withdraw-grid { display:grid; grid-template-columns:1fr 1fr 1fr; gap:12px; margin-top:12px; }
+    .withdraw-grid .item { background:rgba(255,255,255,0.05); padding:12px; border-radius:10px; text-align:center; }
+    .withdraw-grid .item .num { font-size:1.2rem; font-weight:600; color:#818cf8; }
+    .withdraw-grid .item .lbl { font-size:0.65rem; color:#94a3b8; }
 
-    .chart-container { background:#fff; border-radius:16px; padding:12px; margin-bottom:14px; border:2px solid #c8e6c9; }
-    .chart-container canvas { width:100% !important; height:auto !important; max-height:200px; }
+    .chart-container { background:#fff; border-radius:16px; padding:16px; margin-bottom:20px; border:1px solid #e2e8f0; }
+    .chart-container canvas { width:100% !important; height:auto !important; max-height:220px; }
 
-    @media (max-width:380px) {
-      .stats-grid { grid-template-columns:1fr 1fr; gap:6px; }
-      .stat-card { padding:10px 8px; }
-      .stat-card .num { font-size:1.3rem; }
+    /* Earnings Summary Cards */
+    .earnings-grid { display:grid; grid-template-columns:repeat(auto-fit, minmax(120px, 1fr)); gap:12px; margin-bottom:16px; }
+    .earning-card { background:#fff; border-radius:12px; padding:14px; border:1px solid #e2e8f0; text-align:center; }
+    .earning-card .num { font-size:1.4rem; font-weight:700; color:#2563eb; }
+    .earning-card .label { font-size:0.65rem; color:#64748b; }
+
+    /* RESPONSIVE */
+    @media (max-width:768px) {
+      body { padding:12px 12px 80px 12px; }
+      .top-nav { display:none; }
+      .bottom-nav { display:flex; }
+      .stats-grid { grid-template-columns:1fr 1fr; gap:10px; }
+      .stat-card { padding:12px; }
+      .stat-card .num { font-size:1.4rem; }
+      .header { padding:10px 16px; }
+      .logo-area h1 { font-size:1rem; }
+      .user-badge .name { max-width:70px; overflow:hidden; text-overflow:ellipsis; }
+      .withdraw-grid { grid-template-columns:1fr 1fr; }
+      .data-item { padding:10px 12px; }
+      #loginPage { margin:20px 0; padding:28px 20px; }
+      .earnings-grid { grid-template-columns:1fr 1fr; }
+    }
+
+    @media (min-width:769px) {
+      .bottom-nav { display:none !important; }
+      .top-nav { display:flex; }
+      .stats-grid { grid-template-columns:repeat(5,1fr); }
+      .stat-card.full { grid-column:1/-1; }
+      .form-card .field { display:inline-block; width:100%; }
+      .earnings-grid { grid-template-columns:repeat(4,1fr); }
+    }
+
+    @media (max-width:480px) {
+      .stats-grid { grid-template-columns:1fr 1fr; gap:8px; }
+      .stat-card { padding:10px; }
+      .stat-card .num { font-size:1.2rem; }
       .bottom-nav button { font-size:0.5rem; min-width:38px; padding:4px 6px; }
       .bottom-nav button i { font-size:1rem; }
-      .logo-area h1 { font-size:0.95rem; }
-      .withdraw-grid { grid-template-columns:1fr 1fr; }
-    }
-    @media (min-width:600px) {
-      body { padding:20px 20px 90px 20px; }
-      .app { max-width:600px; }
-      .stats-grid { grid-template-columns:repeat(3,1fr); }
-      .stat-card.full { grid-column:1/-1; }
+      .earnings-grid { grid-template-columns:1fr 1fr; }
     }
   </style>
 </head>
@@ -203,16 +244,28 @@
       </div>
     </header>
 
+    <!-- TOP NAV -->
+    <nav class="top-nav" id="topNav">
+      <button class="active" data-page="dashboard"><i class="fas fa-chart-pie"></i> Dashboard</button>
+      <button data-page="work" id="workNavBtn"><i class="fas fa-tasks"></i> Work</button>
+      <button data-page="deo-work" id="deoWorkNavBtn"><i class="fas fa-pen-alt"></i> Form</button>
+      <button data-page="deo-withdraw" id="deoWithdrawNavBtn"><i class="fas fa-wallet"></i> Withdraw</button>
+      <button data-page="users" id="usersNavBtn"><i class="fas fa-users"></i> Users</button>
+      <button data-page="payout" id="payoutNavBtn"><i class="fas fa-hand-holding-usd"></i> Payout</button>
+      <button data-page="profile"><i class="fas fa-user"></i> Profile</button>
+      <button class="logout-btn" id="logoutBtnNav"><i class="fas fa-sign-out-alt"></i> Logout</button>
+    </nav>
+
     <div class="content-area">
 
       <!-- PAGE: DASHBOARD -->
       <div id="page-dashboard" class="page active">
         <div class="stats-grid">
           <div class="stat-card"><div class="num" id="totalFilled">0</div><div class="label"><i class="fas fa-file-alt"></i> Total Forms</div></div>
-          <div class="stat-card"><div class="num" id="totalApproved">0</div><div class="label"><i class="fas fa-check-circle" style="color:#2e7d32;"></i> Approved</div></div>
-          <div class="stat-card"><div class="num" id="totalRejected">0</div><div class="label"><i class="fas fa-times-circle" style="color:#c62828;"></i> Rejected</div></div>
-          <div class="stat-card"><div class="num" id="totalPending">0</div><div class="label"><i class="fas fa-clock" style="color:#e65100;"></i> Pending</div></div>
-          <div class="stat-card full"><div class="num" id="totalPayment">₹0</div><div class="label"><i class="fas fa-coins" style="color:#f97316;"></i> Total Payment (₹3/approved form)</div></div>
+          <div class="stat-card"><div class="num" id="totalApproved">0</div><div class="label"><i class="fas fa-check-circle" style="color:#22c55e;"></i> Approved</div></div>
+          <div class="stat-card"><div class="num" id="totalRejected">0</div><div class="label"><i class="fas fa-times-circle" style="color:#ef4444;"></i> Rejected</div></div>
+          <div class="stat-card"><div class="num" id="totalPending">0</div><div class="label"><i class="fas fa-clock" style="color:#f59e0b;"></i> Pending</div></div>
+          <div class="stat-card full"><div class="num" id="totalPayment">₹0</div><div class="label"><i class="fas fa-coins" style="color:#8b5cf6;"></i> Total Payment (₹3/approved form)</div></div>
         </div>
 
         <div class="chart-container">
@@ -282,6 +335,16 @@
             <div class="item"><div class="num" id="deoAvailable">₹0</div><div class="lbl">Available</div></div>
           </div>
         </div>
+
+        <!-- Enhanced Earnings Summary -->
+        <div class="sheet-header-card"><h3><i class="fas fa-chart-line"></i> Earnings Breakdown</h3></div>
+        <div class="earnings-grid">
+          <div class="earning-card"><div class="num" id="todayEarnings">₹0</div><div class="label">Today</div></div>
+          <div class="earning-card"><div class="num" id="weekEarnings">₹0</div><div class="label">This Week</div></div>
+          <div class="earning-card"><div class="num" id="monthEarnings">₹0</div><div class="label">This Month</div></div>
+          <div class="earning-card"><div class="num" id="lifetimeEarnings">₹0</div><div class="label">Lifetime</div></div>
+        </div>
+
         <div class="form-card">
           <div class="field"><label>Amount to Withdraw (₹)</label>
             <input type="number" id="withdrawAmount" placeholder="Enter amount" min="1" inputmode="numeric" />
@@ -327,9 +390,9 @@
         <div class="profile-card">
           <div class="avatar"><i class="fas fa-user"></i></div>
           <h3 id="profDisplayName">Admin</h3>
-          <p style="color:#64748b; font-size:0.8rem;" id="profDisplayEmail">admin@rk.com</p>
-          <p style="font-size:0.75rem; background:#e8f5e9; padding:4px 12px; border-radius:20px; display:inline-block; margin:4px 0 10px; color:#1b5e20;" id="profDisplayRole">Super Admin</p>
-          <div class="form-card" style="text-align:left; padding:10px;">
+          <p style="color:#64748b; font-size:0.85rem;" id="profDisplayEmail">admin@rk.com</p>
+          <p style="font-size:0.75rem; background:#eff6ff; padding:4px 16px; border-radius:20px; display:inline-block; margin:4px 0 12px; color:#2563eb;" id="profDisplayRole">Super Admin</p>
+          <div class="form-card" style="text-align:left; padding:12px;">
             <div class="field"><label>Name</label><input id="profName" placeholder="Your name" /></div>
             <div class="field"><label>Email</label><input id="profEmail" placeholder="your@email.com" type="email" /></div>
             <div class="field"><label>Role</label><input id="profRole" disabled /></div>
@@ -344,13 +407,13 @@
     <!-- BOTTOM NAV -->
     <nav class="bottom-nav" id="bottomNav">
       <button class="active" data-page="dashboard"><i class="fas fa-chart-pie"></i> Home</button>
-      <button data-page="work" id="workNavBtn"><i class="fas fa-tasks"></i> Work</button>
-      <button data-page="deo-work" id="deoWorkNavBtn"><i class="fas fa-pen-alt"></i> Form</button>
-      <button data-page="deo-withdraw" id="deoWithdrawNavBtn"><i class="fas fa-wallet"></i> Withdraw</button>
-      <button data-page="users" id="usersNavBtn"><i class="fas fa-users"></i> Users</button>
-      <button data-page="payout" id="payoutNavBtn"><i class="fas fa-hand-holding-usd"></i> Payout</button>
+      <button data-page="work" id="workNavBtnM"><i class="fas fa-tasks"></i> Work</button>
+      <button data-page="deo-work" id="deoWorkNavBtnM"><i class="fas fa-pen-alt"></i> Form</button>
+      <button data-page="deo-withdraw" id="deoWithdrawNavBtnM"><i class="fas fa-wallet"></i> Withdraw</button>
+      <button data-page="users" id="usersNavBtnM"><i class="fas fa-users"></i> Users</button>
+      <button data-page="payout" id="payoutNavBtnM"><i class="fas fa-hand-holding-usd"></i> Payout</button>
       <button data-page="profile"><i class="fas fa-user"></i> Profile</button>
-      <button class="logout-btn-nav" id="logoutBtnNav"><i class="fas fa-sign-out-alt"></i> Logout</button>
+      <button class="logout-btn-nav" id="logoutBtnNavM"><i class="fas fa-sign-out-alt"></i> Logout</button>
     </nav>
 
   </div>
@@ -383,6 +446,7 @@ const loginPassword = document.getElementById('loginPassword');
 const loginBtn = document.getElementById('loginBtn');
 const loginError = document.getElementById('loginError');
 const logoutBtnNav = document.getElementById('logoutBtnNav');
+const logoutBtnNavM = document.getElementById('logoutBtnNavM');
 const userName = document.getElementById('userName');
 const userRole = document.getElementById('userRole');
 const loaderOverlay = document.getElementById('loaderOverlay');
@@ -429,11 +493,22 @@ const deoWithdrawn = document.getElementById('deoWithdrawn');
 const deoPending = document.getElementById('deoPending');
 const deoAvailable = document.getElementById('deoAvailable');
 
+const todayEarnings = document.getElementById('todayEarnings');
+const weekEarnings = document.getElementById('weekEarnings');
+const monthEarnings = document.getElementById('monthEarnings');
+const lifetimeEarnings = document.getElementById('lifetimeEarnings');
+
 const workNavBtn = document.getElementById('workNavBtn');
 const deoWorkNavBtn = document.getElementById('deoWorkNavBtn');
 const deoWithdrawNavBtn = document.getElementById('deoWithdrawNavBtn');
 const usersNavBtn = document.getElementById('usersNavBtn');
 const payoutNavBtn = document.getElementById('payoutNavBtn');
+
+const workNavBtnM = document.getElementById('workNavBtnM');
+const deoWorkNavBtnM = document.getElementById('deoWorkNavBtnM');
+const deoWithdrawNavBtnM = document.getElementById('deoWithdrawNavBtnM');
+const usersNavBtnM = document.getElementById('usersNavBtnM');
+const payoutNavBtnM = document.getElementById('payoutNavBtnM');
 
 // =============================================================
 // PASSWORD TOGGLE
@@ -508,19 +583,24 @@ function callApi(action, payload = {}) {
 function renderAuthUsers(users) {
   if (!users || !users.length) { authUserList.innerHTML = `<div class="empty-state">No users</div>`; return; }
   let html = '';
+  const isSuperAdmin = currentUser && currentUser.role === 'Super Admin';
   users.slice(0, 10).forEach(u => {
-    html += `<div class="data-item">
-      <div class="main"><span class="title">${u.name || u.email}</span><span class="sub">${u.email}</span></div>
-      <span style="font-size:0.65rem; background:#c8e6c9; padding:2px 10px; border-radius:20px; color:#1b5e20;">${u.role || 'DEO'}</span>
-    </div>`;
+    if (isSuperAdmin || u.email === currentUser?.email) {
+      html += `<div class="data-item">
+        <div class="main"><span class="title">${u.name || u.email}</span><span class="sub">${u.email}</span></div>
+        <span style="font-size:0.65rem; background:#e2e8f0; padding:2px 10px; border-radius:20px; color:#475569;">${u.role || 'DEO'}</span>
+      </div>`;
+    }
   });
-  authUserList.innerHTML = html;
+  authUserList.innerHTML = html || '<div class="empty-state">No users to show</div>';
 }
 
 function renderDataCards(data) {
   if (!data || !data.length) { dataCardList.innerHTML = `<div class="empty-state">No forms</div>`; return; }
+  const isSuperAdmin = currentUser && currentUser.role === 'Super Admin';
   let html = '';
-  data.slice(0, 15).forEach(r => {
+  const filtered = isSuperAdmin ? data : data.filter(r => r['DEO Email'] === currentUser?.email);
+  filtered.slice(0, 15).forEach(r => {
     const s = (r.Status || 'pending').toLowerCase();
     const cls = s === 'approved' ? 'approved' : s === 'rejected' ? 'rejected' : 'pending';
     html += `<div class="data-item">
@@ -528,13 +608,15 @@ function renderDataCards(data) {
       <span class="status-badge ${cls}">${s}</span>
     </div>`;
   });
-  dataCardList.innerHTML = html;
+  dataCardList.innerHTML = html || '<div class="empty-state">No forms to show</div>';
 }
 
 function renderPayoutCards(data) {
   if (!data || !data.length) { payoutCardList.innerHTML = `<div class="empty-state">No payout</div>`; return; }
+  const isSuperAdmin = currentUser && currentUser.role === 'Super Admin';
   let html = '';
-  data.slice(0, 10).forEach(r => {
+  const filtered = isSuperAdmin ? data : data.filter(r => r['DEO Email'] === currentUser?.email);
+  filtered.slice(0, 10).forEach(r => {
     const s = (r.Status || 'pending').toLowerCase();
     const cls = s === 'paid' ? 'paid' : 'pending';
     html += `<div class="data-item">
@@ -542,37 +624,48 @@ function renderPayoutCards(data) {
       <span class="status-badge ${cls}">${r.Status || 'Pending'}</span>
     </div>`;
   });
-  payoutCardList.innerHTML = html;
+  payoutCardList.innerHTML = html || '<div class="empty-state">No payout to show</div>';
 }
 
 function renderWorkLists(data) {
-  const pending = data.filter(r => (r.Status || 'pending').toLowerCase() === 'pending');
-  if (!pending.length) {
-    pendingWorkList.innerHTML = `<div class="empty-state">✅ No pending forms</div>`;
+  const isSuperAdmin = currentUser && currentUser.role === 'Super Admin';
+  
+  if (isSuperAdmin) {
+    const pending = data.filter(r => (r.Status || 'pending').toLowerCase() === 'pending');
+    if (!pending.length) {
+      pendingWorkList.innerHTML = `<div class="empty-state">✅ No pending forms</div>`;
+    } else {
+      let html = '';
+      pending.forEach(r => {
+        const id = r._id || r.PostName || 'form_' + Date.now();
+        html += `<div class="data-item">
+          <div class="main">
+            <span class="title">${r.PostName || 'Untitled'}</span>
+            <span class="sub">${r.FormType || ''} · ${r.DepartmentName || ''} · ${r['DEO Email'] || ''}</span>
+          </div>
+          <div class="action-btns">
+            <button class="btn-sm approve" onclick="approveForm('${id}')"><i class="fas fa-check"></i> Approve</button>
+            <button class="btn-sm reject" onclick="rejectForm('${id}')"><i class="fas fa-times"></i> Reject</button>
+          </div>
+        </div>`;
+      });
+      pendingWorkList.innerHTML = html;
+    }
   } else {
-    let html = '';
-    pending.forEach(r => {
-      const id = r._id || r.PostName || 'form_' + Date.now();
-      html += `<div class="data-item">
-        <div class="main">
-          <span class="title">${r.PostName || 'Untitled'}</span>
-          <span class="sub">${r.FormType || ''} · ${r.DepartmentName || ''} · ${r['DEO Email'] || ''}</span>
-        </div>
-        <div class="action-btns">
-          <button class="btn-sm approve" onclick="approveForm('${id}')"><i class="fas fa-check"></i> Approve</button>
-          <button class="btn-sm reject" onclick="rejectForm('${id}')"><i class="fas fa-times"></i> Reject</button>
-        </div>
-      </div>`;
-    });
-    pendingWorkList.innerHTML = html;
+    pendingWorkList.innerHTML = `<div class="empty-state">🔒 Only Super Admin can view pending forms</div>`;
   }
 
   if (!data || !data.length) {
     allWorkList.innerHTML = `<div class="empty-state">No forms</div>`;
     return;
   }
+  const filtered = isSuperAdmin ? data : data.filter(r => r['DEO Email'] === currentUser?.email);
+  if (!filtered.length) {
+    allWorkList.innerHTML = `<div class="empty-state">No forms to show</div>`;
+    return;
+  }
   let html = '';
-  data.slice(0, 20).forEach(r => {
+  filtered.slice(0, 20).forEach(r => {
     const s = (r.Status || 'pending').toLowerCase();
     const cls = s === 'approved' ? 'approved' : s === 'rejected' ? 'rejected' : 'pending';
     html += `<div class="data-item">
@@ -611,7 +704,7 @@ function renderUsersCards(users) {
   users.forEach(u => {
     html += `<div class="data-item">
       <div class="main"><span class="title">${u.name || u.email}</span><span class="sub">${u.email}</span></div>
-      <span style="font-size:0.65rem; background:#c8e6c9; padding:2px 10px; border-radius:20px; color:#1b5e20;">${u.role || 'DEO'}</span>
+      <span style="font-size:0.65rem; background:#e2e8f0; padding:2px 10px; border-radius:20px; color:#475569;">${u.role || 'DEO'}</span>
     </div>`;
   });
   usersCardList.innerHTML = html;
@@ -632,11 +725,11 @@ function renderPayoutFullCards(data) {
 }
 
 function renderWithdrawHistory(requests) {
-  if (!requests || !requests.length) {
+  if (!requests || !requests.length || !currentUser) {
     withdrawHistoryList.innerHTML = `<div class="empty-state">No withdrawal requests</div>`;
     return;
   }
-  const myRequests = requests.filter(r => r['DEO Email'] === currentUser?.email);
+  const myRequests = requests.filter(r => r['DEO Email'] === currentUser.email);
   if (!myRequests.length) {
     withdrawHistoryList.innerHTML = `<div class="empty-state">No withdrawal requests</div>`;
     return;
@@ -678,17 +771,79 @@ function renderWithdrawRequests(requests) {
 }
 
 // =============================================================
-// FIXED: UPDATE DEO EARNINGS
+// ENHANCED EARNINGS CALCULATION
 // =============================================================
-function updateDeoEarnings() {
-  if (!currentUser || currentUser.role !== 'DEO') return;
+function calculateEarnings(data, userEmail) {
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
   
-  // Calculate total earned from approved forms (₹3 per approved form)
+  const weekStart = new Date(today);
+  weekStart.setDate(weekStart.getDate() - weekStart.getDay());
+  
+  const monthStart = new Date(today.getFullYear(), today.getMonth(), 1);
+  
+  // Filter forms for this user
+  const userForms = data.filter(r => r['DEO Email'] === userEmail && r.Status === 'approved');
+  
+  let todayTotal = 0;
+  let weekTotal = 0;
+  let monthTotal = 0;
+  let lifetimeTotal = userForms.length * 3;
+  
+  userForms.forEach(r => {
+    const formDate = new Date(r.Date);
+    formDate.setHours(0, 0, 0, 0);
+    
+    if (formDate.getTime() === today.getTime()) {
+      todayTotal += 3;
+    }
+    if (formDate >= weekStart) {
+      weekTotal += 3;
+    }
+    if (formDate >= monthStart) {
+      monthTotal += 3;
+    }
+  });
+  
+  return { todayTotal, weekTotal, monthTotal, lifetimeTotal };
+}
+
+function updateDeoEarnings() {
+  if (!currentUser) return;
+  const isSuperAdmin = currentUser.role === 'Super Admin';
+  
+  if (isSuperAdmin) {
+    // Super Admin sees all earnings summary
+    const allApproved = allData.filter(r => r.Status === 'approved');
+    const totalEarned = allApproved.length * 3;
+    const totalWithdrawn = allPayout.filter(r => r.Status === 'Paid').reduce((sum, r) => sum + (r.Amount || 0), 0);
+    deoTotalEarn.textContent = '₹' + totalEarned;
+    deoWithdrawn.textContent = '₹' + totalWithdrawn;
+    deoPending.textContent = '₹' + withdrawRequests.filter(r => r.Status === 'Pending').reduce((sum, r) => sum + (r.Amount || 0), 0);
+    deoAvailable.textContent = '₹' + (totalEarned - totalWithdrawn);
+    
+    // For Super Admin, show overall stats
+    const overall = calculateEarnings(allData, 'all');
+    todayEarnings.textContent = '₹' + overall.todayTotal;
+    weekEarnings.textContent = '₹' + overall.weekTotal;
+    monthEarnings.textContent = '₹' + overall.monthTotal;
+    lifetimeEarnings.textContent = '₹' + overall.lifetimeTotal;
+    return;
+  }
+  
+  // DEO sees their own earnings
+  const earnings = calculateEarnings(allData, currentUser.email);
+  
+  todayEarnings.textContent = '₹' + earnings.todayTotal;
+  weekEarnings.textContent = '₹' + earnings.weekTotal;
+  monthEarnings.textContent = '₹' + earnings.monthTotal;
+  lifetimeEarnings.textContent = '₹' + earnings.lifetimeTotal;
+  
+  // Update main earnings card
   const myForms = allData.filter(r => r['DEO Email'] === currentUser.email);
   const approvedForms = myForms.filter(r => r.Status === 'approved');
   const totalEarned = approvedForms.length * 3;
   
-  // Get withdrawal data
   const myWithdrawals = withdrawRequests.filter(r => r['DEO Email'] === currentUser.email);
   const totalWithdrawn = myWithdrawals.filter(r => r.Status === 'Approved').reduce((sum, r) => sum + (r.Amount || 0), 0);
   const totalPendingWithdraw = myWithdrawals.filter(r => r.Status === 'Pending').reduce((sum, r) => sum + (r.Amount || 0), 0);
@@ -719,7 +874,7 @@ function updateChart() {
       labels: ['Approved', 'Rejected', 'Pending'],
       datasets: [{
         data: [approved, rejected, pending],
-        backgroundColor: ['#2e7d32', '#c62828', '#e65100'],
+        backgroundColor: ['#22c55e', '#ef4444', '#f59e0b'],
         borderWidth: 2,
         borderColor: '#fff'
       }]
@@ -752,6 +907,10 @@ function updateChart() {
 // WORK ACTIONS
 // =============================================================
 window.approveForm = async function(id) {
+  if (!currentUser || currentUser.role !== 'Super Admin') {
+    showToast('Only Super Admin can approve forms', 2000);
+    return;
+  }
   if (!confirm('Approve this form? This will add ₹3 to DEO earnings.')) return;
   const form = allData.find(r => (r._id || r.PostName) === id && (r.Status || 'pending').toLowerCase() === 'pending');
   if (!form) { showToast('Form not found', 2000); return; }
@@ -768,6 +927,10 @@ window.approveForm = async function(id) {
 };
 
 window.rejectForm = async function(id) {
+  if (!currentUser || currentUser.role !== 'Super Admin') {
+    showToast('Only Super Admin can reject forms', 2000);
+    return;
+  }
   if (!confirm('Reject this form?')) return;
   const form = allData.find(r => (r._id || r.PostName) === id && (r.Status || 'pending').toLowerCase() === 'pending');
   if (!form) { showToast('Form not found', 2000); return; }
@@ -787,6 +950,10 @@ window.rejectForm = async function(id) {
 // WITHDRAW ACTIONS
 // =============================================================
 window.approveWithdraw = async function(id) {
+  if (!currentUser || currentUser.role !== 'Super Admin') {
+    showToast('Only Super Admin can approve withdrawals', 2000);
+    return;
+  }
   if (!confirm('Approve this withdrawal request?')) return;
   const req = withdrawRequests.find(r => r._id === id && r.Status === 'Pending');
   if (!req) { showToast('Request not found', 2000); return; }
@@ -803,6 +970,10 @@ window.approveWithdraw = async function(id) {
 };
 
 window.rejectWithdraw = async function(id) {
+  if (!currentUser || currentUser.role !== 'Super Admin') {
+    showToast('Only Super Admin can reject withdrawals', 2000);
+    return;
+  }
   if (!confirm('Reject this withdrawal request?')) return;
   const req = withdrawRequests.find(r => r._id === id && r.Status === 'Pending');
   if (!req) { showToast('Request not found', 2000); return; }
@@ -1048,7 +1219,7 @@ function handleLogout() {
   dashboard.style.display = 'none';
   loginPage.style.display = 'block';
   loginError.textContent = '';
-  document.querySelectorAll('.bottom-nav button').forEach(b => b.classList.remove('hidden'));
+  document.querySelectorAll('.top-nav button, .bottom-nav button').forEach(b => b.classList.remove('hidden'));
   showToast('Logged out', 1500);
 }
 
@@ -1065,24 +1236,33 @@ function updateNavVisibility() {
   usersNavBtn.style.display = isSuperAdmin ? 'flex' : 'none';
   payoutNavBtn.style.display = isSuperAdmin ? 'flex' : 'none';
   
+  workNavBtnM.style.display = isSuperAdmin ? 'flex' : 'none';
+  deoWorkNavBtnM.style.display = isDEO ? 'flex' : 'none';
+  deoWithdrawNavBtnM.style.display = isDEO ? 'flex' : 'none';
+  usersNavBtnM.style.display = isSuperAdmin ? 'flex' : 'none';
+  payoutNavBtnM.style.display = isSuperAdmin ? 'flex' : 'none';
+  
   if (isSuperAdmin) {
-    document.querySelector('.bottom-nav button[data-page="work"]')?.classList.add('active');
-    document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
-    document.getElementById('page-work').classList.add('active');
+    setActivePage('work');
   } else if (isDEO) {
-    document.querySelector('.bottom-nav button[data-page="deo-work"]')?.classList.add('active');
-    document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
-    document.getElementById('page-deo-work').classList.add('active');
+    setActivePage('deo-work');
   }
+}
+
+function setActivePage(pageName) {
+  document.querySelectorAll('.top-nav button, .bottom-nav button').forEach(b => b.classList.remove('active'));
+  document.querySelectorAll(`.top-nav button[data-page="${pageName}"], .bottom-nav button[data-page="${pageName}"]`).forEach(b => b.classList.add('active'));
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.getElementById('page-' + pageName).classList.add('active');
 }
 
 // =============================================================
 // NAVIGATION
 // =============================================================
-document.querySelectorAll('.bottom-nav button[data-page]').forEach(btn => {
+document.querySelectorAll('.top-nav button[data-page], .bottom-nav button[data-page]').forEach(btn => {
   btn.addEventListener('click', function() {
-    document.querySelectorAll('.bottom-nav button').forEach(b => b.classList.remove('active'));
-    this.classList.add('active');
+    document.querySelectorAll('.top-nav button, .bottom-nav button').forEach(b => b.classList.remove('active'));
+    document.querySelectorAll(`.top-nav button[data-page="${this.dataset.page}"], .bottom-nav button[data-page="${this.dataset.page}"]`).forEach(b => b.classList.add('active'));
     const pageName = this.dataset.page;
     document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
     document.getElementById('page-' + pageName).classList.add('active');
@@ -1094,6 +1274,7 @@ document.querySelectorAll('.bottom-nav button[data-page]').forEach(btn => {
 // =============================================================
 loginBtn.addEventListener('click', handleLogin);
 logoutBtnNav.addEventListener('click', handleLogout);
+logoutBtnNavM.addEventListener('click', handleLogout);
 loginPassword.addEventListener('keydown', e => { if (e.key === 'Enter') handleLogin(); });
 loginEmail.addEventListener('keydown', e => { if (e.key === 'Enter') handleLogin(); });
 
@@ -1133,6 +1314,17 @@ updateProfileBtn.addEventListener('click', function() {
     showToast('Profile updated!', 1500);
   }
 });
+
+// =============================================================
+// PWA - Service Worker Registration
+// =============================================================
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('/sw.js')
+      .then(reg => console.log('SW registered:', reg))
+      .catch(err => console.log('SW registration failed:', err));
+  });
+}
 
 // =============================================================
 // CHECK SAVED SESSION
