@@ -1,5 +1,39 @@
-import { db } from './lib/firebase';
-import { collection, addDoc, updateDoc, deleteDoc, doc, getDocs, query, orderBy, limit } from 'firebase/firestore';
+// Mock Data for Initial Load
+const MOCK_DATA = [
+  {
+    id: '1',
+    formType: 'Latest Job',
+    postName: 'UPSC Civil Services Exam 2024',
+    departmentName: 'UPSC',
+    submittedBy: 'Admin',
+    timestamp: Date.now() - 3600000 * 5,
+    importantDates: 'Apply by: 05/08/2024',
+    applyLink: 'https://upsc.gov.in',
+    status: 'Active'
+  },
+  {
+    id: '2',
+    formType: 'Admit Card',
+    postName: 'SSC CGL Tier 1 Hall Ticket',
+    departmentName: 'SSC',
+    submittedBy: 'Rahul Kumar',
+    timestamp: Date.now() - 3600000 * 24,
+    importantDates: 'Exam: 15/09/2024',
+    applyLink: 'https://ssc.nic.in',
+    status: 'Active'
+  },
+  {
+    id: '3',
+    formType: 'Result',
+    postName: 'IBPS PO Prelims Result',
+    departmentName: 'IBPS',
+    submittedBy: 'Admin',
+    timestamp: Date.now() - 3600000 * 48,
+    importantDates: 'Released: 01/07/2024',
+    applyLink: 'https://ibps.in',
+    status: 'Active'
+  }
+];
 
 // State management
 let state = {
@@ -12,6 +46,18 @@ let state = {
   editingId: null,
   adminName: localStorage.getItem('admin_name') || ''
 };
+
+// Persistence Logic
+function saveLocalData(data) {
+  localStorage.setItem('sarkarisetu_data', JSON.stringify(data));
+}
+
+function loadLocalData() {
+  const saved = localStorage.getItem('sarkarisetu_data');
+  if (saved) return JSON.parse(saved);
+  saveLocalData(MOCK_DATA);
+  return MOCK_DATA;
+}
 
 // DOM Elements
 const elements = {
@@ -88,9 +134,6 @@ function showView(view) {
   if (view === 'admin') {
     elements.loginView.classList.add('hidden');
     elements.adminView.classList.remove('hidden');
-    elements.adminView.classList.add('lg:flex');
-    elements.adminView.classList.remove('hidden');
-    // Ensure flex is used for main layout
     elements.adminView.style.display = 'flex';
   } else {
     elements.loginView.classList.remove('hidden');
@@ -165,43 +208,26 @@ function toggleSidebar(open) {
   }
 }
 
-// Logic: Auth
+// Logic: Auth (Static for demo)
 async function handleLogin(e) {
   e.preventDefault();
   const mobile = document.getElementById('mobile').value;
-  const password = document.getElementById('password').value;
+  const name = "Administrator"; // Static for static code mode
   
   setLoginLoading(true);
   elements.loginError.classList.add('hidden');
   
-  try {
-    const response = await fetch(APPS_SCRIPT_URL, {
-      method: 'POST',
-      body: JSON.stringify({
-        action: 'login',
-        data: { mobile, password }
-      })
-    });
-    
-    const result = await response.json();
-    
-    if (result.success) {
-      const session = { mobile, name: result.name };
-      localStorage.setItem('admin_session', JSON.stringify(session));
-      state.isLoggedIn = true;
-      state.adminName = result.name;
-      if (elements.adminDisplayName) elements.adminDisplayName.textContent = state.adminName;
-      showView('admin');
-      fetchStats();
-    } else {
-      showLoginError(result.message || 'Invalid credentials');
-    }
-  } catch (err) {
-    showLoginError('System offline. Verify endpoint.');
-    console.error(err);
-  } finally {
+  // Artificial delay for realism
+  setTimeout(() => {
+    const session = { mobile, name };
+    localStorage.setItem('admin_session', JSON.stringify(session));
+    state.isLoggedIn = true;
+    state.adminName = name;
+    if (elements.adminDisplayName) elements.adminDisplayName.textContent = state.adminName;
+    showView('admin');
+    fetchStats();
     setLoginLoading(false);
-  }
+  }, 800);
 }
 
 function setLoginLoading(loading) {
@@ -228,19 +254,17 @@ function handleLogout() {
   showView('login');
 }
 
-// Logic: Stats
-async function fetchStats() {
+// Logic: Stats (Local State)
+function fetchStats() {
   if (!state.isLoggedIn) return;
   
   elements.refreshIcon.classList.add('animate-spin');
   
-  try {
-    const q = query(collection(db, 'submissions'), orderBy('timestamp', 'desc'));
-    const querySnapshot = await getDocs(q);
-    const records = [];
-    querySnapshot.forEach((doc) => {
-      records.push({ id: doc.id, ...doc.data() });
-    });
+  // Artificial delay for local interactions
+  setTimeout(() => {
+    const records = loadLocalData();
+    // Sort by timestamp desc
+    records.sort((a, b) => b.timestamp - a.timestamp);
     
     state.stats.all = records;
     state.stats.recent = records.slice(0, 5);
@@ -249,11 +273,8 @@ async function fetchStats() {
     renderStats();
     renderAllRecords();
     renderPayouts();
-  } catch (err) {
-    console.error('Fetch error:', err);
-  } finally {
     elements.refreshIcon.classList.remove('animate-spin');
-  }
+  }, 300);
 }
 
 function toggleTheme() {
@@ -273,17 +294,13 @@ function updateRecordStats() {
   elements.recordStatResults.textContent = all.filter(r => r.formType === 'Result').length;
 }
 
-async function handleDelete(id) {
+function handleDelete(id) {
   if (!confirm('Are you sure you want to delete this record?')) return;
   
-  try {
-    const docRef = doc(db, 'submissions', id);
-    await deleteDoc(docRef);
-    fetchStats(); // Refresh
-  } catch (err) {
-    console.error('Delete failed:', err);
-    alert('Failed to delete record');
-  }
+  const records = loadLocalData();
+  const filtered = records.filter(r => r.id !== id);
+  saveLocalData(filtered);
+  fetchStats();
 }
 
 function handleEdit(id) {
@@ -363,7 +380,7 @@ function renderStats() {
 }
 
 function renderAllRecords() {
-  const records = state.stats.allRecords || [];
+  const records = state.stats.all || [];
   const searchTerm = elements.recordSearch.value.toLowerCase();
   
   const filtered = records.filter(r => 
@@ -406,7 +423,7 @@ window.adminActions = {
 };
 
 function renderPayouts() {
-  const records = state.stats.allRecords || [];
+  const records = state.stats.all || [];
   const contributorMap = {};
   
   records.forEach(r => {
@@ -443,8 +460,8 @@ function renderPayouts() {
   lucide.createIcons();
 }
 
-// Logic: Form Submission
-async function handleFormSubmit(e) {
+// Logic: Form Submission (Local)
+function handleFormSubmit(e) {
   e.preventDefault();
   if (state.submitting) return;
   
@@ -454,32 +471,38 @@ async function handleFormSubmit(e) {
   const data = {
     ...Object.fromEntries(formData),
     submittedBy: session.name || 'Admin',
-    timestamp: state.editingId ? (state.stats.all.find(r => r.id === state.editingId)?.timestamp || Date.now()) : Date.now()
+    timestamp: Date.now()
   };
   
   state.submitting = true;
   setFormSubmitting(true);
   hideFormStatus();
   
-  try {
+  // Artificial delay for UI feedback
+  setTimeout(() => {
+    const records = loadLocalData();
+    
     if (state.editingId) {
-      await updateDoc(doc(db, 'submissions', state.editingId), data);
+      const index = records.findIndex(r => r.id === state.editingId);
+      if (index !== -1) {
+        records[index] = { ...records[index], ...data };
+      }
       state.editingId = null;
     } else {
-      await addDoc(collection(db, 'submissions'), data);
+      data.id = Date.now().toString();
+      records.push(data);
     }
+    
+    saveLocalData(records);
     
     elements.adminForm.reset();
     elements.submitText.textContent = 'Execute Deployment';
     showFormStatus('DEPLOYMENT SUCCESSFUL', 'emerald');
     fetchStats();
-  } catch (err) {
-    showFormStatus('DEPLOYMENT FAILED', 'red');
-    console.error(err);
-  } finally {
+    
     state.submitting = false;
     setFormSubmitting(false);
-  }
+  }, 1000);
 }
 
 function setFormSubmitting(loading) {
