@@ -3,13 +3,13 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes" />
-  <title>RK Digital Verse · Admin Page</title>
+  <title>RK Verse · Admin</title>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" />
   <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,400;14..32,500;14..32,600;14..32,700&display=swap" rel="stylesheet" />
   <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
   <style>
     * { margin:0; padding:0; box-sizing:border-box; font-family:'Inter',sans-serif; }
-    body { background:#f1f5f9; color:#0f172a; min-height:100vh; padding:12px 12px 80px 12px; display:flex; justify-content:center; }
+    body { background:#e8f5e9; color:#0f172a; min-height:100vh; padding:12px 12px 80px 12px; display:flex; justify-content:center; }
     .app { max-width:480px; width:100%; margin:0 auto; }
 
     .spinner { display:inline-block; width:20px; height:20px; border:3px solid #e2e8f0; border-radius:50%; border-top-color:#0f172a; animation:spin 0.6s linear infinite; margin-right:8px; }
@@ -19,121 +19,127 @@
     .loader-box .spinner { width:40px; height:40px; border-width:4px; }
     .loader-box p { margin-top:12px; color:#64748b; font-size:0.9rem; }
 
-    #loginPage { background:#fff; padding:32px 24px; border-radius:28px; box-shadow:0 20px 60px rgba(0,0,0,0.08); text-align:center; margin-top:20px; }
-    #loginPage .logo-big { width:72px; height:72px; background:#0f172a; border-radius:20px; display:flex; align-items:center; justify-content:center; margin:0 auto 16px; font-size:32px; color:#facc15; }
-    #loginPage h1 { font-size:1.8rem; font-weight:700; background:linear-gradient(135deg,#facc15,#f97316); -webkit-background-clip:text; -webkit-text-fill-color:transparent; }
+    /* LOGIN - Green/Blue Theme */
+    #loginPage { background:#fff; padding:32px 24px; border-radius:28px; box-shadow:0 20px 60px rgba(0,0,0,0.08); text-align:center; margin-top:20px; border:2px solid #4caf50; }
+    #loginPage .logo-big { width:72px; height:72px; background:linear-gradient(135deg,#1b5e20,#0d47a1); border-radius:20px; display:flex; align-items:center; justify-content:center; margin:0 auto 16px; font-size:32px; color:#fff; }
+    #loginPage h1 { font-size:1.8rem; font-weight:700; background:linear-gradient(135deg,#1b5e20,#0d47a1); -webkit-background-clip:text; -webkit-text-fill-color:transparent; }
     #loginPage p { color:#64748b; margin:8px 0 24px; font-size:0.95rem; }
-    #loginPage .input-group { margin-bottom:14px; text-align:left; }
-    #loginPage .input-group label { font-size:0.8rem; font-weight:500; color:#334155; display:block; margin-bottom:4px; }
-    #loginPage .input-group input { width:100%; padding:12px 16px; border:1.5px solid #e2e8f0; border-radius:12px; font-size:0.95rem; background:#f8fafc; transition:0.2s; -webkit-appearance:none; appearance:none; }
-    #loginPage .input-group input:focus { outline:none; border-color:#3b82f6; background:#fff; box-shadow:0 0 0 4px rgba(59,130,246,0.08); }
-    #loginPage .login-btn { width:100%; padding:14px; background:#0f172a; color:#fff; border:none; border-radius:40px; font-weight:600; font-size:1rem; cursor:pointer; transition:0.2s; display:flex; align-items:center; justify-content:center; gap:10px; -webkit-tap-highlight-color:transparent; }
+    #loginPage .input-group { margin-bottom:14px; text-align:left; position:relative; }
+    #loginPage .input-group label { font-size:0.8rem; font-weight:500; color:#1b5e20; display:block; margin-bottom:4px; }
+    #loginPage .input-group input { width:100%; padding:12px 16px; border:2px solid #c8e6c9; border-radius:12px; font-size:0.95rem; background:#f1f8e9; transition:0.2s; -webkit-appearance:none; appearance:none; padding-right:45px; }
+    #loginPage .input-group input:focus { outline:none; border-color:#4caf50; background:#fff; box-shadow:0 0 0 4px rgba(76,175,80,0.1); }
+    #loginPage .password-toggle { position:absolute; right:14px; top:38px; cursor:pointer; color:#4caf50; font-size:1.1rem; background:none; border:none; z-index:2; }
+    #loginPage .login-btn { width:100%; padding:14px; background:linear-gradient(135deg,#1b5e20,#0d47a1); color:#fff; border:none; border-radius:40px; font-weight:600; font-size:1rem; cursor:pointer; transition:0.3s; display:flex; align-items:center; justify-content:center; gap:10px; -webkit-tap-highlight-color:transparent; box-shadow:0 4px 15px rgba(27,94,32,0.3); }
     #loginPage .login-btn:active { transform:scale(0.97); }
     #loginPage .login-btn:disabled { opacity:0.6; cursor:not-allowed; transform:none; }
-    #loginPage .login-error { color:#dc2626; font-size:0.85rem; margin-top:12px; min-height:24px; }
+    #loginPage .login-error { color:#d32f2f; font-size:0.85rem; margin-top:12px; min-height:24px; }
 
     #dashboard { display:none; }
 
-    .header { background:#0f172a; color:#f8fafc; padding:8px 16px; border-radius:20px; display:flex; align-items:center; justify-content:space-between; gap:10px; margin-bottom:16px; box-shadow:0 4px 16px rgba(15,23,42,0.12); flex-wrap:nowrap; }
+    /* HEADER */
+    .header { background:linear-gradient(135deg,#1b5e20,#0d47a1); color:#fff; padding:8px 16px; border-radius:20px; display:flex; align-items:center; justify-content:space-between; gap:10px; margin-bottom:16px; box-shadow:0 4px 16px rgba(27,94,32,0.2); flex-wrap:nowrap; }
     .logo-area { display:flex; align-items:center; gap:8px; flex-shrink:0; }
-    .logo-box { width:32px; height:32px; background:linear-gradient(135deg,#facc15,#f97316); border-radius:8px; display:flex; align-items:center; justify-content:center; font-weight:700; font-size:14px; color:#0f172a; flex-shrink:0; }
+    .logo-box { width:32px; height:32px; background:rgba(255,255,255,0.2); border-radius:8px; display:flex; align-items:center; justify-content:center; font-weight:700; font-size:14px; color:#fff; flex-shrink:0; }
     .logo-area h1 { font-size:1.1rem; font-weight:700; color:#fff; background:none; -webkit-text-fill-color:#fff; letter-spacing:-0.3px; white-space:nowrap; }
-    .logo-area h1 span { color:#facc15; -webkit-text-fill-color:#facc15; }
-    .user-badge { display:flex; align-items:center; gap:6px; background:#1e293b; padding:4px 10px 4px 8px; border-radius:30px; flex-shrink:0; }
-    .user-badge i { font-size:0.9rem; color:#facc15; }
+    .logo-area h1 span { color:#a5d6a7; -webkit-text-fill-color:#a5d6a7; }
+    .user-badge { display:flex; align-items:center; gap:6px; background:rgba(255,255,255,0.15); padding:4px 10px 4px 8px; border-radius:30px; flex-shrink:0; backdrop-filter:blur(4px); }
+    .user-badge i { font-size:0.9rem; color:#a5d6a7; }
     .user-badge .name { font-weight:500; font-size:0.75rem; white-space:nowrap; max-width:80px; overflow:hidden; text-overflow:ellipsis; }
-    .user-badge .role { font-size:0.6rem; background:#334155; padding:2px 8px; border-radius:20px; color:#cbd5e1; white-space:nowrap; }
+    .user-badge .role { font-size:0.6rem; background:rgba(255,255,255,0.2); padding:2px 8px; border-radius:20px; color:#a5d6a7; white-space:nowrap; }
 
-    .bottom-nav { position:fixed; bottom:0; left:0; right:0; background:#fff; display:flex; justify-content:space-around; align-items:center; padding:6px 0 env(safe-area-inset-bottom,8px); box-shadow:0 -4px 20px rgba(0,0,0,0.06); border-top:1px solid #e9edf2; z-index:100; max-width:480px; margin:0 auto; }
+    /* BOTTOM NAV - Green/Blue Theme */
+    .bottom-nav { position:fixed; bottom:0; left:0; right:0; background:#fff; display:flex; justify-content:space-around; align-items:center; padding:6px 0 env(safe-area-inset-bottom,8px); box-shadow:0 -4px 20px rgba(0,0,0,0.06); border-top:2px solid #4caf50; z-index:100; max-width:480px; margin:0 auto; }
     .bottom-nav button { background:none; border:none; display:flex; flex-direction:column; align-items:center; gap:2px; padding:6px 10px; font-size:0.55rem; font-weight:500; color:#94a3b8; cursor:pointer; transition:0.2s; border-radius:12px; min-width:44px; -webkit-tap-highlight-color:transparent; }
     .bottom-nav button:active { transform:scale(0.92); }
     .bottom-nav button i { font-size:1.1rem; color:#94a3b8; transition:0.2s; }
-    .bottom-nav button.active { color:#0f172a; }
-    .bottom-nav button.active i { color:#0f172a; }
-    .bottom-nav button.logout-btn-nav { color:#dc2626; }
-    .bottom-nav button.logout-btn-nav i { color:#dc2626; }
+    .bottom-nav button.active { color:#1b5e20; }
+    .bottom-nav button.active i { color:#1b5e20; }
+    .bottom-nav button.logout-btn-nav { color:#d32f2f; }
+    .bottom-nav button.logout-btn-nav i { color:#d32f2f; }
     .bottom-nav button.hidden { display:none; }
 
+    /* STATS CARDS - Green/Blue */
     .stats-grid { display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-bottom:16px; }
-    .stat-card { background:#fff; border-radius:16px; padding:14px 12px; box-shadow:0 2px 8px rgba(0,0,0,0.04); border:1px solid #e9edf2; transition:0.2s; position:relative; overflow:hidden; }
-    .stat-card::before { content:''; position:absolute; top:0; left:0; right:0; height:3px; background:linear-gradient(90deg,#3b82f6,#8b5cf6); }
-    .stat-card:nth-child(2)::before { background:linear-gradient(90deg,#16a34a,#22c55e); }
-    .stat-card:nth-child(3)::before { background:linear-gradient(90deg,#dc2626,#ef4444); }
-    .stat-card:nth-child(4)::before { background:linear-gradient(90deg,#eab308,#facc15); }
-    .stat-card:nth-child(5)::before { background:linear-gradient(90deg,#f97316,#fb923c); }
-    .stat-card .num { font-size:1.6rem; font-weight:700; color:#0f172a; }
+    .stat-card { background:#fff; border-radius:16px; padding:14px 12px; box-shadow:0 2px 8px rgba(0,0,0,0.04); border:2px solid #c8e6c9; transition:0.2s; position:relative; overflow:hidden; }
+    .stat-card::before { content:''; position:absolute; top:0; left:0; right:0; height:3px; background:linear-gradient(90deg,#4caf50,#2196f3); }
+    .stat-card:nth-child(2)::before { background:linear-gradient(90deg,#2196f3,#4caf50); }
+    .stat-card:nth-child(3)::before { background:linear-gradient(90deg,#ff5722,#ff9800); }
+    .stat-card:nth-child(4)::before { background:linear-gradient(90deg,#ff9800,#ffc107); }
+    .stat-card:nth-child(5)::before { background:linear-gradient(90deg,#4caf50,#2196f3); }
+    .stat-card .num { font-size:1.6rem; font-weight:700; color:#1b5e20; }
     .stat-card .label { font-size:0.65rem; color:#64748b; margin-top:2px; display:flex; align-items:center; gap:4px; }
-    .stat-card .label i { font-size:0.7rem; }
+    .stat-card .label i { font-size:0.7rem; color:#4caf50; }
     .stat-card.full { grid-column:1/-1; }
 
-    .sheet-header-card { background:#fff; padding:10px 14px; border-radius:14px; margin-bottom:10px; border-left:4px solid #3b82f6; box-shadow:0 2px 8px rgba(0,0,0,0.04); display:flex; justify-content:space-between; align-items:center; }
-    .sheet-header-card h3 { font-size:0.9rem; font-weight:600; display:flex; align-items:center; gap:6px; }
-    .sheet-header-card h3 i { color:#3b82f6; }
-    .sheet-header-card .badge { background:#e2e8f0; padding:2px 10px; border-radius:30px; font-size:0.65rem; font-weight:500; color:#1e293b; }
+    .sheet-header-card { background:#fff; padding:10px 14px; border-radius:14px; margin-bottom:10px; border-left:4px solid #4caf50; box-shadow:0 2px 8px rgba(0,0,0,0.04); display:flex; justify-content:space-between; align-items:center; border:2px solid #c8e6c9; border-left-width:4px; }
+    .sheet-header-card h3 { font-size:0.9rem; font-weight:600; display:flex; align-items:center; gap:6px; color:#1b5e20; }
+    .sheet-header-card h3 i { color:#4caf50; }
+    .sheet-header-card .badge { background:#c8e6c9; padding:2px 10px; border-radius:30px; font-size:0.65rem; font-weight:500; color:#1b5e20; }
 
     .data-card-list { display:flex; flex-direction:column; gap:6px; margin-bottom:14px; }
-    .data-item { background:#fff; padding:10px 12px; border-radius:12px; border:1px solid #e9edf2; display:flex; flex-wrap:wrap; align-items:center; justify-content:space-between; gap:4px; box-shadow:0 1px 4px rgba(0,0,0,0.02); transition:0.2s; }
-    .data-item:hover { border-color:#cbd5e1; }
+    .data-item { background:#fff; padding:10px 12px; border-radius:12px; border:2px solid #e8f5e9; display:flex; flex-wrap:wrap; align-items:center; justify-content:space-between; gap:4px; box-shadow:0 1px 4px rgba(0,0,0,0.02); transition:0.2s; }
+    .data-item:hover { border-color:#4caf50; }
     .data-item .main { display:flex; flex-direction:column; gap:1px; flex:1; min-width:80px; }
-    .data-item .main .title { font-weight:600; font-size:0.8rem; }
+    .data-item .main .title { font-weight:600; font-size:0.8rem; color:#0d47a1; }
     .data-item .main .sub { font-size:0.65rem; color:#64748b; }
     .status-badge { padding:2px 10px; border-radius:30px; font-size:0.6rem; font-weight:600; white-space:nowrap; }
-    .status-badge.approved { background:#dcfce7; color:#166534; }
-    .status-badge.rejected { background:#fee2e2; color:#991b1b; }
-    .status-badge.pending { background:#fef9c3; color:#854d0e; }
-    .status-badge.paid { background:#dcfce7; color:#166534; }
+    .status-badge.approved { background:#c8e6c9; color:#1b5e20; }
+    .status-badge.rejected { background:#ffcdd2; color:#b71c1c; }
+    .status-badge.pending { background:#fff3e0; color:#e65100; }
+    .status-badge.paid { background:#bbdefb; color:#0d47a1; }
     .empty-state { text-align:center; padding:20px 0; color:#94a3b8; font-size:0.8rem; }
 
-    .form-card { background:#fff; padding:14px; border-radius:14px; margin-bottom:14px; border:1px solid #e9edf2; }
-    .form-card .field { margin-bottom:10px; }
-    .form-card .field label { font-size:0.7rem; font-weight:500; color:#334155; display:block; margin-bottom:2px; }
-    .form-card .field input, .form-card .field select, .form-card .field textarea { width:100%; padding:8px 12px; border:1.5px solid #e2e8f0; border-radius:8px; font-size:0.8rem; background:#f8fafc; transition:0.2s; -webkit-appearance:none; appearance:none; }
-    .form-card .field input:focus, .form-card .field select:focus, .form-card .field textarea:focus { outline:none; border-color:#3b82f6; background:#fff; }
+    /* FORM */
+    .form-card { background:#fff; padding:14px; border-radius:14px; margin-bottom:14px; border:2px solid #c8e6c9; }
+    .form-card .field { margin-bottom:10px; position:relative; }
+    .form-card .field label { font-size:0.7rem; font-weight:500; color:#1b5e20; display:block; margin-bottom:2px; }
+    .form-card .field input, .form-card .field select, .form-card .field textarea { width:100%; padding:8px 12px; border:2px solid #e8f5e9; border-radius:8px; font-size:0.8rem; background:#fafafa; transition:0.2s; -webkit-appearance:none; appearance:none; }
+    .form-card .field input:focus, .form-card .field select:focus, .form-card .field textarea:focus { outline:none; border-color:#4caf50; background:#fff; box-shadow:0 0 0 4px rgba(76,175,80,0.1); }
     .form-card .field textarea { min-height:40px; resize:vertical; }
+    .form-card .password-toggle { position:absolute; right:12px; bottom:10px; cursor:pointer; color:#4caf50; background:none; border:none; font-size:0.9rem; }
 
-    .btn { padding:8px 16px; border:none; border-radius:30px; font-weight:600; font-size:0.8rem; cursor:pointer; transition:0.2s; display:inline-flex; align-items:center; gap:5px; width:100%; justify-content:center; margin-top:2px; -webkit-tap-highlight-color:transparent; }
+    .btn { padding:8px 16px; border:none; border-radius:30px; font-weight:600; font-size:0.8rem; cursor:pointer; transition:0.3s; display:inline-flex; align-items:center; gap:5px; width:100%; justify-content:center; margin-top:2px; -webkit-tap-highlight-color:transparent; }
     .btn:active { transform:scale(0.97); }
     .btn:disabled { opacity:0.6; cursor:not-allowed; transform:none; }
-    .btn-primary { background:#0f172a; color:#fff; }
-    .btn-primary:hover:not(:disabled) { background:#1e293b; }
-    .btn-success { background:#16a34a; color:#fff; }
-    .btn-success:hover:not(:disabled) { background:#15803d; }
-    .btn-danger { background:#dc2626; color:#fff; }
-    .btn-danger:hover:not(:disabled) { background:#b91c1c; }
-    .btn-warning { background:#eab308; color:#fff; }
-    .btn-warning:hover:not(:disabled) { background:#ca8a04; }
-    .btn-outline { background:transparent; border:1.5px solid #e2e8f0; color:#334155; }
+    .btn-primary { background:linear-gradient(135deg,#1b5e20,#0d47a1); color:#fff; box-shadow:0 4px 15px rgba(27,94,32,0.2); }
+    .btn-primary:hover:not(:disabled) { box-shadow:0 6px 20px rgba(27,94,32,0.3); transform:translateY(-1px); }
+    .btn-success { background:linear-gradient(135deg,#2e7d32,#1b5e20); color:#fff; box-shadow:0 4px 15px rgba(46,125,50,0.2); }
+    .btn-success:hover:not(:disabled) { box-shadow:0 6px 20px rgba(46,125,50,0.3); transform:translateY(-1px); }
+    .btn-danger { background:linear-gradient(135deg,#c62828,#b71c1c); color:#fff; box-shadow:0 4px 15px rgba(198,40,40,0.2); }
+    .btn-danger:hover:not(:disabled) { box-shadow:0 6px 20px rgba(198,40,40,0.3); transform:translateY(-1px); }
+    .btn-warning { background:linear-gradient(135deg,#e65100,#f57c00); color:#fff; }
+    .btn-outline { background:transparent; border:2px solid #4caf50; color:#1b5e20; }
     .btn-group { display:flex; gap:6px; flex-wrap:wrap; }
     .btn-group .btn { flex:1; min-width:70px; }
 
     .page { display:none; }
     .page.active { display:block; }
 
-    .profile-card { background:#fff; padding:16px; border-radius:16px; text-align:center; border:1px solid #e9edf2; }
-    .profile-card .avatar { width:60px; height:60px; background:#0f172a; border-radius:50%; display:flex; align-items:center; justify-content:center; margin:0 auto 10px; font-size:28px; color:#facc15; }
+    .profile-card { background:#fff; padding:16px; border-radius:16px; text-align:center; border:2px solid #c8e6c9; }
+    .profile-card .avatar { width:60px; height:60px; background:linear-gradient(135deg,#1b5e20,#0d47a1); border-radius:50%; display:flex; align-items:center; justify-content:center; margin:0 auto 10px; font-size:28px; color:#fff; }
 
     .action-btns { display:flex; gap:4px; flex-wrap:wrap; }
     .action-btns .btn-sm { padding:2px 10px; font-size:0.6rem; border-radius:20px; border:none; cursor:pointer; font-weight:600; transition:0.2s; -webkit-tap-highlight-color:transparent; }
     .action-btns .btn-sm:active { transform:scale(0.92); }
-    .btn-sm.approve { background:#dcfce7; color:#166534; }
-    .btn-sm.approve:hover { background:#bbf7d0; }
-    .btn-sm.reject { background:#fee2e2; color:#991b1b; }
-    .btn-sm.reject:hover { background:#fecaca; }
+    .btn-sm.approve { background:#c8e6c9; color:#1b5e20; }
+    .btn-sm.approve:hover { background:#a5d6a7; }
+    .btn-sm.reject { background:#ffcdd2; color:#b71c1c; }
+    .btn-sm.reject:hover { background:#ef9a9a; }
 
-    .toast { position:fixed; top:20px; left:50%; transform:translateX(-50%); background:#0f172a; color:#fff; padding:12px 24px; border-radius:12px; font-size:0.85rem; font-weight:500; z-index:1000; box-shadow:0 8px 30px rgba(0,0,0,0.2); opacity:0; transition:opacity 0.3s ease; pointer-events:none; max-width:90%; }
+    .toast { position:fixed; top:20px; left:50%; transform:translateX(-50%); background:#1b5e20; color:#fff; padding:12px 24px; border-radius:12px; font-size:0.85rem; font-weight:500; z-index:1000; box-shadow:0 8px 30px rgba(0,0,0,0.2); opacity:0; transition:opacity 0.3s ease; pointer-events:none; max-width:90%; border:2px solid #a5d6a7; }
     .toast.show { opacity:1; }
 
-    .deo-note { background:#f8fafc; padding:10px 14px; border-radius:10px; font-size:0.75rem; color:#475569; border-left:3px solid #3b82f6; margin-bottom:12px; }
+    .deo-note { background:#e8f5e9; padding:10px 14px; border-radius:10px; font-size:0.75rem; color:#1b5e20; border-left:3px solid #4caf50; margin-bottom:12px; }
 
-    .withdraw-card { background:linear-gradient(135deg,#0f172a,#1e293b); color:#fff; padding:16px; border-radius:16px; margin-bottom:14px; }
-    .withdraw-card .amount-display { font-size:2.2rem; font-weight:700; color:#facc15; }
-    .withdraw-card .label { font-size:0.7rem; color:#94a3b8; }
+    .withdraw-card { background:linear-gradient(135deg,#1b5e20,#0d47a1); color:#fff; padding:16px; border-radius:16px; margin-bottom:14px; border:2px solid #4caf50; }
+    .withdraw-card .amount-display { font-size:2.2rem; font-weight:700; color:#a5d6a7; }
+    .withdraw-card .label { font-size:0.7rem; color:#bbdefb; }
     .withdraw-grid { display:grid; grid-template-columns:1fr 1fr 1fr; gap:8px; margin-top:10px; }
-    .withdraw-grid .item { background:rgba(255,255,255,0.05); padding:8px; border-radius:10px; text-align:center; }
-    .withdraw-grid .item .num { font-size:1.2rem; font-weight:600; color:#facc15; }
-    .withdraw-grid .item .lbl { font-size:0.6rem; color:#94a3b8; }
+    .withdraw-grid .item { background:rgba(255,255,255,0.1); padding:8px; border-radius:10px; text-align:center; }
+    .withdraw-grid .item .num { font-size:1.2rem; font-weight:600; color:#a5d6a7; }
+    .withdraw-grid .item .lbl { font-size:0.6rem; color:#bbdefb; }
 
-    .chart-container { background:#fff; border-radius:16px; padding:12px; margin-bottom:14px; border:1px solid #e9edf2; }
+    .chart-container { background:#fff; border-radius:16px; padding:12px; margin-bottom:14px; border:2px solid #c8e6c9; }
     .chart-container canvas { width:100% !important; height:auto !important; max-height:200px; }
 
     @media (max-width:380px) {
@@ -168,14 +174,15 @@
   <div id="loginPage">
     <div class="logo-big"><i class="fas fa-crown"></i></div>
     <h1>RK Verse</h1>
-    <p>Sign in to continue</p>
+    <p>Sign in to your admin panel</p>
     <div class="input-group">
-      <label><i class="fas fa-envelope"></i> Email</label>
-      <input type="email" id="loginEmail" placeholder="admin@rk.com" autocomplete="email" value="******@sarkarisetu.info" />
+      <label><i class="fas fa-envelope"></i> Email Address</label>
+      <input type="email" id="loginEmail" placeholder="Enter your email" autocomplete="email" />
     </div>
     <div class="input-group">
       <label><i class="fas fa-lock"></i> Password</label>
-      <input type="password" id="loginPassword" placeholder="••••••••" autocomplete="current-password" value="admin123" />
+      <input type="password" id="loginPassword" placeholder="Enter your password" autocomplete="current-password" />
+      <button class="password-toggle" id="loginPasswordToggle" type="button"><i class="fas fa-eye"></i></button>
     </div>
     <button class="login-btn" id="loginBtn"><i class="fas fa-sign-in-alt"></i> Login</button>
     <div class="login-error" id="loginError"></div>
@@ -202,9 +209,9 @@
       <div id="page-dashboard" class="page active">
         <div class="stats-grid">
           <div class="stat-card"><div class="num" id="totalFilled">0</div><div class="label"><i class="fas fa-file-alt"></i> Total Forms</div></div>
-          <div class="stat-card"><div class="num" id="totalApproved">0</div><div class="label"><i class="fas fa-check-circle" style="color:#16a34a;"></i> Approved</div></div>
-          <div class="stat-card"><div class="num" id="totalRejected">0</div><div class="label"><i class="fas fa-times-circle" style="color:#dc2626;"></i> Rejected</div></div>
-          <div class="stat-card"><div class="num" id="totalPending">0</div><div class="label"><i class="fas fa-clock" style="color:#eab308;"></i> Pending</div></div>
+          <div class="stat-card"><div class="num" id="totalApproved">0</div><div class="label"><i class="fas fa-check-circle" style="color:#2e7d32;"></i> Approved</div></div>
+          <div class="stat-card"><div class="num" id="totalRejected">0</div><div class="label"><i class="fas fa-times-circle" style="color:#c62828;"></i> Rejected</div></div>
+          <div class="stat-card"><div class="num" id="totalPending">0</div><div class="label"><i class="fas fa-clock" style="color:#e65100;"></i> Pending</div></div>
           <div class="stat-card full"><div class="num" id="totalPayment">₹0</div><div class="label"><i class="fas fa-coins" style="color:#f97316;"></i> Total Payment (₹3/approved form)</div></div>
         </div>
 
@@ -225,7 +232,7 @@
       <!-- PAGE: WORK (Super Admin) -->
       <div id="page-work" class="page">
         <div class="sheet-header-card"><h3><i class="fas fa-tasks"></i> Pending Forms</h3></div>
-        <div class="data-card-list" id="pendingWorkList"><div class="empty-state">No pending forms</div></div>
+        <div class="data-card-list" id="pendingWorkList"><div class="empty-state">✅ No pending forms</div></div>
         <div class="sheet-header-card"><h3><i class="fas fa-check-circle"></i> All Forms</h3></div>
         <div class="data-card-list" id="allWorkList"><div class="empty-state">No forms</div></div>
       </div>
@@ -245,18 +252,18 @@
               <option value="Addmission">Addmission</option>
             </select>
           </div>
-          <div class="field"><label>Post Name</label><input id="dPostName" placeholder="Post name" /></div>
-          <div class="field"><label>Department Name</label><input id="dDept" placeholder="Department" /></div>
-          <div class="field"><label>Important Dates</label><input id="dDates" placeholder="2026-07-10" /></div>
-          <div class="field"><label>Application Fees</label><input id="dFees" placeholder="100" /></div>
-          <div class="field"><label>Age</label><input id="dAge" placeholder="18-35" /></div>
-          <div class="field"><label>Eligibility</label><input id="dEligibility" placeholder="Graduate" /></div>
-          <div class="field"><label>Post Wise Details</label><input id="dPostDetails" placeholder="Details" /></div>
-          <div class="field"><label>How To Fill</label><input id="dHowFill" placeholder="Instructions" /></div>
-          <div class="field"><label>Apply Link</label><input id="dApplyLink" placeholder="https://apply.com" /></div>
-          <div class="field"><label>Notification Link</label><input id="dNotifLink" placeholder="https://notif.com" /></div>
-          <div class="field"><label>Official Website</label><input id="dWebsite" placeholder="https://official.com" /></div>
-          <div class="field"><label>Remark</label><input id="dRemark" placeholder="Remark" /></div>
+          <div class="field"><label>Post Name</label><input id="dPostName" placeholder="e.g. Clerk, Officer" /></div>
+          <div class="field"><label>Department Name</label><input id="dDept" placeholder="e.g. Revenue, Police" /></div>
+          <div class="field"><label>Important Dates</label><input id="dDates" placeholder="e.g. 2026-07-10" /></div>
+          <div class="field"><label>Application Fees</label><input id="dFees" placeholder="e.g. 100" /></div>
+          <div class="field"><label>Age</label><input id="dAge" placeholder="e.g. 18-35" /></div>
+          <div class="field"><label>Eligibility</label><input id="dEligibility" placeholder="e.g. Graduate" /></div>
+          <div class="field"><label>Post Wise Details</label><input id="dPostDetails" placeholder="Enter post details" /></div>
+          <div class="field"><label>How To Fill</label><input id="dHowFill" placeholder="Instructions to fill form" /></div>
+          <div class="field"><label>Apply Link</label><input id="dApplyLink" placeholder="https://apply.example.com" /></div>
+          <div class="field"><label>Notification Link</label><input id="dNotifLink" placeholder="https://notification.example.com" /></div>
+          <div class="field"><label>Official Website</label><input id="dWebsite" placeholder="https://official.example.com" /></div>
+          <div class="field"><label>Remark</label><input id="dRemark" placeholder="Any additional remarks" /></div>
           <button class="btn btn-primary" id="submitDeoForm"><i class="fas fa-paper-plane"></i> Submit Form</button>
         </div>
         <div class="sheet-header-card"><h3><i class="fas fa-list"></i> My Submitted Forms</h3></div>
@@ -292,8 +299,8 @@
       <div id="page-users" class="page">
         <div class="sheet-header-card"><h3><i class="fas fa-user-plus"></i> Manage Users</h3></div>
         <div class="form-card">
-          <div class="field"><label>Email</label><input id="uEmail" placeholder="user@rk.com" type="email" /></div>
-          <div class="field"><label>Password</label><input id="uPass" placeholder="password" type="password" /></div>
+          <div class="field"><label>Email</label><input id="uEmail" placeholder="user@example.com" type="email" /></div>
+          <div class="field"><label>Password</label><input id="uPass" placeholder="Enter password" type="password" /></div>
           <div class="field"><label>Role</label>
             <select id="uRole"><option value="DEO">DEO</option><option value="Super Admin">Super Admin</option></select>
           </div>
@@ -321,10 +328,10 @@
           <div class="avatar"><i class="fas fa-user"></i></div>
           <h3 id="profDisplayName">Admin</h3>
           <p style="color:#64748b; font-size:0.8rem;" id="profDisplayEmail">admin@rk.com</p>
-          <p style="font-size:0.75rem; background:#f1f5f9; padding:4px 12px; border-radius:20px; display:inline-block; margin:4px 0 10px;" id="profDisplayRole">Super Admin</p>
+          <p style="font-size:0.75rem; background:#e8f5e9; padding:4px 12px; border-radius:20px; display:inline-block; margin:4px 0 10px; color:#1b5e20;" id="profDisplayRole">Super Admin</p>
           <div class="form-card" style="text-align:left; padding:10px;">
             <div class="field"><label>Name</label><input id="profName" placeholder="Your name" /></div>
-            <div class="field"><label>Email</label><input id="profEmail" placeholder="email@rk.com" type="email" /></div>
+            <div class="field"><label>Email</label><input id="profEmail" placeholder="your@email.com" type="email" /></div>
             <div class="field"><label>Role</label><input id="profRole" disabled /></div>
             <div class="field"><label>Pending Payment</label><input id="profPending" disabled /></div>
             <button class="btn btn-primary" id="updateProfileBtn"><i class="fas fa-save"></i> Update Profile</button>
@@ -380,6 +387,7 @@ const userName = document.getElementById('userName');
 const userRole = document.getElementById('userRole');
 const loaderOverlay = document.getElementById('loaderOverlay');
 const toast = document.getElementById('toast');
+const loginPasswordToggle = document.getElementById('loginPasswordToggle');
 
 const totalFilled = document.getElementById('totalFilled');
 const totalApproved = document.getElementById('totalApproved');
@@ -428,6 +436,16 @@ const usersNavBtn = document.getElementById('usersNavBtn');
 const payoutNavBtn = document.getElementById('payoutNavBtn');
 
 // =============================================================
+// PASSWORD TOGGLE
+// =============================================================
+loginPasswordToggle.addEventListener('click', function() {
+  const type = loginPassword.getAttribute('type') === 'password' ? 'text' : 'password';
+  loginPassword.setAttribute('type', type);
+  this.querySelector('i').classList.toggle('fa-eye');
+  this.querySelector('i').classList.toggle('fa-eye-slash');
+});
+
+// =============================================================
 // TOAST & LOADER
 // =============================================================
 function showToast(message, duration = 2500) {
@@ -442,77 +460,46 @@ function showLoader(show) {
 }
 
 // =============================================================
-// FIXED: API CALL WITH FETCH + JSONP FALLBACK
+// API CALL
 // =============================================================
 function callApi(action, payload = {}) {
-  return new Promise(async (resolve) => {
-    // Method 1: Try fetch with CORS proxy first (works on most mobile browsers)
-    try {
-      const url = new URL(API_BASE);
-      url.searchParams.set('action', action);
-      for (let k in payload) {
-        if (payload[k] !== undefined && payload[k] !== null) {
-          url.searchParams.set(k, payload[k]);
-        }
+  return new Promise((resolve) => {
+    const callbackName = 'jsonp_cb_' + Date.now() + '_' + Math.random().toString(36).substr(2, 8);
+    const timeoutId = setTimeout(() => {
+      if (window[callbackName]) {
+        window[callbackName]({ error: 'Request timeout. Please check your connection.' });
+        delete window[callbackName];
+        if (document.body.contains(script)) document.body.removeChild(script);
       }
-      
-      // Try fetch with no-cors mode
-      const response = await fetch(url.toString(), {
-        method: 'GET',
-        mode: 'no-cors',
-        cache: 'no-cache'
-      });
-      
-      // Since no-cors returns opaque response, we can't read it
-      // Fallback to JSONP
-      console.log('Fetch attempt made, falling back to JSONP...');
-      jsonpCall(action, payload, resolve);
-      
-    } catch (error) {
-      console.log('Fetch failed, using JSONP:', error);
-      jsonpCall(action, payload, resolve);
-    }
-  });
-}
-
-// JSONP fallback method (reliable for Apps Script)
-function jsonpCall(action, payload, resolve) {
-  const callbackName = 'jsonp_cb_' + Date.now() + '_' + Math.random().toString(36).substr(2, 8);
-  
-  const timeoutId = setTimeout(() => {
-    if (window[callbackName]) {
-      window[callbackName]({ error: 'Request timeout. Please check your connection.' });
+    }, 20000);
+    
+    window[callbackName] = function(data) {
+      clearTimeout(timeoutId);
       delete window[callbackName];
       if (document.body.contains(script)) document.body.removeChild(script);
+      resolve(data);
+    };
+    
+    const script = document.createElement('script');
+    const url = new URL(API_BASE);
+    url.searchParams.set('action', action);
+    for (let k in payload) {
+      if (payload[k] !== undefined && payload[k] !== null) {
+        url.searchParams.set(k, payload[k]);
+      }
     }
-  }, 20000);
-  
-  window[callbackName] = function(data) {
-    clearTimeout(timeoutId);
-    delete window[callbackName];
-    if (document.body.contains(script)) document.body.removeChild(script);
-    resolve(data);
-  };
-  
-  const script = document.createElement('script');
-  const url = new URL(API_BASE);
-  url.searchParams.set('action', action);
-  for (let k in payload) {
-    if (payload[k] !== undefined && payload[k] !== null) {
-      url.searchParams.set(k, payload[k]);
-    }
-  }
-  url.searchParams.set('callback', callbackName);
-  script.src = url.toString();
-  script.onerror = function() {
-    clearTimeout(timeoutId);
-    if (window[callbackName]) {
-      window[callbackName]({ error: 'Network error. Please check your connection.' });
-      delete window[callbackName];
-    }
-    if (document.body.contains(script)) document.body.removeChild(script);
-  };
-  document.body.appendChild(script);
+    url.searchParams.set('callback', callbackName);
+    script.src = url.toString();
+    script.onerror = function() {
+      clearTimeout(timeoutId);
+      if (window[callbackName]) {
+        window[callbackName]({ error: 'Network error. Please check your connection.' });
+        delete window[callbackName];
+      }
+      if (document.body.contains(script)) document.body.removeChild(script);
+    };
+    document.body.appendChild(script);
+  });
 }
 
 // =============================================================
@@ -524,7 +511,7 @@ function renderAuthUsers(users) {
   users.slice(0, 10).forEach(u => {
     html += `<div class="data-item">
       <div class="main"><span class="title">${u.name || u.email}</span><span class="sub">${u.email}</span></div>
-      <span style="font-size:0.65rem; background:#e2e8f0; padding:2px 10px; border-radius:20px;">${u.role || 'DEO'}</span>
+      <span style="font-size:0.65rem; background:#c8e6c9; padding:2px 10px; border-radius:20px; color:#1b5e20;">${u.role || 'DEO'}</span>
     </div>`;
   });
   authUserList.innerHTML = html;
@@ -624,7 +611,7 @@ function renderUsersCards(users) {
   users.forEach(u => {
     html += `<div class="data-item">
       <div class="main"><span class="title">${u.name || u.email}</span><span class="sub">${u.email}</span></div>
-      <span style="font-size:0.65rem; background:#e2e8f0; padding:2px 10px; border-radius:20px;">${u.role || 'DEO'}</span>
+      <span style="font-size:0.65rem; background:#c8e6c9; padding:2px 10px; border-radius:20px; color:#1b5e20;">${u.role || 'DEO'}</span>
     </div>`;
   });
   usersCardList.innerHTML = html;
@@ -690,12 +677,18 @@ function renderWithdrawRequests(requests) {
   withdrawRequestsList.innerHTML = html;
 }
 
+// =============================================================
+// FIXED: UPDATE DEO EARNINGS
+// =============================================================
 function updateDeoEarnings() {
   if (!currentUser || currentUser.role !== 'DEO') return;
   
-  const myForms = allData.filter(r => r['DEO Email'] === currentUser.email && r.Status === 'approved');
-  const totalEarned = myForms.length * 3;
+  // Calculate total earned from approved forms (₹3 per approved form)
+  const myForms = allData.filter(r => r['DEO Email'] === currentUser.email);
+  const approvedForms = myForms.filter(r => r.Status === 'approved');
+  const totalEarned = approvedForms.length * 3;
   
+  // Get withdrawal data
   const myWithdrawals = withdrawRequests.filter(r => r['DEO Email'] === currentUser.email);
   const totalWithdrawn = myWithdrawals.filter(r => r.Status === 'Approved').reduce((sum, r) => sum + (r.Amount || 0), 0);
   const totalPendingWithdraw = myWithdrawals.filter(r => r.Status === 'Pending').reduce((sum, r) => sum + (r.Amount || 0), 0);
@@ -726,7 +719,7 @@ function updateChart() {
       labels: ['Approved', 'Rejected', 'Pending'],
       datasets: [{
         data: [approved, rejected, pending],
-        backgroundColor: ['#16a34a', '#dc2626', '#eab308'],
+        backgroundColor: ['#2e7d32', '#c62828', '#e65100'],
         borderWidth: 2,
         borderColor: '#fff'
       }]
@@ -840,8 +833,9 @@ withdrawBtn.addEventListener('click', async function() {
     return;
   }
   
-  const myForms = allData.filter(r => r['DEO Email'] === currentUser.email && r.Status === 'approved');
-  const totalEarned = myForms.length * 3;
+  const myForms = allData.filter(r => r['DEO Email'] === currentUser.email);
+  const approvedForms = myForms.filter(r => r.Status === 'approved');
+  const totalEarned = approvedForms.length * 3;
   const myWithdrawals = withdrawRequests.filter(r => r['DEO Email'] === currentUser.email);
   const totalWithdrawn = myWithdrawals.filter(r => r.Status === 'Approved').reduce((sum, r) => sum + (r.Amount || 0), 0);
   const available = totalEarned - totalWithdrawn;
@@ -994,7 +988,7 @@ async function fetchAllData() {
 }
 
 // =============================================================
-// AUTH - FIXED LOGIN
+// AUTH
 // =============================================================
 async function handleLogin() {
   const email = loginEmail.value.trim();
@@ -1010,9 +1004,7 @@ async function handleLogin() {
   loginBtn.innerHTML = '<span class="spinner"></span> Logging in...';
   
   try {
-    console.log('Attempting login for:', email);
     const resp = await callApi('verifyLogin', { email, password });
-    console.log('Login response:', resp);
     
     loginBtn.disabled = false;
     loginBtn.innerHTML = '<i class="fas fa-sign-in-alt"></i> Login';
@@ -1039,13 +1031,12 @@ async function handleLogin() {
       await fetchAllData();
       showToast('Welcome, ' + (currentUser.name || currentUser.email) + '!', 2000);
     } else {
-      loginError.textContent = 'Login failed: ' + (resp?.message || 'Invalid credentials. Please check your email and password.');
-      console.error('Login failed:', resp);
+      loginError.textContent = 'Login failed: ' + (resp?.message || 'Invalid credentials');
     }
   } catch (error) {
     loginBtn.disabled = false;
     loginBtn.innerHTML = '<i class="fas fa-sign-in-alt"></i> Login';
-    loginError.textContent = 'Network error: ' + (error.message || 'Please check your internet connection.');
+    loginError.textContent = 'Network error. Please check your connection.';
     console.error('Login error:', error);
   }
 }
@@ -1187,10 +1178,6 @@ if (!checkSavedSession()) {
 
 console.log('RK Verse Admin Panel ready.');
 console.log('API_BASE:', API_BASE);
-console.log('If login fails, check:');
-console.log('1. Apps Script URL is correct');
-console.log('2. Internet connection is working');
-console.log('3. Apps Script is deployed with "Anyone" access');
 </script>
 </body>
 </html>
