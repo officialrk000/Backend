@@ -1,645 +1,286 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>SarkariSetu · Admin Panel</title>
-  <!-- Font Awesome (free icons) -->
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
-  <style>
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-      font-family: 'Inter', -apple-system, system-ui, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-      transition: background 0.2s ease, color 0.15s ease, border-color 0.15s ease;
-    }
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    body {
-      background: #f4f7fc;
-      min-height: 100vh;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      padding: 24px;
-    }
+<title>SarkariSetu Admin Dashboard</title>
 
-    /* ----- DASHBOARD CARD (glassmorphism light) ----- */
-    .dashboard {
-      max-width: 1440px;
-      width: 100%;
-      background: rgba(255, 255, 255, 0.7);
-      backdrop-filter: blur(12px);
-      -webkit-backdrop-filter: blur(12px);
-      border-radius: 40px;
-      padding: 28px 32px 36px;
-      box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.15);
-      border: 1px solid rgba(255, 255, 255, 0.5);
-    }
+<link rel="stylesheet" href="css/style.css">
 
-    /* ----- DARK THEME (applied to .dark) ----- */
-    .dark {
-      background: #0c0f15;
-    }
-    .dark .dashboard {
-      background: rgba(18, 22, 30, 0.85);
-      backdrop-filter: blur(14px);
-      -webkit-backdrop-filter: blur(14px);
-      border-color: rgba(255, 255, 255, 0.06);
-      box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.8);
-    }
-    .dark .dashboard * {
-      color: #eef2f6;
-    }
-    .dark .stat-card {
-      background: rgba(30, 36, 48, 0.7);
-      border-color: rgba(255, 255, 255, 0.04);
-    }
-    .dark .stat-card .stat-icon {
-      background: rgba(255, 255, 255, 0.04);
-      color: #b9c8ff;
-    }
-    .dark .stat-card .stat-change.positive {
-      color: #7ddfb0;
-    }
-    .dark .stat-card .stat-change.negative {
-      color: #ff8a8a;
-    }
-    .dark .section-title {
-      color: #d6dfeb;
-    }
-    .dark .chart-placeholder {
-      background: rgba(40, 48, 64, 0.5);
-      border-color: rgba(255, 255, 255, 0.05);
-    }
-    .dark .chart-bar {
-      background: #4b6af5;
-    }
-    .dark .legend-item {
-      color: #c8d2e0;
-    }
-    .dark .recent-table {
-      border-color: rgba(255, 255, 255, 0.05);
-    }
-    .dark .recent-table th {
-      background: #1e2533;
-      color: #bcc9db;
-    }
-    .dark .recent-table td {
-      border-color: rgba(255, 255, 255, 0.04);
-    }
-    .dark .recent-table tr:hover td {
-      background: #252d3e;
-    }
-    .dark .badge-pending {
-      background: #3d2e1e;
-      color: #f5b56b;
-    }
-    .dark .badge-progress {
-      background: #1d344a;
-      color: #7db8f5;
-    }
-    .dark .badge-completed {
-      background: #1e3a2a;
-      color: #7ddfb0;
-    }
-    .dark .badge-paid {
-      background: #1e3a2a;
-      color: #7ddfb0;
-    }
-    .dark .btn-outline {
-      border-color: rgba(255, 255, 255, 0.15);
-      color: #d6dfeb;
-    }
-    .dark .btn-outline:hover {
-      background: rgba(255, 255, 255, 0.04);
-    }
-    .dark .greeting-sub {
-      color: #a2b3cc;
-    }
-    .dark .theme-toggle {
-      background: #1e2533;
-      border-color: #2e384a;
-      color: #d6dfeb;
-    }
-    .dark .theme-toggle i {
-      color: #f5d742;
-    }
-    .dark .annotation {
-      background: #1e2533;
-      color: #bcc9db;
-    }
+<link
+href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap"
+rel="stylesheet">
 
-    /* ----- header / top bar ----- */
-    .topbar {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 28px;
-      flex-wrap: wrap;
-      gap: 14px;
-    }
-    .logo-area {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-    }
-    .logo-area i {
-      font-size: 28px;
-      background: #1e3a8a;
-      background: linear-gradient(145deg, #2563eb, #1e3a8a);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      background-clip: text;
-    }
-    .dark .logo-area i {
-      background: linear-gradient(145deg, #7aa2ff, #4b6af5);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      background-clip: text;
-    }
-    .logo-area h1 {
-      font-weight: 700;
-      font-size: 24px;
-      letter-spacing: -0.3px;
-      background: linear-gradient(145deg, #1e3a8a, #2563eb);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      background-clip: text;
-    }
-    .dark .logo-area h1 {
-      background: linear-gradient(145deg, #b9c8ff, #7aa2ff);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      background-clip: text;
-    }
-    .greeting {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      flex-wrap: wrap;
-    }
-    .greeting h2 {
-      font-weight: 600;
-      font-size: 22px;
-      color: #0b1e3a;
-    }
-    .dark .greeting h2 {
-      color: #eef2f6;
-    }
-    .greeting-sub {
-      color: #4a5a72;
-      font-size: 15px;
-      font-weight: 450;
-    }
-    .theme-toggle {
-      background: #ffffff;
-      border: 1px solid #dde3ed;
-      border-radius: 60px;
-      padding: 8px 16px;
-      font-size: 15px;
-      font-weight: 500;
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      cursor: pointer;
-      color: #1f2a44;
-      box-shadow: 0 2px 6px rgba(0,0,0,0.02);
-    }
-    .theme-toggle i {
-      color: #f5b342;
-      font-size: 18px;
-    }
-    .theme-toggle:hover {
-      background: #f0f4ff;
-    }
-    .dark .theme-toggle:hover {
-      background: #2a3348;
-    }
+<link
+href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"
+rel="stylesheet">
 
-    /* ----- stats grid ----- */
-    .stats-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(170px, 1fr));
-      gap: 18px;
-      margin-bottom: 32px;
-    }
-    .stat-card {
-      background: rgba(255, 255, 255, 0.6);
-      backdrop-filter: blur(6px);
-      -webkit-backdrop-filter: blur(6px);
-      border: 1px solid rgba(255, 255, 255, 0.7);
-      border-radius: 28px;
-      padding: 18px 18px 16px;
-      box-shadow: 0 4px 12px rgba(0,0,0,0.02);
-    }
-    .stat-card .stat-label {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      color: #33435c;
-      font-weight: 500;
-      font-size: 14px;
-      letter-spacing: 0.2px;
-    }
-    .dark .stat-card .stat-label {
-      color: #bcc9db;
-    }
-    .stat-card .stat-number {
-      font-size: 28px;
-      font-weight: 700;
-      color: #0b1e3a;
-      margin: 6px 0 4px;
-    }
-    .dark .stat-card .stat-number {
-      color: #eef2f6;
-    }
-    .stat-card .stat-change {
-      font-size: 13px;
-      font-weight: 500;
-      display: inline-flex;
-      align-items: center;
-      gap: 4px;
-    }
-    .stat-card .stat-change.positive {
-      color: #0d7a4a;
-    }
-    .stat-card .stat-change.negative {
-      color: #b53b3b;
-    }
-    .stat-icon {
-      background: rgba(37, 99, 235, 0.08);
-      width: 32px;
-      height: 32px;
-      border-radius: 40px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      color: #2563eb;
-    }
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
-    /* ----- charts section ----- */
-    .charts-row {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 24px;
-      margin-bottom: 32px;
-    }
-    .chart-box {
-      flex: 1 1 260px;
-      background: rgba(255, 255, 255, 0.3);
-      backdrop-filter: blur(6px);
-      -webkit-backdrop-filter: blur(6px);
-      border-radius: 28px;
-      padding: 18px 18px 12px;
-      border: 1px solid rgba(255, 255, 255, 0.3);
-    }
-    .dark .chart-box {
-      background: rgba(30, 36, 48, 0.3);
-      border-color: rgba(255, 255, 255, 0.04);
-    }
-    .chart-box h4 {
-      font-weight: 600;
-      font-size: 16px;
-      margin-bottom: 12px;
-      color: #1a2b44;
-    }
-    .dark .chart-box h4 {
-      color: #d6dfeb;
-    }
-    .chart-placeholder {
-      background: rgba(235, 242, 255, 0.4);
-      border-radius: 24px;
-      padding: 14px 8px 8px;
-      border: 1px solid rgba(255, 255, 255, 0.4);
-      display: flex;
-      flex-direction: column;
-      gap: 6px;
-    }
-    .chart-row {
-      display: flex;
-      align-items: flex-end;
-      justify-content: space-around;
-      gap: 6px;
-      height: 140px;
-      padding: 0 4px;
-    }
-    .chart-bar {
-      flex: 1;
-      background: #2563eb;
-      border-radius: 20px 20px 6px 6px;
-      min-height: 12px;
-      height: var(--h, 80px);
-      max-width: 32px;
-      transition: height 0.2s;
-    }
-    .chart-bar:nth-child(1) { --h: 70px; }
-    .chart-bar:nth-child(2) { --h: 110px; }
-    .chart-bar:nth-child(3) { --h: 140px; }
-    .chart-bar:nth-child(4) { --h: 90px; }
-    .chart-bar:nth-child(5) { --h: 120px; }
-    .chart-bar:nth-child(6) { --h: 60px; }
-    .chart-bar:nth-child(7) { --h: 100px; }
-    .dark .chart-bar {
-      background: #4b6af5;
-    }
-    .chart-labels {
-      display: flex;
-      justify-content: space-around;
-      font-size: 11px;
-      color: #4a5a72;
-      padding-top: 6px;
-    }
-    .dark .chart-labels {
-      color: #a2b3cc;
-    }
-    .legend {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 16px;
-      padding-top: 8px;
-      font-size: 13px;
-      color: #1f2a44;
-    }
-    .legend-item i {
-      color: #2563eb;
-      margin-right: 4px;
-    }
-    .dark .legend-item i {
-      color: #7aa2ff;
-    }
-    .annotation {
-      background: rgba(255, 255, 255, 0.4);
-      border-radius: 40px;
-      padding: 4px 14px;
-      display: inline-block;
-      font-size: 12px;
-      font-weight: 500;
-      color: #1a2b44;
-    }
-
-    /* ----- recent activity / tables ----- */
-    .recent-grid {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 24px;
-      margin-top: 8px;
-    }
-    .recent-card {
-      flex: 1 1 300px;
-      background: rgba(255, 255, 255, 0.2);
-      backdrop-filter: blur(4px);
-      -webkit-backdrop-filter: blur(4px);
-      border-radius: 28px;
-      padding: 18px 16px 18px;
-      border: 1px solid rgba(255, 255, 255, 0.2);
-    }
-    .dark .recent-card {
-      background: rgba(30, 36, 48, 0.2);
-      border-color: rgba(255, 255, 255, 0.04);
-    }
-    .recent-card .card-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 14px;
-    }
-    .recent-card .card-header h4 {
-      font-weight: 600;
-      color: #1a2b44;
-    }
-    .dark .recent-card .card-header h4 {
-      color: #d6dfeb;
-    }
-    .btn-outline {
-      background: transparent;
-      border: 1px solid #cbd5e1;
-      border-radius: 60px;
-      padding: 4px 14px;
-      font-size: 13px;
-      font-weight: 500;
-      color: #1f2a44;
-      cursor: default;
-    }
-    .activity-item {
-      display: flex;
-      justify-content: space-between;
-      padding: 10px 0;
-      border-bottom: 1px solid rgba(0,0,0,0.03);
-    }
-    .dark .activity-item {
-      border-bottom-color: rgba(255,255,255,0.03);
-    }
-    .activity-item:last-child {
-      border-bottom: none;
-    }
-    .activity-item .left {
-      display: flex;
-      gap: 10px;
-      align-items: center;
-    }
-    .activity-item i {
-      color: #2563eb;
-      width: 20px;
-    }
-    .dark .activity-item i {
-      color: #7aa2ff;
-    }
-    .activity-item .time {
-      color: #6b7d99;
-      font-size: 13px;
-    }
-    .dark .activity-item .time {
-      color: #889bb3;
-    }
-
-    /* table */
-    .table-wrap {
-      overflow-x: auto;
-      margin-top: 6px;
-    }
-    .recent-table {
-      width: 100%;
-      border-collapse: collapse;
-      font-size: 14px;
-      border: 1px solid rgba(0,0,0,0.02);
-      border-radius: 20px;
-      overflow: hidden;
-    }
-    .recent-table th {
-      text-align: left;
-      padding: 12px 10px;
-      background: #f0f4fe;
-      color: #1a2b44;
-      font-weight: 600;
-      font-size: 12px;
-      letter-spacing: 0.3px;
-      text-transform: uppercase;
-    }
-    .recent-table td {
-      padding: 12px 10px;
-      border-bottom: 1px solid rgba(0,0,0,0.04);
-      color: #1f2a44;
-    }
-    .dark .recent-table td {
-      color: #d6dfeb;
-    }
-    .badge {
-      background: #eef2f6;
-      padding: 4px 12px;
-      border-radius: 40px;
-      font-size: 12px;
-      font-weight: 500;
-      display: inline-block;
-    }
-    .badge-pending { background: #fef3e2; color: #9b6f2c; }
-    .badge-progress { background: #e1edff; color: #1f5bb5; }
-    .badge-completed { background: #ddf4e4; color: #0d7a4a; }
-    .badge-paid { background: #ddf4e4; color: #0d7a4a; }
-
-    .text-muted { color: #6b7d99; }
-    .dark .text-muted { color: #889bb3; }
-    .mt-2 { margin-top: 10px; }
-    .flex { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
-
-    @media (max-width: 600px) {
-      .dashboard { padding: 18px; }
-      .stats-grid { grid-template-columns: 1fr 1fr; }
-    }
-  </style>
 </head>
-<body>
-  <div class="dashboard" id="app">
-    <!-- TOP BAR -->
-    <div class="topbar">
-      <div class="logo-area">
-        <i class="fas fa-bridge"></i>
-        <h1>SarkariSetu</h1>
-        <span style="font-size: 13px; background: #eef2f6; padding: 2px 12px; border-radius: 40px; color: #1f2a44;">Admin</span>
-      </div>
-      <div class="greeting">
-        <div>
-          <h2>Hi, Ranjeet <span style="font-weight: 400; font-size: 16px; color: #4a5a72;">👋</span></h2>
-          <div class="greeting-sub">Here's what's happening today.</div>
-        </div>
-        <button class="theme-toggle" id="themeToggle"><i class="fas fa-moon"></i> <span id="themeLabel">Dark</span></button>
-      </div>
-    </div>
 
-    <!-- STATS -->
-    <div class="stats-grid">
-      <div class="stat-card"><div class="stat-label"><span>Total Users</span><span class="stat-icon"><i class="fas fa-users"></i></span></div><div class="stat-number">1,245</div><div class="stat-change positive"><i class="fas fa-arrow-up"></i> +12.5%</div></div>
-      <div class="stat-card"><div class="stat-label"><span>Active Work</span><span class="stat-icon"><i class="fas fa-tasks"></i></span></div><div class="stat-number">356</div><div class="stat-change positive"><i class="fas fa-arrow-up"></i> +8.2%</div></div>
-      <div class="stat-card"><div class="stat-label"><span>Total Payout</span><span class="stat-icon"><i class="fas fa-credit-card"></i></span></div><div class="stat-number">₹4,85,000</div><div class="stat-change positive"><i class="fas fa-arrow-up"></i> +15.3%</div></div>
-      <div class="stat-card"><div class="stat-label"><span>Pending Payout</span><span class="stat-icon"><i class="fas fa-clock"></i></span></div><div class="stat-number">₹42,500</div><div class="stat-change negative"><i class="fas fa-arrow-down"></i> -3.6%</div></div>
-      <div class="stat-card"><div class="stat-label"><span>Completed Tasks</span><span class="stat-icon"><i class="fas fa-check-circle"></i></span></div><div class="stat-number">2,150</div><div class="stat-change positive"><i class="fas fa-arrow-up"></i> +10.7%</div></div>
-      <div class="stat-card"><div class="stat-label"><span>Today's Work</span><span class="stat-icon"><i class="fas fa-calendar-day"></i></span></div><div class="stat-number">78</div><div class="stat-change positive"><i class="fas fa-arrow-up"></i> +5.4%</div></div>
-    </div>
+<body class="dark">
 
-    <!-- CHARTS ROW -->
-    <div class="charts-row">
-      <div class="chart-box">
-        <h4>Overview <span style="font-weight: 400; font-size: 13px; margin-left: 8px;">This Week</span></h4>
-        <div class="chart-placeholder">
-          <div class="chart-row">
-            <div class="chart-bar" style="--h:70px"></div>
-            <div class="chart-bar" style="--h:110px"></div>
-            <div class="chart-bar" style="--h:140px"></div>
-            <div class="chart-bar" style="--h:90px"></div>
-            <div class="chart-bar" style="--h:120px"></div>
-            <div class="chart-bar" style="--h:60px"></div>
-            <div class="chart-bar" style="--h:100px"></div>
-          </div>
-          <div class="chart-labels"><span>Mon</span><span>Tue</span><span>Wed</span><span>Thu</span><span>Fri</span><span>Sat</span><span>Sun</span></div>
-          <div class="flex" style="justify-content: space-between; padding: 6px 2px 0;">
-            <div class="legend"><span class="legend-item"><i class="fas fa-circle"></i> New User Joined · Amit Kumar</span></div>
-            <div class="annotation"><i class="far fa-calendar-alt"></i> Wed 320 Work</div>
-          </div>
-        </div>
-      </div>
-      <!-- additional mini chart -->
-      <div class="chart-box">
-        <h4>Monthly Payout</h4>
-        <div class="chart-placeholder">
-          <div class="chart-row"><div class="chart-bar" style="--h:50px"></div><div class="chart-bar" style="--h:100px"></div><div class="chart-bar" style="--h:140px"></div><div class="chart-bar" style="--h:80px"></div><div class="chart-bar" style="--h:110px"></div></div>
-          <div class="chart-labels"><span>1st</span><span>2nd</span><span>3rd</span><span>4th</span><span>5th</span></div>
-        </div>
-      </div>
-      <div class="chart-box">
-        <h4>User Growth</h4>
-        <div class="chart-placeholder">
-          <div class="chart-row"><div class="chart-bar" style="--h:60px"></div><div class="chart-bar" style="--h:120px"></div><div class="chart-bar" style="--h:100px"></div><div class="chart-bar" style="--h:140px"></div><div class="chart-bar" style="--h:130px"></div></div>
-          <div class="chart-labels"><span>1st</span><span>2nd</span><span>3rd</span><span>4th</span><span>5th</span></div>
-        </div>
-      </div>
-    </div>
+<!-- Sidebar -->
+<div class="sidebar">
 
-    <!-- RECENT ACTIVITY + TABLES -->
-    <div class="recent-grid">
-      <div class="recent-card">
-        <div class="card-header"><h4><i class="far fa-bell" style="margin-right: 8px;"></i>Recent Activity</h4><span class="btn-outline">View All</span></div>
-        <div class="activity-item"><div class="left"><i class="fas fa-user-plus"></i> New User Joined</div><span class="time">2 min ago</span></div>
-        <div class="activity-item"><div class="left"><i class="fas fa-file-alt"></i> Work Submitted</div><span class="time">15 min ago</span></div>
-        <div class="activity-item"><div class="left"><i class="fas fa-rupee-sign"></i> Payout Released</div><span class="time">1 hr ago</span></div>
-        <div class="activity-item"><div class="left"><i class="fas fa-rupee-sign"></i> Payment ₹2,500 to Rahul Verma</div><span class="time">2 hr ago</span></div>
-      </div>
+<div class="logo">
 
-      <div class="recent-card" style="flex: 2 1 400px;">
-        <div class="card-header"><h4><i class="fas fa-list-ul" style="margin-right: 8px;"></i>Recent Work</h4><span class="btn-outline">View All</span></div>
-        <div class="table-wrap">
-          <table class="recent-table">
-            <thead><tr><th>ID</th><th>Worker</th><th>Task</th><th>Date</th><th>Status</th></tr></thead>
-            <tbody>
-              <tr><td>#1258</td><td>Amit Kumar</td><td>Image Labeling</td><td>7 May 2025</td><td><span class="badge badge-pending">Pending</span></td></tr>
-              <tr><td>#1257</td><td>Rahul Verma</td><td>Data Collection</td><td>7 May 2025</td><td><span class="badge badge-progress">In Progress</span></td></tr>
-              <tr><td>#1256</td><td>Neha Singh</td><td>Content Review</td><td>6 May 2025</td><td><span class="badge badge-completed">Completed</span></td></tr>
-              <tr><td>#1255</td><td>Sanjay Yadav</td><td>Form Filling</td><td>6 May 2025</td><td><span class="badge badge-pending">Pending</span></td></tr>
-              <tr><td>#1254</td><td>Pooja Sharma</td><td>Verification</td><td>6 May 2025</td><td><span class="badge badge-completed">Completed</span></td></tr>
-            </tbody>
-          </table>
-        </div>
-        <div style="margin-top: 14px; font-size: 13px; color: #4a5a72;"><i class="fas fa-credit-card"></i> Payouts: #P1258 ₹2,500 Paid · #P1257 ₹1,800 Paid · #P1256 ₹2,000 Pending</div>
-      </div>
-    </div>
+<div class="logo-icon">
+<i class="fa-solid fa-shield"></i>
+</div>
 
-    <div style="margin-top: 18px; text-align: right; font-size: 13px; color: #6b7d99; border-top: 1px solid rgba(0,0,0,0.02); padding-top: 16px;">
-      <i class="fas fa-shield-alt"></i> Admin · SarkariSetu v2
-    </div>
-  </div>
+<div>
+<h2>SarkariSetu</h2>
+<p>Admin Panel</p>
+</div>
 
-  <script>
-    (function() {
-      const toggleBtn = document.getElementById('themeToggle');
-      const themeLabel = document.getElementById('themeLabel');
-      const body = document.body;
+</div>
 
-      // check stored preference
-      const stored = localStorage.getItem('sarkariTheme');
-      if (stored === 'dark') {
-        body.classList.add('dark');
-        themeLabel.textContent = 'Light';
-        toggleBtn.innerHTML = '<i class="fas fa-sun"></i> Light';
-      } else {
-        body.classList.remove('dark');
-        themeLabel.textContent = 'Dark';
-        toggleBtn.innerHTML = '<i class="fas fa-moon"></i> Dark';
-      }
+<ul>
 
-      toggleBtn.addEventListener('click', function(e) {
-        e.preventDefault();
-        if (body.classList.contains('dark')) {
-          body.classList.remove('dark');
-          localStorage.setItem('sarkariTheme', 'light');
-          toggleBtn.innerHTML = '<i class="fas fa-moon"></i> Dark';
-          themeLabel.textContent = 'Dark';
-        } else {
-          body.classList.add('dark');
-          localStorage.setItem('sarkariTheme', 'dark');
-          toggleBtn.innerHTML = '<i class="fas fa-sun"></i> Light';
-          themeLabel.textContent = 'Light';
-        }
-      });
-    })();
-  </script>
+<li class="active">
+<i class="fa-solid fa-house"></i>
+<span>Home</span>
+</li>
+
+<li>
+<i class="fa-solid fa-briefcase"></i>
+<span>Work</span>
+</li>
+
+<li>
+<i class="fa-solid fa-wallet"></i>
+<span>Payout</span>
+</li>
+
+<li>
+<i class="fa-solid fa-users"></i>
+<span>Users</span>
+</li>
+
+<li>
+<i class="fa-solid fa-chart-column"></i>
+<span>Reports</span>
+</li>
+
+<li>
+<i class="fa-solid fa-gear"></i>
+<span>Settings</span>
+</li>
+
+</ul>
+
+<div class="logout">
+<i class="fa-solid fa-right-from-bracket"></i>
+<span>Logout</span>
+</div>
+
+</div>
+
+<!-- Main -->
+
+<div class="main">
+
+<header>
+
+<div class="menu-btn">
+<i class="fa-solid fa-bars"></i>
+</div>
+
+<div class="search">
+
+<i class="fa-solid fa-magnifying-glass"></i>
+
+<input
+type="text"
+placeholder="Search here...">
+
+</div>
+
+<div class="header-right">
+
+<button id="themeToggle">
+<i class="fa-solid fa-moon"></i>
+</button>
+
+<div class="notification">
+<i class="fa-regular fa-bell"></i>
+<span>8</span>
+</div>
+
+<div class="profile">
+
+<img
+src="https://i.pravatar.cc/100">
+
+<div>
+
+<h4>Ranjeet Kushwaha</h4>
+
+<p>Super Admin</p>
+
+</div>
+
+</div>
+
+</div>
+
+</header>
+
+<section class="welcome">
+
+<div>
+
+<h1>Dashboard</h1>
+
+<p>
+Welcome back, Ranjeet!
+Here's what's happening today.
+</p>
+
+</div>
+
+</section>
+
+<!-- Cards -->
+
+<section class="cards">
+
+<div class="card blue">
+<h4>Total Users</h4>
+<h2>1,245</h2>
+<p>+12.5%</p>
+</div>
+
+<div class="card green">
+<h4>Active Work</h4>
+<h2>356</h2>
+<p>+8.2%</p>
+</div>
+
+<div class="card purple">
+<h4>Total Payout</h4>
+<h2>₹4,85,000</h2>
+<p>+15%</p>
+</div>
+
+<div class="card orange">
+<h4>Pending</h4>
+<h2>₹42,500</h2>
+<p>-3.6%</p>
+</div>
+
+<div class="card cyan">
+<h4>Completed</h4>
+<h2>2,150</h2>
+<p>+10%</p>
+</div>
+
+</section>
+
+<!-- Charts -->
+
+<section class="charts">
+
+<div class="chart-box">
+<canvas id="lineChart"></canvas>
+</div>
+
+<div class="chart-box">
+<canvas id="barChart"></canvas>
+</div>
+
+<div class="chart-box">
+<canvas id="areaChart"></canvas>
+</div>
+
+</section>
+
+<!-- Table -->
+
+<section class="table-box">
+
+<h2>Recent Work</h2>
+
+<table>
+
+<thead>
+
+<tr>
+
+<th>ID</th>
+
+<th>Name</th>
+
+<th>Task</th>
+
+<th>Status</th>
+
+</tr>
+
+</thead>
+
+<tbody>
+
+<tr>
+
+<td>#1258</td>
+
+<td>Amit Kumar</td>
+
+<td>Image Labeling</td>
+
+<td>
+<span class="badge pending">
+Pending
+</span>
+</td>
+
+</tr>
+
+<tr>
+
+<td>#1257</td>
+
+<td>Rahul Verma</td>
+
+<td>Collection</td>
+
+<td>
+<span class="badge progress">
+In Progress
+</span>
+</td>
+
+</tr>
+
+<tr>
+
+<td>#1256</td>
+
+<td>Neha Singh</td>
+
+<td>Verification</td>
+
+<td>
+<span class="badge done">
+Completed
+</span>
+</td>
+
+</tr>
+
+</tbody>
+
+</table>
+
+</section>
+
+</div>
+
+<script src="js/app.js"></script>
+
 </body>
 </html>
