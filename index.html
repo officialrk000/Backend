@@ -1,286 +1,1130 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes" />
+  <title>RK Verse · Super Admin</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,400;14..32,500;14..32,600;14..32,700&display=swap" rel="stylesheet" />
+  <!-- Chart.js for graphs -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+  <style>
+    * { margin:0; padding:0; box-sizing:border-box; font-family:'Inter',sans-serif; }
+    body { background:#f1f5f9; color:#0f172a; min-height:100vh; padding:12px 12px 80px 12px; display:flex; justify-content:center; }
+    .app { max-width:480px; width:100%; margin:0 auto; }
 
-<title>SarkariSetu Admin Dashboard</title>
+    .spinner { display:inline-block; width:20px; height:20px; border:3px solid #e2e8f0; border-radius:50%; border-top-color:#0f172a; animation:spin 0.6s linear infinite; margin-right:8px; }
+    @keyframes spin { to { transform:rotate(360deg); } }
+    .loader-overlay { position:fixed; top:0; left:0; right:0; bottom:0; background:rgba(255,255,255,0.85); display:flex; align-items:center; justify-content:center; z-index:999; backdrop-filter:blur(4px); }
+    .loader-box { background:#fff; padding:30px 40px; border-radius:20px; box-shadow:0 20px 60px rgba(0,0,0,0.1); text-align:center; }
+    .loader-box .spinner { width:40px; height:40px; border-width:4px; }
+    .loader-box p { margin-top:12px; color:#64748b; font-size:0.9rem; }
 
-<link rel="stylesheet" href="css/style.css">
+    #loginPage { background:#fff; padding:32px 24px; border-radius:28px; box-shadow:0 20px 60px rgba(0,0,0,0.08); text-align:center; margin-top:40px; }
+    #loginPage .logo-big { width:72px; height:72px; background:#0f172a; border-radius:20px; display:flex; align-items:center; justify-content:center; margin:0 auto 16px; font-size:32px; color:#facc15; }
+    #loginPage h1 { font-size:1.8rem; font-weight:700; background:linear-gradient(135deg,#facc15,#f97316); -webkit-background-clip:text; -webkit-text-fill-color:transparent; }
+    #loginPage p { color:#64748b; margin:8px 0 24px; font-size:0.95rem; }
+    #loginPage .input-group { margin-bottom:14px; text-align:left; }
+    #loginPage .input-group label { font-size:0.8rem; font-weight:500; color:#334155; display:block; margin-bottom:4px; }
+    #loginPage .input-group input { width:100%; padding:12px 16px; border:1.5px solid #e2e8f0; border-radius:12px; font-size:0.95rem; background:#f8fafc; transition:0.2s; }
+    #loginPage .input-group input:focus { outline:none; border-color:#3b82f6; background:#fff; box-shadow:0 0 0 4px rgba(59,130,246,0.08); }
+    #loginPage .login-btn { width:100%; padding:14px; background:#0f172a; color:#fff; border:none; border-radius:40px; font-weight:600; font-size:1rem; cursor:pointer; transition:0.2s; display:flex; align-items:center; justify-content:center; gap:10px; }
+    #loginPage .login-btn:hover { background:#1e293b; }
+    #loginPage .login-btn:disabled { opacity:0.6; cursor:not-allowed; }
+    #loginPage .login-error { color:#dc2626; font-size:0.85rem; margin-top:12px; min-height:24px; }
 
-<link
-href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap"
-rel="stylesheet">
+    #dashboard { display:none; }
 
-<link
-href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"
-rel="stylesheet">
+    .header { background:#0f172a; color:#f8fafc; padding:8px 16px; border-radius:20px; display:flex; align-items:center; justify-content:space-between; gap:10px; margin-bottom:16px; box-shadow:0 4px 16px rgba(15,23,42,0.12); flex-wrap:nowrap; }
+    .logo-area { display:flex; align-items:center; gap:8px; flex-shrink:0; }
+    .logo-box { width:32px; height:32px; background:linear-gradient(135deg,#facc15,#f97316); border-radius:8px; display:flex; align-items:center; justify-content:center; font-weight:700; font-size:14px; color:#0f172a; flex-shrink:0; }
+    .logo-area h1 { font-size:1.1rem; font-weight:700; color:#fff; background:none; -webkit-text-fill-color:#fff; letter-spacing:-0.3px; white-space:nowrap; }
+    .logo-area h1 span { color:#facc15; -webkit-text-fill-color:#facc15; }
+    .user-badge { display:flex; align-items:center; gap:6px; background:#1e293b; padding:4px 10px 4px 8px; border-radius:30px; flex-shrink:0; }
+    .user-badge i { font-size:0.9rem; color:#facc15; }
+    .user-badge .name { font-weight:500; font-size:0.75rem; white-space:nowrap; }
+    .user-badge .role { font-size:0.6rem; background:#334155; padding:2px 8px; border-radius:20px; color:#cbd5e1; white-space:nowrap; }
 
-<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    .bottom-nav { position:fixed; bottom:0; left:0; right:0; background:#fff; display:flex; justify-content:space-around; align-items:center; padding:6px 0 env(safe-area-inset-bottom,8px); box-shadow:0 -4px 20px rgba(0,0,0,0.06); border-top:1px solid #e9edf2; z-index:100; max-width:480px; margin:0 auto; }
+    .bottom-nav button { background:none; border:none; display:flex; flex-direction:column; align-items:center; gap:2px; padding:6px 10px; font-size:0.55rem; font-weight:500; color:#94a3b8; cursor:pointer; transition:0.2s; border-radius:12px; min-width:44px; }
+    .bottom-nav button i { font-size:1.1rem; color:#94a3b8; transition:0.2s; }
+    .bottom-nav button.active { color:#0f172a; }
+    .bottom-nav button.active i { color:#0f172a; }
+    .bottom-nav button.logout-btn-nav { color:#dc2626; }
+    .bottom-nav button.logout-btn-nav i { color:#dc2626; }
+    .bottom-nav button.hidden { display:none; }
 
+    .stats-grid { display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-bottom:16px; }
+    .stat-card { background:#fff; border-radius:16px; padding:14px 12px; box-shadow:0 2px 8px rgba(0,0,0,0.04); border:1px solid #e9edf2; transition:0.2s; position:relative; overflow:hidden; }
+    .stat-card::before { content:''; position:absolute; top:0; left:0; right:0; height:3px; background:linear-gradient(90deg,#3b82f6,#8b5cf6); }
+    .stat-card:nth-child(2)::before { background:linear-gradient(90deg,#16a34a,#22c55e); }
+    .stat-card:nth-child(3)::before { background:linear-gradient(90deg,#dc2626,#ef4444); }
+    .stat-card:nth-child(4)::before { background:linear-gradient(90deg,#eab308,#facc15); }
+    .stat-card:nth-child(5)::before { background:linear-gradient(90deg,#f97316,#fb923c); }
+    .stat-card .num { font-size:1.6rem; font-weight:700; color:#0f172a; }
+    .stat-card .label { font-size:0.65rem; color:#64748b; margin-top:2px; display:flex; align-items:center; gap:4px; }
+    .stat-card .label i { font-size:0.7rem; }
+    .stat-card.full { grid-column:1/-1; }
+
+    .sheet-header-card { background:#fff; padding:10px 14px; border-radius:14px; margin-bottom:10px; border-left:4px solid #3b82f6; box-shadow:0 2px 8px rgba(0,0,0,0.04); display:flex; justify-content:space-between; align-items:center; }
+    .sheet-header-card h3 { font-size:0.9rem; font-weight:600; display:flex; align-items:center; gap:6px; }
+    .sheet-header-card h3 i { color:#3b82f6; }
+    .sheet-header-card .badge { background:#e2e8f0; padding:2px 10px; border-radius:30px; font-size:0.65rem; font-weight:500; color:#1e293b; }
+
+    .data-card-list { display:flex; flex-direction:column; gap:6px; margin-bottom:14px; }
+    .data-item { background:#fff; padding:10px 12px; border-radius:12px; border:1px solid #e9edf2; display:flex; flex-wrap:wrap; align-items:center; justify-content:space-between; gap:4px; box-shadow:0 1px 4px rgba(0,0,0,0.02); transition:0.2s; }
+    .data-item:hover { border-color:#cbd5e1; }
+    .data-item .main { display:flex; flex-direction:column; gap:1px; flex:1; min-width:80px; }
+    .data-item .main .title { font-weight:600; font-size:0.8rem; }
+    .data-item .main .sub { font-size:0.65rem; color:#64748b; }
+    .status-badge { padding:2px 10px; border-radius:30px; font-size:0.6rem; font-weight:600; white-space:nowrap; }
+    .status-badge.approved { background:#dcfce7; color:#166534; }
+    .status-badge.rejected { background:#fee2e2; color:#991b1b; }
+    .status-badge.pending { background:#fef9c3; color:#854d0e; }
+    .status-badge.paid { background:#dcfce7; color:#166534; }
+    .empty-state { text-align:center; padding:20px 0; color:#94a3b8; font-size:0.8rem; }
+
+    .form-card { background:#fff; padding:14px; border-radius:14px; margin-bottom:14px; border:1px solid #e9edf2; }
+    .form-card .field { margin-bottom:10px; }
+    .form-card .field label { font-size:0.7rem; font-weight:500; color:#334155; display:block; margin-bottom:2px; }
+    .form-card .field input, .form-card .field select, .form-card .field textarea { width:100%; padding:8px 12px; border:1.5px solid #e2e8f0; border-radius:8px; font-size:0.8rem; background:#f8fafc; transition:0.2s; }
+    .form-card .field input:focus, .form-card .field select:focus, .form-card .field textarea:focus { outline:none; border-color:#3b82f6; background:#fff; }
+    .form-card .field textarea { min-height:40px; resize:vertical; }
+
+    .btn { padding:8px 16px; border:none; border-radius:30px; font-weight:600; font-size:0.8rem; cursor:pointer; transition:0.2s; display:inline-flex; align-items:center; gap:5px; width:100%; justify-content:center; margin-top:2px; }
+    .btn:disabled { opacity:0.6; cursor:not-allowed; }
+    .btn-primary { background:#0f172a; color:#fff; }
+    .btn-primary:hover:not(:disabled) { background:#1e293b; }
+    .btn-success { background:#16a34a; color:#fff; }
+    .btn-success:hover:not(:disabled) { background:#15803d; }
+    .btn-danger { background:#dc2626; color:#fff; }
+    .btn-danger:hover:not(:disabled) { background:#b91c1c; }
+    .btn-warning { background:#eab308; color:#fff; }
+    .btn-warning:hover:not(:disabled) { background:#ca8a04; }
+    .btn-outline { background:transparent; border:1.5px solid #e2e8f0; color:#334155; }
+    .btn-group { display:flex; gap:6px; flex-wrap:wrap; }
+    .btn-group .btn { flex:1; min-width:70px; }
+
+    .page { display:none; }
+    .page.active { display:block; }
+
+    .profile-card { background:#fff; padding:16px; border-radius:16px; text-align:center; border:1px solid #e9edf2; }
+    .profile-card .avatar { width:60px; height:60px; background:#0f172a; border-radius:50%; display:flex; align-items:center; justify-content:center; margin:0 auto 10px; font-size:28px; color:#facc15; }
+
+    .action-btns { display:flex; gap:4px; flex-wrap:wrap; }
+    .action-btns .btn-sm { padding:2px 10px; font-size:0.6rem; border-radius:20px; border:none; cursor:pointer; font-weight:600; transition:0.2s; }
+    .btn-sm.approve { background:#dcfce7; color:#166534; }
+    .btn-sm.approve:hover { background:#bbf7d0; }
+    .btn-sm.reject { background:#fee2e2; color:#991b1b; }
+    .btn-sm.reject:hover { background:#fecaca; }
+
+    .toast { position:fixed; top:20px; left:50%; transform:translateX(-50%); background:#0f172a; color:#fff; padding:12px 24px; border-radius:12px; font-size:0.85rem; font-weight:500; z-index:1000; box-shadow:0 8px 30px rgba(0,0,0,0.2); opacity:0; transition:opacity 0.3s ease; pointer-events:none; max-width:90%; }
+    .toast.show { opacity:1; }
+
+    .deo-note { background:#f8fafc; padding:10px 14px; border-radius:10px; font-size:0.75rem; color:#475569; border-left:3px solid #3b82f6; margin-bottom:12px; }
+
+    .withdraw-card { background:linear-gradient(135deg,#0f172a,#1e293b); color:#fff; padding:16px; border-radius:16px; margin-bottom:14px; }
+    .withdraw-card .amount-display { font-size:2.2rem; font-weight:700; color:#facc15; }
+    .withdraw-card .label { font-size:0.7rem; color:#94a3b8; }
+    .withdraw-grid { display:grid; grid-template-columns:1fr 1fr 1fr; gap:8px; margin-top:10px; }
+    .withdraw-grid .item { background:rgba(255,255,255,0.05); padding:8px; border-radius:10px; text-align:center; }
+    .withdraw-grid .item .num { font-size:1.2rem; font-weight:600; color:#facc15; }
+    .withdraw-grid .item .lbl { font-size:0.6rem; color:#94a3b8; }
+
+    /* Chart container */
+    .chart-container { background:#fff; border-radius:16px; padding:12px; margin-bottom:14px; border:1px solid #e9edf2; }
+    .chart-container canvas { width:100% !important; height:auto !important; max-height:200px; }
+
+    @media (max-width:380px) {
+      .stats-grid { grid-template-columns:1fr 1fr; gap:6px; }
+      .stat-card { padding:10px 8px; }
+      .stat-card .num { font-size:1.3rem; }
+      .bottom-nav button { font-size:0.5rem; min-width:38px; padding:4px 6px; }
+      .bottom-nav button i { font-size:1rem; }
+      .logo-area h1 { font-size:0.95rem; }
+      .withdraw-grid { grid-template-columns:1fr 1fr; }
+    }
+    @media (min-width:600px) {
+      body { padding:20px 20px 90px 20px; }
+      .app { max-width:600px; }
+      .stats-grid { grid-template-columns:repeat(3,1fr); }
+      .stat-card.full { grid-column:1/-1; }
+    }
+  </style>
 </head>
+<body>
+<div class="app">
 
-<body class="dark">
+  <div id="toast" class="toast"></div>
+  <div id="loaderOverlay" class="loader-overlay" style="display:none;">
+    <div class="loader-box">
+      <div class="spinner"></div>
+      <p>Loading...</p>
+    </div>
+  </div>
 
-<!-- Sidebar -->
-<div class="sidebar">
+  <!-- LOGIN -->
+  <div id="loginPage">
+    <div class="logo-big"><i class="fas fa-crown"></i></div>
+    <h1>RK Verse</h1>
+    <p>Sign in to continue</p>
+    <div class="input-group">
+      <label><i class="fas fa-envelope"></i> Email</label>
+      <input type="email" id="loginEmail" placeholder="admin@rk.com" />
+    </div>
+    <div class="input-group">
+      <label><i class="fas fa-lock"></i> Password</label>
+      <input type="password" id="loginPassword" placeholder="••••••••" />
+    </div>
+    <button class="login-btn" id="loginBtn"><i class="fas fa-sign-in-alt"></i> Login</button>
+    <div class="login-error" id="loginError"></div>
+  </div>
 
-<div class="logo">
+  <!-- DASHBOARD -->
+  <div id="dashboard">
 
-<div class="logo-icon">
-<i class="fa-solid fa-shield"></i>
+    <header class="header">
+      <div class="logo-area">
+        <div class="logo-box"><i class="fas fa-crown"></i></div>
+        <h1>RK <span>Verse</span></h1>
+      </div>
+      <div class="user-badge">
+        <i class="fas fa-user-circle"></i>
+        <span class="name" id="userName">Admin</span>
+        <span class="role" id="userRole">Admin</span>
+      </div>
+    </header>
+
+    <div class="content-area">
+
+      <!-- PAGE: DASHBOARD -->
+      <div id="page-dashboard" class="page active">
+        <div class="stats-grid">
+          <div class="stat-card"><div class="num" id="totalFilled">0</div><div class="label"><i class="fas fa-file-alt"></i> Total Forms</div></div>
+          <div class="stat-card"><div class="num" id="totalApproved">0</div><div class="label"><i class="fas fa-check-circle" style="color:#16a34a;"></i> Approved</div></div>
+          <div class="stat-card"><div class="num" id="totalRejected">0</div><div class="label"><i class="fas fa-times-circle" style="color:#dc2626;"></i> Rejected</div></div>
+          <div class="stat-card"><div class="num" id="totalPending">0</div><div class="label"><i class="fas fa-clock" style="color:#eab308;"></i> Pending</div></div>
+          <div class="stat-card full"><div class="num" id="totalPayment">₹0</div><div class="label"><i class="fas fa-coins" style="color:#f97316;"></i> Total Payment (₹3/approved form)</div></div>
+        </div>
+
+        <!-- Chart -->
+        <div class="chart-container">
+          <canvas id="statusChart"></canvas>
+        </div>
+
+        <div class="sheet-header-card"><h3><i class="fas fa-users-cog"></i> Users</h3><span class="badge" id="authCount">0</span></div>
+        <div class="data-card-list" id="authUserList"><div class="empty-state">Loading users...</div></div>
+
+        <div class="sheet-header-card"><h3><i class="fas fa-database"></i> Recent Forms</h3><span class="badge" id="dataCount">0</span></div>
+        <div class="data-card-list" id="dataCardList"><div class="empty-state">Loading data...</div></div>
+
+        <div class="sheet-header-card"><h3><i class="fas fa-hand-holding-usd"></i> Payout</h3><span class="badge" id="payoutCount">0</span></div>
+        <div class="data-card-list" id="payoutCardList"><div class="empty-state">No payout data</div></div>
+      </div>
+
+      <!-- PAGE: WORK (Super Admin) -->
+      <div id="page-work" class="page">
+        <div class="sheet-header-card"><h3><i class="fas fa-tasks"></i> Pending Forms</h3></div>
+        <div class="data-card-list" id="pendingWorkList"><div class="empty-state">No pending forms</div></div>
+        <div class="sheet-header-card"><h3><i class="fas fa-check-circle"></i> All Forms</h3></div>
+        <div class="data-card-list" id="allWorkList"><div class="empty-state">No forms</div></div>
+      </div>
+
+      <!-- PAGE: DEO WORK (Fill Form) -->
+      <div id="page-deo-work" class="page">
+        <div class="sheet-header-card"><h3><i class="fas fa-pen-alt"></i> Fill Form</h3></div>
+        <div class="deo-note"><i class="fas fa-info-circle"></i> Fill the form below. It will be sent to Super Admin for approval.</div>
+        <div class="form-card" id="deoForm">
+          <div class="field"><label>Form Type</label>
+            <select id="dFormType">
+              <option value="Latest Jobs">Latest Jobs</option>
+              <option value="Admit Card">Admit Card</option>
+              <option value="Results">Results</option>
+              <option value="Answer Key">Answer Key</option>
+              <option value="Offline Jobs">Offline Jobs</option>
+              <option value="Addmission">Addmission</option>
+            </select>
+          </div>
+          <div class="field"><label>Post Name</label><input id="dPostName" placeholder="Post name" /></div>
+          <div class="field"><label>Department Name</label><input id="dDept" placeholder="Department" /></div>
+          <div class="field"><label>Important Dates</label><input id="dDates" placeholder="2026-07-10" /></div>
+          <div class="field"><label>Application Fees</label><input id="dFees" placeholder="100" /></div>
+          <div class="field"><label>Age</label><input id="dAge" placeholder="18-35" /></div>
+          <div class="field"><label>Eligibility</label><input id="dEligibility" placeholder="Graduate" /></div>
+          <div class="field"><label>Post Wise Details</label><input id="dPostDetails" placeholder="Details" /></div>
+          <div class="field"><label>How To Fill</label><input id="dHowFill" placeholder="Instructions" /></div>
+          <div class="field"><label>Apply Link</label><input id="dApplyLink" placeholder="https://apply.com" /></div>
+          <div class="field"><label>Notification Link</label><input id="dNotifLink" placeholder="https://notif.com" /></div>
+          <div class="field"><label>Official Website</label><input id="dWebsite" placeholder="https://official.com" /></div>
+          <div class="field"><label>Remark</label><input id="dRemark" placeholder="Remark" /></div>
+          <button class="btn btn-primary" id="submitDeoForm"><i class="fas fa-paper-plane"></i> Submit Form</button>
+        </div>
+        <div class="sheet-header-card"><h3><i class="fas fa-list"></i> My Submitted Forms</h3></div>
+        <div class="data-card-list" id="deoSubmittedList"><div class="empty-state">No forms submitted</div></div>
+      </div>
+
+      <!-- PAGE: DEO WITHDRAW -->
+      <div id="page-deo-withdraw" class="page">
+        <div class="sheet-header-card"><h3><i class="fas fa-wallet"></i> My Earnings</h3></div>
+        <div class="withdraw-card">
+          <div class="label">Total Earned</div>
+          <div class="amount-display" id="deoTotalEarn">₹0</div>
+          <div class="withdraw-grid">
+            <div class="item"><div class="num" id="deoWithdrawn">₹0</div><div class="lbl">Withdrawn</div></div>
+            <div class="item"><div class="num" id="deoPending">₹0</div><div class="lbl">Pending</div></div>
+            <div class="item"><div class="num" id="deoAvailable">₹0</div><div class="lbl">Available</div></div>
+          </div>
+        </div>
+        <div class="form-card">
+          <div class="field"><label>Amount to Withdraw (₹)</label>
+            <input type="number" id="withdrawAmount" placeholder="Enter amount" min="1" />
+          </div>
+          <button class="btn btn-success" id="withdrawBtn"><i class="fas fa-hand-holding-usd"></i> Request Withdrawal</button>
+          <div style="margin-top:8px; font-size:0.7rem; color:#64748b; text-align:center;">
+            <i class="fas fa-info-circle"></i> Withdrawal requests will be reviewed by Super Admin
+          </div>
+        </div>
+        <div class="sheet-header-card"><h3><i class="fas fa-history"></i> Withdrawal History</h3></div>
+        <div class="data-card-list" id="withdrawHistoryList"><div class="empty-state">No withdrawal requests</div></div>
+      </div>
+
+      <!-- PAGE: USERS (Super Admin) -->
+      <div id="page-users" class="page">
+        <div class="sheet-header-card"><h3><i class="fas fa-user-plus"></i> Manage Users</h3></div>
+        <div class="form-card">
+          <div class="field"><label>Email</label><input id="uEmail" placeholder="user@rk.com" /></div>
+          <div class="field"><label>Password</label><input id="uPass" placeholder="password" /></div>
+          <div class="field"><label>Role</label>
+            <select id="uRole"><option value="DEO">DEO</option><option value="Super Admin">Super Admin</option></select>
+          </div>
+          <div class="field"><label>Name</label><input id="uName" placeholder="Full name" /></div>
+          <div class="btn-group">
+            <button class="btn btn-primary" id="createUserBtn"><i class="fas fa-user-plus"></i> Create</button>
+            <button class="btn btn-danger" id="removeUserBtn"><i class="fas fa-user-minus"></i> Remove</button>
+          </div>
+        </div>
+        <div class="sheet-header-card"><h3><i class="fas fa-list"></i> All Users</h3></div>
+        <div class="data-card-list" id="usersCardList"><div class="empty-state">No users</div></div>
+      </div>
+
+      <!-- PAGE: PAYOUT (Super Admin) -->
+      <div id="page-payout" class="page">
+        <div class="sheet-header-card"><h3><i class="fas fa-hand-holding-usd"></i> Withdrawal Requests</h3></div>
+        <div class="data-card-list" id="withdrawRequestsList"><div class="empty-state">No withdrawal requests</div></div>
+        <div class="sheet-header-card"><h3><i class="fas fa-list"></i> All Payouts</h3></div>
+        <div class="data-card-list" id="payoutFullCardList"><div class="empty-state">No records</div></div>
+      </div>
+
+      <!-- PAGE: PROFILE -->
+      <div id="page-profile" class="page">
+        <div class="profile-card">
+          <div class="avatar"><i class="fas fa-user"></i></div>
+          <h3 id="profDisplayName">Admin</h3>
+          <p style="color:#64748b; font-size:0.8rem;" id="profDisplayEmail">admin@rk.com</p>
+          <p style="font-size:0.75rem; background:#f1f5f9; padding:4px 12px; border-radius:20px; display:inline-block; margin:4px 0 10px;" id="profDisplayRole">Super Admin</p>
+          <div class="form-card" style="text-align:left; padding:10px;">
+            <div class="field"><label>Name</label><input id="profName" placeholder="Your name" /></div>
+            <div class="field"><label>Email</label><input id="profEmail" placeholder="email@rk.com" /></div>
+            <div class="field"><label>Role</label><input id="profRole" disabled /></div>
+            <div class="field"><label>Pending Payment</label><input id="profPending" disabled /></div>
+            <button class="btn btn-primary" id="updateProfileBtn"><i class="fas fa-save"></i> Update Profile</button>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- BOTTOM NAV -->
+    <nav class="bottom-nav" id="bottomNav">
+      <button class="active" data-page="dashboard"><i class="fas fa-chart-pie"></i> Home</button>
+      <button data-page="work" id="workNavBtn"><i class="fas fa-tasks"></i> Work</button>
+      <button data-page="deo-work" id="deoWorkNavBtn"><i class="fas fa-pen-alt"></i> Form</button>
+      <button data-page="deo-withdraw" id="deoWithdrawNavBtn"><i class="fas fa-wallet"></i> Withdraw</button>
+      <button data-page="users" id="usersNavBtn"><i class="fas fa-users"></i> Users</button>
+      <button data-page="payout" id="payoutNavBtn"><i class="fas fa-hand-holding-usd"></i> Payout</button>
+      <button data-page="profile"><i class="fas fa-user"></i> Profile</button>
+      <button class="logout-btn-nav" id="logoutBtnNav"><i class="fas fa-sign-out-alt"></i> Logout</button>
+    </nav>
+
+  </div>
 </div>
 
-<div>
-<h2>SarkariSetu</h2>
-<p>Admin Panel</p>
-</div>
-
-</div>
-
-<ul>
-
-<li class="active">
-<i class="fa-solid fa-house"></i>
-<span>Home</span>
-</li>
-
-<li>
-<i class="fa-solid fa-briefcase"></i>
-<span>Work</span>
-</li>
-
-<li>
-<i class="fa-solid fa-wallet"></i>
-<span>Payout</span>
-</li>
-
-<li>
-<i class="fa-solid fa-users"></i>
-<span>Users</span>
-</li>
-
-<li>
-<i class="fa-solid fa-chart-column"></i>
-<span>Reports</span>
-</li>
-
-<li>
-<i class="fa-solid fa-gear"></i>
-<span>Settings</span>
-</li>
-
-</ul>
-
-<div class="logout">
-<i class="fa-solid fa-right-from-bracket"></i>
-<span>Logout</span>
-</div>
-
-</div>
-
-<!-- Main -->
-
-<div class="main">
-
-<header>
-
-<div class="menu-btn">
-<i class="fa-solid fa-bars"></i>
-</div>
-
-<div class="search">
-
-<i class="fa-solid fa-magnifying-glass"></i>
-
-<input
-type="text"
-placeholder="Search here...">
-
-</div>
-
-<div class="header-right">
-
-<button id="themeToggle">
-<i class="fa-solid fa-moon"></i>
-</button>
-
-<div class="notification">
-<i class="fa-regular fa-bell"></i>
-<span>8</span>
-</div>
-
-<div class="profile">
-
-<img
-src="https://i.pravatar.cc/100">
-
-<div>
-
-<h4>Ranjeet Kushwaha</h4>
-
-<p>Super Admin</p>
-
-</div>
-
-</div>
-
-</div>
-
-</header>
-
-<section class="welcome">
-
-<div>
-
-<h1>Dashboard</h1>
-
-<p>
-Welcome back, Ranjeet!
-Here's what's happening today.
-</p>
-
-</div>
-
-</section>
-
-<!-- Cards -->
-
-<section class="cards">
-
-<div class="card blue">
-<h4>Total Users</h4>
-<h2>1,245</h2>
-<p>+12.5%</p>
-</div>
-
-<div class="card green">
-<h4>Active Work</h4>
-<h2>356</h2>
-<p>+8.2%</p>
-</div>
-
-<div class="card purple">
-<h4>Total Payout</h4>
-<h2>₹4,85,000</h2>
-<p>+15%</p>
-</div>
-
-<div class="card orange">
-<h4>Pending</h4>
-<h2>₹42,500</h2>
-<p>-3.6%</p>
-</div>
-
-<div class="card cyan">
-<h4>Completed</h4>
-<h2>2,150</h2>
-<p>+10%</p>
-</div>
-
-</section>
-
-<!-- Charts -->
-
-<section class="charts">
-
-<div class="chart-box">
-<canvas id="lineChart"></canvas>
-</div>
-
-<div class="chart-box">
-<canvas id="barChart"></canvas>
-</div>
-
-<div class="chart-box">
-<canvas id="areaChart"></canvas>
-</div>
-
-</section>
-
-<!-- Table -->
-
-<section class="table-box">
-
-<h2>Recent Work</h2>
-
-<table>
-
-<thead>
-
-<tr>
-
-<th>ID</th>
-
-<th>Name</th>
-
-<th>Task</th>
-
-<th>Status</th>
-
-</tr>
-
-</thead>
-
-<tbody>
-
-<tr>
-
-<td>#1258</td>
-
-<td>Amit Kumar</td>
-
-<td>Image Labeling</td>
-
-<td>
-<span class="badge pending">
-Pending
-</span>
-</td>
-
-</tr>
-
-<tr>
-
-<td>#1257</td>
-
-<td>Rahul Verma</td>
-
-<td>Collection</td>
-
-<td>
-<span class="badge progress">
-In Progress
-</span>
-</td>
-
-</tr>
-
-<tr>
-
-<td>#1256</td>
-
-<td>Neha Singh</td>
-
-<td>Verification</td>
-
-<td>
-<span class="badge done">
-Completed
-</span>
-</td>
-
-</tr>
-
-</tbody>
-
-</table>
-
-</section>
-
-</div>
-
-<script src="js/app.js"></script>
-
+<script>
+// =============================================================
+// CONFIG: REPLACE WITH YOUR APPS SCRIPT WEB APP URL
+// =============================================================
+const API_BASE = 'https://script.google.com/macros/s/AKfycbzVhq3hLWn8MalA99WoH4ubKJI9k4YRLKNna9TWulsq3d4oUzYy7SPCJFoiBIMX49PL/exec';
+
+// =============================================================
+// STATE
+// =============================================================
+let currentUser = null;
+let allData = [];
+let allPayout = [];
+let allUsers = [];
+let withdrawRequests = [];
+let isLoggedIn = false;
+let statusChart = null;
+
+// =============================================================
+// DOM REFS
+// =============================================================
+const loginPage = document.getElementById('loginPage');
+const dashboard = document.getElementById('dashboard');
+const loginEmail = document.getElementById('loginEmail');
+const loginPassword = document.getElementById('loginPassword');
+const loginBtn = document.getElementById('loginBtn');
+const loginError = document.getElementById('loginError');
+const logoutBtnNav = document.getElementById('logoutBtnNav');
+const userName = document.getElementById('userName');
+const userRole = document.getElementById('userRole');
+const loaderOverlay = document.getElementById('loaderOverlay');
+const toast = document.getElementById('toast');
+
+const totalFilled = document.getElementById('totalFilled');
+const totalApproved = document.getElementById('totalApproved');
+const totalRejected = document.getElementById('totalRejected');
+const totalPending = document.getElementById('totalPending');
+const totalPayment = document.getElementById('totalPayment');
+const authCount = document.getElementById('authCount');
+const dataCount = document.getElementById('dataCount');
+const payoutCount = document.getElementById('payoutCount');
+
+const authUserList = document.getElementById('authUserList');
+const dataCardList = document.getElementById('dataCardList');
+const payoutCardList = document.getElementById('payoutCardList');
+const pendingWorkList = document.getElementById('pendingWorkList');
+const allWorkList = document.getElementById('allWorkList');
+const usersCardList = document.getElementById('usersCardList');
+const payoutFullCardList = document.getElementById('payoutFullCardList');
+const deoSubmittedList = document.getElementById('deoSubmittedList');
+const withdrawHistoryList = document.getElementById('withdrawHistoryList');
+const withdrawRequestsList = document.getElementById('withdrawRequestsList');
+
+const profDisplayName = document.getElementById('profDisplayName');
+const profDisplayEmail = document.getElementById('profDisplayEmail');
+const profDisplayRole = document.getElementById('profDisplayRole');
+const profName = document.getElementById('profName');
+const profEmail = document.getElementById('profEmail');
+const profRole = document.getElementById('profRole');
+const profPending = document.getElementById('profPending');
+const updateProfileBtn = document.getElementById('updateProfileBtn');
+
+const createUserBtn = document.getElementById('createUserBtn');
+const removeUserBtn = document.getElementById('removeUserBtn');
+const submitDeoForm = document.getElementById('submitDeoForm');
+const withdrawBtn = document.getElementById('withdrawBtn');
+const withdrawAmount = document.getElementById('withdrawAmount');
+
+const deoTotalEarn = document.getElementById('deoTotalEarn');
+const deoWithdrawn = document.getElementById('deoWithdrawn');
+const deoPending = document.getElementById('deoPending');
+const deoAvailable = document.getElementById('deoAvailable');
+
+const workNavBtn = document.getElementById('workNavBtn');
+const deoWorkNavBtn = document.getElementById('deoWorkNavBtn');
+const deoWithdrawNavBtn = document.getElementById('deoWithdrawNavBtn');
+const usersNavBtn = document.getElementById('usersNavBtn');
+const payoutNavBtn = document.getElementById('payoutNavBtn');
+
+// =============================================================
+// TOAST & LOADER
+// =============================================================
+function showToast(message, duration = 2500) {
+  toast.textContent = message;
+  toast.classList.add('show');
+  clearTimeout(toast._timer);
+  toast._timer = setTimeout(() => toast.classList.remove('show'), duration);
+}
+
+function showLoader(show) {
+  loaderOverlay.style.display = show ? 'flex' : 'none';
+}
+
+// =============================================================
+// API CALL
+// =============================================================
+function callApi(action, payload = {}) {
+  return new Promise((resolve) => {
+    const callbackName = 'jsonp_cb_' + Date.now() + '_' + Math.random().toString(36).substr(2, 6);
+    window[callbackName] = function(data) {
+      delete window[callbackName];
+      if (document.body.contains(script)) document.body.removeChild(script);
+      resolve(data);
+    };
+    const script = document.createElement('script');
+    const url = new URL(API_BASE);
+    url.searchParams.set('action', action);
+    for (let k in payload) {
+      if (payload[k] !== undefined && payload[k] !== null) url.searchParams.set(k, payload[k]);
+    }
+    url.searchParams.set('callback', callbackName);
+    script.src = url.toString();
+    document.body.appendChild(script);
+    setTimeout(() => {
+      if (window[callbackName]) {
+        window[callbackName]({ error: 'Request timeout. Check API URL.' });
+        delete window[callbackName];
+        if (document.body.contains(script)) document.body.removeChild(script);
+      }
+    }, 10000);
+  });
+}
+
+// =============================================================
+// RENDER FUNCTIONS
+// =============================================================
+function renderAuthUsers(users) {
+  if (!users || !users.length) { authUserList.innerHTML = `<div class="empty-state">No users</div>`; return; }
+  let html = '';
+  users.slice(0, 10).forEach(u => {
+    html += `<div class="data-item">
+      <div class="main"><span class="title">${u.name || u.email}</span><span class="sub">${u.email}</span></div>
+      <span style="font-size:0.65rem; background:#e2e8f0; padding:2px 10px; border-radius:20px;">${u.role || 'DEO'}</span>
+    </div>`;
+  });
+  authUserList.innerHTML = html;
+}
+
+function renderDataCards(data) {
+  if (!data || !data.length) { dataCardList.innerHTML = `<div class="empty-state">No forms</div>`; return; }
+  let html = '';
+  data.slice(0, 15).forEach(r => {
+    const s = (r.Status || 'pending').toLowerCase();
+    const cls = s === 'approved' ? 'approved' : s === 'rejected' ? 'rejected' : 'pending';
+    html += `<div class="data-item">
+      <div class="main"><span class="title">${r.PostName || 'Untitled'}</span><span class="sub">${r.FormType || ''} · ${r.DepartmentName || ''}</span></div>
+      <span class="status-badge ${cls}">${s}</span>
+    </div>`;
+  });
+  dataCardList.innerHTML = html;
+}
+
+function renderPayoutCards(data) {
+  if (!data || !data.length) { payoutCardList.innerHTML = `<div class="empty-state">No payout</div>`; return; }
+  let html = '';
+  data.slice(0, 10).forEach(r => {
+    const s = (r.Status || 'pending').toLowerCase();
+    const cls = s === 'paid' ? 'paid' : 'pending';
+    html += `<div class="data-item">
+      <div class="main"><span class="title">${r['DEO Email'] || ''}</span><span class="sub">₹${r.Amount || 0}</span></div>
+      <span class="status-badge ${cls}">${r.Status || 'Pending'}</span>
+    </div>`;
+  });
+  payoutCardList.innerHTML = html;
+}
+
+function renderWorkLists(data) {
+  const pending = data.filter(r => (r.Status || 'pending').toLowerCase() === 'pending');
+  if (!pending.length) {
+    pendingWorkList.innerHTML = `<div class="empty-state">✅ No pending forms</div>`;
+  } else {
+    let html = '';
+    pending.forEach(r => {
+      html += `<div class="data-item">
+        <div class="main">
+          <span class="title">${r.PostName || 'Untitled'}</span>
+          <span class="sub">${r.FormType || ''} · ${r.DepartmentName || ''} · ${r['DEO Email'] || ''}</span>
+        </div>
+        <div class="action-btns">
+          <button class="btn-sm approve" onclick="approveForm('${r._id || r.PostName}')"><i class="fas fa-check"></i> Approve</button>
+          <button class="btn-sm reject" onclick="rejectForm('${r._id || r.PostName}')"><i class="fas fa-times"></i> Reject</button>
+        </div>
+      </div>`;
+    });
+    pendingWorkList.innerHTML = html;
+  }
+
+  if (!data || !data.length) {
+    allWorkList.innerHTML = `<div class="empty-state">No forms</div>`;
+    return;
+  }
+  let html = '';
+  data.slice(0, 20).forEach(r => {
+    const s = (r.Status || 'pending').toLowerCase();
+    const cls = s === 'approved' ? 'approved' : s === 'rejected' ? 'rejected' : 'pending';
+    html += `<div class="data-item">
+      <div class="main"><span class="title">${r.PostName || 'Untitled'}</span><span class="sub">${r.FormType || ''} · ${r.DepartmentName || ''}</span></div>
+      <span class="status-badge ${cls}">${s}</span>
+    </div>`;
+  });
+  allWorkList.innerHTML = html;
+}
+
+function renderDeoSubmitted(data) {
+  if (!data || !data.length || !currentUser) {
+    deoSubmittedList.innerHTML = `<div class="empty-state">No forms submitted</div>`;
+    return;
+  }
+  const myForms = data.filter(r => r['DEO Email'] === currentUser.email);
+  if (!myForms.length) {
+    deoSubmittedList.innerHTML = `<div class="empty-state">No forms submitted</div>`;
+    return;
+  }
+  let html = '';
+  myForms.slice(0, 15).forEach(r => {
+    const s = (r.Status || 'pending').toLowerCase();
+    const cls = s === 'approved' ? 'approved' : s === 'rejected' ? 'rejected' : 'pending';
+    html += `<div class="data-item">
+      <div class="main"><span class="title">${r.PostName || 'Untitled'}</span><span class="sub">${r.FormType || ''} · ${r.DepartmentName || ''}</span></div>
+      <span class="status-badge ${cls}">${s}</span>
+    </div>`;
+  });
+  deoSubmittedList.innerHTML = html;
+}
+
+function renderUsersCards(users) {
+  if (!users || !users.length) { usersCardList.innerHTML = `<div class="empty-state">No users</div>`; return; }
+  let html = '';
+  users.forEach(u => {
+    html += `<div class="data-item">
+      <div class="main"><span class="title">${u.name || u.email}</span><span class="sub">${u.email}</span></div>
+      <span style="font-size:0.65rem; background:#e2e8f0; padding:2px 10px; border-radius:20px;">${u.role || 'DEO'}</span>
+    </div>`;
+  });
+  usersCardList.innerHTML = html;
+}
+
+function renderPayoutFullCards(data) {
+  if (!data || !data.length) { payoutFullCardList.innerHTML = `<div class="empty-state">No records</div>`; return; }
+  let html = '';
+  data.forEach(r => {
+    const s = (r.Status || 'pending').toLowerCase();
+    const cls = s === 'paid' ? 'paid' : 'pending';
+    html += `<div class="data-item">
+      <div class="main"><span class="title">${r['DEO Email'] || ''}</span><span class="sub">₹${r.Amount || 0}</span></div>
+      <span class="status-badge ${cls}">${r.Status || 'Pending'}</span>
+    </div>`;
+  });
+  payoutFullCardList.innerHTML = html;
+}
+
+function renderWithdrawHistory(requests) {
+  if (!requests || !requests.length) {
+    withdrawHistoryList.innerHTML = `<div class="empty-state">No withdrawal requests</div>`;
+    return;
+  }
+  const myRequests = requests.filter(r => r['DEO Email'] === currentUser?.email);
+  if (!myRequests.length) {
+    withdrawHistoryList.innerHTML = `<div class="empty-state">No withdrawal requests</div>`;
+    return;
+  }
+  let html = '';
+  myRequests.slice(0, 15).forEach(r => {
+    const status = r.Status || 'Pending';
+    const cls = status === 'Approved' ? 'approved' : status === 'Rejected' ? 'rejected' : 'pending';
+    html += `<div class="data-item">
+      <div class="main"><span class="title">₹${r.Amount || 0}</span><span class="sub">${r.Date ? r.Date.slice(0,10) : ''}</span></div>
+      <span class="status-badge ${cls}">${status}</span>
+    </div>`;
+  });
+  withdrawHistoryList.innerHTML = html;
+}
+
+function renderWithdrawRequests(requests) {
+  if (!requests || !requests.length) {
+    withdrawRequestsList.innerHTML = `<div class="empty-state">No withdrawal requests</div>`;
+    return;
+  }
+  let html = '';
+  const pending = requests.filter(r => r.Status === 'Pending');
+  if (!pending.length) {
+    withdrawRequestsList.innerHTML = `<div class="empty-state">✅ No pending requests</div>`;
+    return;
+  }
+  pending.forEach(r => {
+    html += `<div class="data-item">
+      <div class="main"><span class="title">${r['DEO Email'] || ''}</span><span class="sub">₹${r.Amount || 0} · ${r.Date ? r.Date.slice(0,10) : ''}</span></div>
+      <div class="action-btns">
+        <button class="btn-sm approve" onclick="approveWithdraw('${r._id}')"><i class="fas fa-check"></i> Pay</button>
+        <button class="btn-sm reject" onclick="rejectWithdraw('${r._id}')"><i class="fas fa-times"></i> Reject</button>
+      </div>
+    </div>`;
+  });
+  withdrawRequestsList.innerHTML = html;
+}
+
+function updateDeoEarnings() {
+  if (!currentUser || currentUser.role !== 'DEO') return;
+  
+  const myForms = allData.filter(r => r['DEO Email'] === currentUser.email && r.Status === 'approved');
+  const totalEarned = myForms.length * 3;
+  
+  const myWithdrawals = withdrawRequests.filter(r => r['DEO Email'] === currentUser.email);
+  const totalWithdrawn = myWithdrawals.filter(r => r.Status === 'Approved').reduce((sum, r) => sum + (r.Amount || 0), 0);
+  const totalPendingWithdraw = myWithdrawals.filter(r => r.Status === 'Pending').reduce((sum, r) => sum + (r.Amount || 0), 0);
+  const available = totalEarned - totalWithdrawn;
+  
+  deoTotalEarn.textContent = '₹' + totalEarned;
+  deoWithdrawn.textContent = '₹' + totalWithdrawn;
+  deoPending.textContent = '₹' + totalPendingWithdraw;
+  deoAvailable.textContent = '₹' + available;
+}
+
+// =============================================================
+// CHART
+// =============================================================
+function updateChart() {
+  const ctx = document.getElementById('statusChart').getContext('2d');
+  const approved = parseInt(totalApproved.textContent) || 0;
+  const rejected = parseInt(totalRejected.textContent) || 0;
+  const pending = parseInt(totalPending.textContent) || 0;
+  
+  if (statusChart) {
+    statusChart.destroy();
+  }
+  
+  statusChart = new Chart(ctx, {
+    type: 'doughnut',
+    data: {
+      labels: ['Approved', 'Rejected', 'Pending'],
+      datasets: [{
+        data: [approved, rejected, pending],
+        backgroundColor: ['#16a34a', '#dc2626', '#eab308'],
+        borderWidth: 2,
+        borderColor: '#fff'
+      }]
+    },
+    options: {
+      responsive: true,
+      plugins: {
+        legend: {
+          position: 'bottom',
+          labels: {
+            font: { size: 11 },
+            padding: 10,
+            usePointStyle: true
+          }
+        },
+        title: {
+          display: true,
+          text: 'Form Status Overview',
+          font: { size: 14, weight: '600' },
+          padding: { bottom: 10 }
+        }
+      },
+      cutout: '60%'
+    }
+  });
+}
+
+// =============================================================
+// WORK ACTIONS (Approve/Reject Forms)
+// =============================================================
+window.approveForm = async function(id) {
+  if (!confirm('Approve this form? This will add ₹3 to DEO earnings.')) return;
+  const form = allData.find(r => (r._id || r.PostName) === id && (r.Status || 'pending').toLowerCase() === 'pending');
+  if (!form) { showToast('Form not found', 2000); return; }
+  form.Status = 'approved';
+  showLoader(true);
+  const resp = await callApi('saveFormData', form);
+  showLoader(false);
+  if (resp?.success) {
+    showToast('✅ Form approved! ₹3 added to DEO earnings.', 2500);
+    await fetchAllData();
+  } else {
+    showToast('Error: ' + (resp?.message || 'Failed to approve'), 3000);
+  }
+};
+
+window.rejectForm = async function(id) {
+  if (!confirm('Reject this form?')) return;
+  const form = allData.find(r => (r._id || r.PostName) === id && (r.Status || 'pending').toLowerCase() === 'pending');
+  if (!form) { showToast('Form not found', 2000); return; }
+  form.Status = 'rejected';
+  showLoader(true);
+  const resp = await callApi('saveFormData', form);
+  showLoader(false);
+  if (resp?.success) {
+    showToast('❌ Form rejected', 2000);
+    await fetchAllData();
+  } else {
+    showToast('Error: ' + (resp?.message || 'Failed to reject'), 3000);
+  }
+};
+
+// =============================================================
+// WITHDRAW ACTIONS (Super Admin)
+// =============================================================
+window.approveWithdraw = async function(id) {
+  if (!confirm('Approve this withdrawal request?')) return;
+  const req = withdrawRequests.find(r => r._id === id && r.Status === 'Pending');
+  if (!req) { showToast('Request not found', 2000); return; }
+  req.Status = 'Approved';
+  showLoader(true);
+  const resp = await callApi('updateWithdraw', req);
+  showLoader(false);
+  if (resp?.success) {
+    showToast('✅ Withdrawal approved!', 2000);
+    await fetchAllData();
+  } else {
+    showToast('Error: ' + (resp?.message || 'Failed to approve'), 3000);
+  }
+};
+
+window.rejectWithdraw = async function(id) {
+  if (!confirm('Reject this withdrawal request?')) return;
+  const req = withdrawRequests.find(r => r._id === id && r.Status === 'Pending');
+  if (!req) { showToast('Request not found', 2000); return; }
+  req.Status = 'Rejected';
+  showLoader(true);
+  const resp = await callApi('updateWithdraw', req);
+  showLoader(false);
+  if (resp?.success) {
+    showToast('❌ Withdrawal rejected', 2000);
+    await fetchAllData();
+  } else {
+    showToast('Error: ' + (resp?.message || 'Failed to reject'), 3000);
+  }
+};
+
+// =============================================================
+// DEO WITHDRAW REQUEST
+// =============================================================
+withdrawBtn.addEventListener('click', async function() {
+  if (!currentUser || currentUser.role !== 'DEO') {
+    showToast('Only DEO users can withdraw', 2000);
+    return;
+  }
+  
+  const amount = parseInt(withdrawAmount.value);
+  if (!amount || amount <= 0) {
+    showToast('Please enter a valid amount', 2000);
+    return;
+  }
+  
+  const myForms = allData.filter(r => r['DEO Email'] === currentUser.email && r.Status === 'approved');
+  const totalEarned = myForms.length * 3;
+  const myWithdrawals = withdrawRequests.filter(r => r['DEO Email'] === currentUser.email);
+  const totalWithdrawn = myWithdrawals.filter(r => r.Status === 'Approved').reduce((sum, r) => sum + (r.Amount || 0), 0);
+  const available = totalEarned - totalWithdrawn;
+  
+  if (amount > available) {
+    showToast('Insufficient balance. Available: ₹' + available, 3000);
+    return;
+  }
+  
+  const request = {
+    'DEO Email': currentUser.email,
+    Amount: amount,
+    Status: 'Pending',
+    Date: new Date().toISOString(),
+    _id: 'wd_' + Date.now()
+  };
+  
+  showLoader(true);
+  const resp = await callApi('saveWithdraw', request);
+  showLoader(false);
+  if (resp?.success) {
+    showToast('✅ Withdrawal request submitted!', 2500);
+    withdrawAmount.value = '';
+    await fetchAllData();
+  } else {
+    showToast('Error: ' + (resp?.message || 'Failed to submit'), 3000);
+  }
+});
+
+// =============================================================
+// DEO SUBMIT FORM
+// =============================================================
+submitDeoForm.addEventListener('click', async function() {
+  if (!currentUser) { showToast('Please login first', 2000); return; }
+  if (currentUser.role === 'Super Admin') {
+    showToast('Super Admin cannot fill forms. Please switch to DEO account.', 3000);
+    return;
+  }
+  
+  const formData = {
+    FormType: document.getElementById('dFormType').value,
+    PostName: document.getElementById('dPostName').value,
+    DepartmentName: document.getElementById('dDept').value,
+    ImportantDates: document.getElementById('dDates').value,
+    ApplicationFees: document.getElementById('dFees').value,
+    Age: document.getElementById('dAge').value,
+    Eligibility: document.getElementById('dEligibility').value,
+    PostWiseDetails: document.getElementById('dPostDetails').value,
+    HowToFill: document.getElementById('dHowFill').value,
+    ApplyLink: document.getElementById('dApplyLink').value,
+    NotificationLink: document.getElementById('dNotifLink').value,
+    OfficialWebsiteLink: document.getElementById('dWebsite').value,
+    Remark: document.getElementById('dRemark').value,
+    Status: 'pending',
+    'DEO Email': currentUser.email,
+    Date: new Date().toISOString(),
+    _id: 'form_' + Date.now()
+  };
+  
+  if (!formData.PostName) { showToast('Post Name is required', 2000); return; }
+  
+  showLoader(true);
+  const resp = await callApi('saveFormData', formData);
+  showLoader(false);
+  if (resp?.success) {
+    showToast('✅ Form submitted for approval!', 2500);
+    document.getElementById('dPostName').value = '';
+    document.getElementById('dDept').value = '';
+    document.getElementById('dDates').value = '';
+    document.getElementById('dFees').value = '';
+    document.getElementById('dAge').value = '';
+    document.getElementById('dEligibility').value = '';
+    document.getElementById('dPostDetails').value = '';
+    document.getElementById('dHowFill').value = '';
+    document.getElementById('dApplyLink').value = '';
+    document.getElementById('dNotifLink').value = '';
+    document.getElementById('dWebsite').value = '';
+    document.getElementById('dRemark').value = '';
+    await fetchAllData();
+  } else {
+    showToast('Error: ' + (resp?.message || 'Failed to submit'), 3000);
+  }
+});
+
+// =============================================================
+// FETCH ALL DATA
+// =============================================================
+async function fetchAllData() {
+  showLoader(true);
+  try {
+    const [usersResp, dataResp, payoutResp, withdrawResp] = await Promise.all([
+      callApi('getUsers'),
+      callApi('getFormData'),
+      callApi('getPayoutData'),
+      callApi('getWithdrawRequests')
+    ]);
+
+    if (usersResp && !usersResp.error) {
+      allUsers = usersResp || [];
+      authCount.textContent = allUsers.length;
+      renderAuthUsers(allUsers);
+      renderUsersCards(allUsers);
+    }
+
+    if (dataResp && !dataResp.error) {
+      allData = dataResp || [];
+      dataCount.textContent = allData.length;
+      renderDataCards(allData);
+      renderWorkLists(allData);
+      renderDeoSubmitted(allData);
+      
+      let approved = 0, rejected = 0, pending = 0;
+      allData.forEach(r => {
+        const s = (r.Status || 'pending').toLowerCase();
+        if (s === 'approved') approved++;
+        else if (s === 'rejected') rejected++;
+        else pending++;
+      });
+      totalFilled.textContent = allData.length;
+      totalApproved.textContent = approved;
+      totalRejected.textContent = rejected;
+      totalPending.textContent = pending;
+      totalPayment.textContent = '₹' + (approved * 3);
+      
+      // Update chart
+      updateChart();
+    }
+
+    if (payoutResp && !payoutResp.error) {
+      allPayout = payoutResp || [];
+      payoutCount.textContent = allPayout.length;
+      renderPayoutCards(allPayout);
+      renderPayoutFullCards(allPayout);
+      if (currentUser) {
+        const up = allPayout.find(p => p['DEO Email'] === currentUser.email);
+        profPending.value = up ? '₹' + up.Amount : '₹0';
+      }
+    }
+
+    if (withdrawResp && !withdrawResp.error) {
+      withdrawRequests = withdrawResp || [];
+      renderWithdrawHistory(withdrawRequests);
+      renderWithdrawRequests(withdrawRequests);
+      updateDeoEarnings();
+    }
+  } catch (e) { 
+    console.warn('Fetch error:', e);
+    showToast('Error loading data', 3000);
+  }
+  showLoader(false);
+}
+
+// =============================================================
+// AUTH
+// =============================================================
+async function handleLogin() {
+  const email = loginEmail.value.trim();
+  const password = loginPassword.value.trim();
+  if (!email || !password) { loginError.textContent = 'Enter email and password'; return; }
+  loginError.textContent = '';
+  loginBtn.disabled = true;
+  loginBtn.innerHTML = '<span class="spinner"></span> Logging in...';
+  
+  const resp = await callApi('verifyLogin', { email, password });
+  loginBtn.disabled = false;
+  loginBtn.innerHTML = '<i class="fas fa-sign-in-alt"></i> Login';
+  
+  if (resp && resp.success && resp.user) {
+    currentUser = resp.user;
+    isLoggedIn = true;
+    localStorage.setItem('rk_user', JSON.stringify(currentUser));
+    
+    userName.textContent = currentUser.name || currentUser.email;
+    userRole.textContent = currentUser.role || 'DEO';
+    profDisplayName.textContent = currentUser.name || currentUser.email;
+    profDisplayEmail.textContent = currentUser.email || '';
+    profDisplayRole.textContent = currentUser.role || 'DEO';
+    profName.value = currentUser.name || '';
+    profEmail.value = currentUser.email || '';
+    profRole.value = currentUser.role || 'DEO';
+    
+    updateNavVisibility();
+    
+    loginPage.style.display = 'none';
+    dashboard.style.display = 'block';
+    loginError.textContent = '';
+    await fetchAllData();
+    showToast('Welcome, ' + (currentUser.name || currentUser.email) + '!', 2000);
+  } else {
+    loginError.textContent = 'Login failed: ' + (resp?.message || 'Invalid credentials');
+  }
+}
+
+function handleLogout() {
+  currentUser = null;
+  isLoggedIn = false;
+  localStorage.removeItem('rk_user');
+  dashboard.style.display = 'none';
+  loginPage.style.display = 'block';
+  loginError.textContent = '';
+  document.querySelectorAll('.bottom-nav button').forEach(b => b.classList.remove('hidden'));
+  showToast('Logged out', 1500);
+}
+
+// =============================================================
+// NAVIGATION VISIBILITY
+// =============================================================
+function updateNavVisibility() {
+  const isSuperAdmin = currentUser && currentUser.role === 'Super Admin';
+  const isDEO = currentUser && currentUser.role === 'DEO';
+  
+  workNavBtn.style.display = isSuperAdmin ? 'flex' : 'none';
+  deoWorkNavBtn.style.display = isDEO ? 'flex' : 'none';
+  deoWithdrawNavBtn.style.display = isDEO ? 'flex' : 'none';
+  usersNavBtn.style.display = isSuperAdmin ? 'flex' : 'none';
+  payoutNavBtn.style.display = isSuperAdmin ? 'flex' : 'none';
+  
+  if (isSuperAdmin) {
+    document.querySelector('.bottom-nav button[data-page="work"]')?.classList.add('active');
+    document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+    document.getElementById('page-work').classList.add('active');
+  } else if (isDEO) {
+    document.querySelector('.bottom-nav button[data-page="deo-work"]')?.classList.add('active');
+    document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+    document.getElementById('page-deo-work').classList.add('active');
+  }
+}
+
+// =============================================================
+// NAVIGATION
+// =============================================================
+document.querySelectorAll('.bottom-nav button[data-page]').forEach(btn => {
+  btn.addEventListener('click', function() {
+    document.querySelectorAll('.bottom-nav button').forEach(b => b.classList.remove('active'));
+    this.classList.add('active');
+    const pageName = this.dataset.page;
+    document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+    document.getElementById('page-' + pageName).classList.add('active');
+  });
+});
+
+// =============================================================
+// EVENT LISTENERS
+// =============================================================
+loginBtn.addEventListener('click', handleLogin);
+logoutBtnNav.addEventListener('click', handleLogout);
+loginPassword.addEventListener('keydown', e => { if (e.key === 'Enter') handleLogin(); });
+loginEmail.addEventListener('keydown', e => { if (e.key === 'Enter') handleLogin(); });
+
+// USERS: Create
+createUserBtn.addEventListener('click', async function() {
+  const email = document.getElementById('uEmail').value.trim();
+  const pass = document.getElementById('uPass').value.trim();
+  const role = document.getElementById('uRole').value;
+  const name = document.getElementById('uName').value.trim();
+  if (!email || !pass) { showToast('Email and password required', 2000); return; }
+  showLoader(true);
+  const resp = await callApi('createUser', { email, password: pass, role, name });
+  showLoader(false);
+  showToast(resp?.message || 'Done', 2000);
+  if (resp?.success) await fetchAllData();
+});
+
+// USERS: Remove
+removeUserBtn.addEventListener('click', async function() {
+  const email = document.getElementById('uEmail').value.trim();
+  if (!email) { showToast('Enter email to remove', 2000); return; }
+  if (!confirm('Remove ' + email + '?')) return;
+  showLoader(true);
+  const resp = await callApi('removeUser', { email });
+  showLoader(false);
+  showToast(resp?.message || 'Done', 2000);
+  if (resp?.success) await fetchAllData();
+});
+
+// PROFILE: Update
+updateProfileBtn.addEventListener('click', function() {
+  if (currentUser) {
+    currentUser.name = profName.value;
+    userName.textContent = currentUser.name;
+    profDisplayName.textContent = currentUser.name;
+    localStorage.setItem('rk_user', JSON.stringify(currentUser));
+    showToast('Profile updated!', 1500);
+  }
+});
+
+// =============================================================
+// CHECK SAVED SESSION
+// =============================================================
+function checkSavedSession() {
+  const saved = localStorage.getItem('rk_user');
+  if (saved) {
+    try {
+      const user = JSON.parse(saved);
+      currentUser = user;
+      isLoggedIn = true;
+      userName.textContent = user.name || user.email;
+      userRole.textContent = user.role || 'DEO';
+      profDisplayName.textContent = user.name || user.email;
+      profDisplayEmail.textContent = user.email || '';
+      profDisplayRole.textContent = user.role || 'DEO';
+      profName.value = user.name || '';
+      profEmail.value = user.email || '';
+      profRole.value = user.role || 'DEO';
+      loginPage.style.display = 'none';
+      dashboard.style.display = 'block';
+      updateNavVisibility();
+      fetchAllData();
+      showToast('Welcome back, ' + (user.name || user.email) + '!', 2000);
+      return true;
+    } catch(e) {
+      localStorage.removeItem('rk_user');
+    }
+  }
+  return false;
+}
+
+// =============================================================
+// INIT
+// =============================================================
+loginPage.style.display = 'block';
+dashboard.style.display = 'none';
+
+if (!checkSavedSession()) {
+  loginPage.style.display = 'block';
+  dashboard.style.display = 'none';
+}
+
+console.log('RK Verse Admin Panel ready.');
+console.log('Please set API_BASE to your Apps Script URL.');
+</script>
 </body>
 </html>
