@@ -3,10 +3,9 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes" />
-  <title>RK Verse Digital</title>
+  <title>RK Digital Verse · Admin Page</title>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" />
   <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,400;14..32,500;14..32,600;14..32,700&display=swap" rel="stylesheet" />
-  <!-- Chart.js for graphs -->
   <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
   <style>
     * { margin:0; padding:0; box-sizing:border-box; font-family:'Inter',sans-serif; }
@@ -20,17 +19,17 @@
     .loader-box .spinner { width:40px; height:40px; border-width:4px; }
     .loader-box p { margin-top:12px; color:#64748b; font-size:0.9rem; }
 
-    #loginPage { background:#fff; padding:32px 24px; border-radius:28px; box-shadow:0 20px 60px rgba(0,0,0,0.08); text-align:center; margin-top:40px; }
+    #loginPage { background:#fff; padding:32px 24px; border-radius:28px; box-shadow:0 20px 60px rgba(0,0,0,0.08); text-align:center; margin-top:20px; }
     #loginPage .logo-big { width:72px; height:72px; background:#0f172a; border-radius:20px; display:flex; align-items:center; justify-content:center; margin:0 auto 16px; font-size:32px; color:#facc15; }
     #loginPage h1 { font-size:1.8rem; font-weight:700; background:linear-gradient(135deg,#facc15,#f97316); -webkit-background-clip:text; -webkit-text-fill-color:transparent; }
     #loginPage p { color:#64748b; margin:8px 0 24px; font-size:0.95rem; }
     #loginPage .input-group { margin-bottom:14px; text-align:left; }
     #loginPage .input-group label { font-size:0.8rem; font-weight:500; color:#334155; display:block; margin-bottom:4px; }
-    #loginPage .input-group input { width:100%; padding:12px 16px; border:1.5px solid #e2e8f0; border-radius:12px; font-size:0.95rem; background:#f8fafc; transition:0.2s; }
+    #loginPage .input-group input { width:100%; padding:12px 16px; border:1.5px solid #e2e8f0; border-radius:12px; font-size:0.95rem; background:#f8fafc; transition:0.2s; -webkit-appearance:none; appearance:none; }
     #loginPage .input-group input:focus { outline:none; border-color:#3b82f6; background:#fff; box-shadow:0 0 0 4px rgba(59,130,246,0.08); }
-    #loginPage .login-btn { width:100%; padding:14px; background:#0f172a; color:#fff; border:none; border-radius:40px; font-weight:600; font-size:1rem; cursor:pointer; transition:0.2s; display:flex; align-items:center; justify-content:center; gap:10px; }
-    #loginPage .login-btn:hover { background:#1e293b; }
-    #loginPage .login-btn:disabled { opacity:0.6; cursor:not-allowed; }
+    #loginPage .login-btn { width:100%; padding:14px; background:#0f172a; color:#fff; border:none; border-radius:40px; font-weight:600; font-size:1rem; cursor:pointer; transition:0.2s; display:flex; align-items:center; justify-content:center; gap:10px; -webkit-tap-highlight-color:transparent; }
+    #loginPage .login-btn:active { transform:scale(0.97); }
+    #loginPage .login-btn:disabled { opacity:0.6; cursor:not-allowed; transform:none; }
     #loginPage .login-error { color:#dc2626; font-size:0.85rem; margin-top:12px; min-height:24px; }
 
     #dashboard { display:none; }
@@ -42,11 +41,12 @@
     .logo-area h1 span { color:#facc15; -webkit-text-fill-color:#facc15; }
     .user-badge { display:flex; align-items:center; gap:6px; background:#1e293b; padding:4px 10px 4px 8px; border-radius:30px; flex-shrink:0; }
     .user-badge i { font-size:0.9rem; color:#facc15; }
-    .user-badge .name { font-weight:500; font-size:0.75rem; white-space:nowrap; }
+    .user-badge .name { font-weight:500; font-size:0.75rem; white-space:nowrap; max-width:80px; overflow:hidden; text-overflow:ellipsis; }
     .user-badge .role { font-size:0.6rem; background:#334155; padding:2px 8px; border-radius:20px; color:#cbd5e1; white-space:nowrap; }
 
     .bottom-nav { position:fixed; bottom:0; left:0; right:0; background:#fff; display:flex; justify-content:space-around; align-items:center; padding:6px 0 env(safe-area-inset-bottom,8px); box-shadow:0 -4px 20px rgba(0,0,0,0.06); border-top:1px solid #e9edf2; z-index:100; max-width:480px; margin:0 auto; }
-    .bottom-nav button { background:none; border:none; display:flex; flex-direction:column; align-items:center; gap:2px; padding:6px 10px; font-size:0.55rem; font-weight:500; color:#94a3b8; cursor:pointer; transition:0.2s; border-radius:12px; min-width:44px; }
+    .bottom-nav button { background:none; border:none; display:flex; flex-direction:column; align-items:center; gap:2px; padding:6px 10px; font-size:0.55rem; font-weight:500; color:#94a3b8; cursor:pointer; transition:0.2s; border-radius:12px; min-width:44px; -webkit-tap-highlight-color:transparent; }
+    .bottom-nav button:active { transform:scale(0.92); }
     .bottom-nav button i { font-size:1.1rem; color:#94a3b8; transition:0.2s; }
     .bottom-nav button.active { color:#0f172a; }
     .bottom-nav button.active i { color:#0f172a; }
@@ -87,12 +87,13 @@
     .form-card { background:#fff; padding:14px; border-radius:14px; margin-bottom:14px; border:1px solid #e9edf2; }
     .form-card .field { margin-bottom:10px; }
     .form-card .field label { font-size:0.7rem; font-weight:500; color:#334155; display:block; margin-bottom:2px; }
-    .form-card .field input, .form-card .field select, .form-card .field textarea { width:100%; padding:8px 12px; border:1.5px solid #e2e8f0; border-radius:8px; font-size:0.8rem; background:#f8fafc; transition:0.2s; }
+    .form-card .field input, .form-card .field select, .form-card .field textarea { width:100%; padding:8px 12px; border:1.5px solid #e2e8f0; border-radius:8px; font-size:0.8rem; background:#f8fafc; transition:0.2s; -webkit-appearance:none; appearance:none; }
     .form-card .field input:focus, .form-card .field select:focus, .form-card .field textarea:focus { outline:none; border-color:#3b82f6; background:#fff; }
     .form-card .field textarea { min-height:40px; resize:vertical; }
 
-    .btn { padding:8px 16px; border:none; border-radius:30px; font-weight:600; font-size:0.8rem; cursor:pointer; transition:0.2s; display:inline-flex; align-items:center; gap:5px; width:100%; justify-content:center; margin-top:2px; }
-    .btn:disabled { opacity:0.6; cursor:not-allowed; }
+    .btn { padding:8px 16px; border:none; border-radius:30px; font-weight:600; font-size:0.8rem; cursor:pointer; transition:0.2s; display:inline-flex; align-items:center; gap:5px; width:100%; justify-content:center; margin-top:2px; -webkit-tap-highlight-color:transparent; }
+    .btn:active { transform:scale(0.97); }
+    .btn:disabled { opacity:0.6; cursor:not-allowed; transform:none; }
     .btn-primary { background:#0f172a; color:#fff; }
     .btn-primary:hover:not(:disabled) { background:#1e293b; }
     .btn-success { background:#16a34a; color:#fff; }
@@ -112,7 +113,8 @@
     .profile-card .avatar { width:60px; height:60px; background:#0f172a; border-radius:50%; display:flex; align-items:center; justify-content:center; margin:0 auto 10px; font-size:28px; color:#facc15; }
 
     .action-btns { display:flex; gap:4px; flex-wrap:wrap; }
-    .action-btns .btn-sm { padding:2px 10px; font-size:0.6rem; border-radius:20px; border:none; cursor:pointer; font-weight:600; transition:0.2s; }
+    .action-btns .btn-sm { padding:2px 10px; font-size:0.6rem; border-radius:20px; border:none; cursor:pointer; font-weight:600; transition:0.2s; -webkit-tap-highlight-color:transparent; }
+    .action-btns .btn-sm:active { transform:scale(0.92); }
     .btn-sm.approve { background:#dcfce7; color:#166534; }
     .btn-sm.approve:hover { background:#bbf7d0; }
     .btn-sm.reject { background:#fee2e2; color:#991b1b; }
@@ -131,7 +133,6 @@
     .withdraw-grid .item .num { font-size:1.2rem; font-weight:600; color:#facc15; }
     .withdraw-grid .item .lbl { font-size:0.6rem; color:#94a3b8; }
 
-    /* Chart container */
     .chart-container { background:#fff; border-radius:16px; padding:12px; margin-bottom:14px; border:1px solid #e9edf2; }
     .chart-container canvas { width:100% !important; height:auto !important; max-height:200px; }
 
@@ -170,11 +171,11 @@
     <p>Sign in to continue</p>
     <div class="input-group">
       <label><i class="fas fa-envelope"></i> Email</label>
-      <input type="email" id="loginEmail" placeholder="******@sarkarisetu.info" />
+      <input type="email" id="loginEmail" placeholder="*****@sarkarisetu.info" autocomplete="email" />
     </div>
     <div class="input-group">
       <label><i class="fas fa-lock"></i> Password</label>
-      <input type="password" id="loginPassword" placeholder="Please enter Password" />
+      <input type="password" id="loginPassword" placeholder="••••••••" autocomplete="current-password" />
     </div>
     <button class="login-btn" id="loginBtn"><i class="fas fa-sign-in-alt"></i> Login</button>
     <div class="login-error" id="loginError"></div>
@@ -207,7 +208,6 @@
           <div class="stat-card full"><div class="num" id="totalPayment">₹0</div><div class="label"><i class="fas fa-coins" style="color:#f97316;"></i> Total Payment (₹3/approved form)</div></div>
         </div>
 
-        <!-- Chart -->
         <div class="chart-container">
           <canvas id="statusChart"></canvas>
         </div>
@@ -230,7 +230,7 @@
         <div class="data-card-list" id="allWorkList"><div class="empty-state">No forms</div></div>
       </div>
 
-      <!-- PAGE: DEO WORK (Fill Form) -->
+      <!-- PAGE: DEO WORK -->
       <div id="page-deo-work" class="page">
         <div class="sheet-header-card"><h3><i class="fas fa-pen-alt"></i> Fill Form</h3></div>
         <div class="deo-note"><i class="fas fa-info-circle"></i> Fill the form below. It will be sent to Super Admin for approval.</div>
@@ -277,7 +277,7 @@
         </div>
         <div class="form-card">
           <div class="field"><label>Amount to Withdraw (₹)</label>
-            <input type="number" id="withdrawAmount" placeholder="Enter amount" min="1" />
+            <input type="number" id="withdrawAmount" placeholder="Enter amount" min="1" inputmode="numeric" />
           </div>
           <button class="btn btn-success" id="withdrawBtn"><i class="fas fa-hand-holding-usd"></i> Request Withdrawal</button>
           <div style="margin-top:8px; font-size:0.7rem; color:#64748b; text-align:center;">
@@ -288,12 +288,12 @@
         <div class="data-card-list" id="withdrawHistoryList"><div class="empty-state">No withdrawal requests</div></div>
       </div>
 
-      <!-- PAGE: USERS (Super Admin) -->
+      <!-- PAGE: USERS -->
       <div id="page-users" class="page">
         <div class="sheet-header-card"><h3><i class="fas fa-user-plus"></i> Manage Users</h3></div>
         <div class="form-card">
-          <div class="field"><label>Email</label><input id="uEmail" placeholder="user@rk.com" /></div>
-          <div class="field"><label>Password</label><input id="uPass" placeholder="password" /></div>
+          <div class="field"><label>Email</label><input id="uEmail" placeholder="user@rk.com" type="email" /></div>
+          <div class="field"><label>Password</label><input id="uPass" placeholder="password" type="password" /></div>
           <div class="field"><label>Role</label>
             <select id="uRole"><option value="DEO">DEO</option><option value="Super Admin">Super Admin</option></select>
           </div>
@@ -307,7 +307,7 @@
         <div class="data-card-list" id="usersCardList"><div class="empty-state">No users</div></div>
       </div>
 
-      <!-- PAGE: PAYOUT (Super Admin) -->
+      <!-- PAGE: PAYOUT -->
       <div id="page-payout" class="page">
         <div class="sheet-header-card"><h3><i class="fas fa-hand-holding-usd"></i> Withdrawal Requests</h3></div>
         <div class="data-card-list" id="withdrawRequestsList"><div class="empty-state">No withdrawal requests</div></div>
@@ -324,7 +324,7 @@
           <p style="font-size:0.75rem; background:#f1f5f9; padding:4px 12px; border-radius:20px; display:inline-block; margin:4px 0 10px;" id="profDisplayRole">Super Admin</p>
           <div class="form-card" style="text-align:left; padding:10px;">
             <div class="field"><label>Name</label><input id="profName" placeholder="Your name" /></div>
-            <div class="field"><label>Email</label><input id="profEmail" placeholder="email@rk.com" /></div>
+            <div class="field"><label>Email</label><input id="profEmail" placeholder="email@rk.com" type="email" /></div>
             <div class="field"><label>Role</label><input id="profRole" disabled /></div>
             <div class="field"><label>Pending Payment</label><input id="profPending" disabled /></div>
             <button class="btn btn-primary" id="updateProfileBtn"><i class="fas fa-save"></i> Update Profile</button>
@@ -442,32 +442,47 @@ function showLoader(show) {
 }
 
 // =============================================================
-// API CALL
+// API CALL WITH BETTER MOBILE SUPPORT
 // =============================================================
 function callApi(action, payload = {}) {
   return new Promise((resolve) => {
-    const callbackName = 'jsonp_cb_' + Date.now() + '_' + Math.random().toString(36).substr(2, 6);
+    const callbackName = 'jsonp_cb_' + Date.now() + '_' + Math.random().toString(36).substr(2, 8);
+    
+    // Set a timeout
+    const timeoutId = setTimeout(() => {
+      if (window[callbackName]) {
+        window[callbackName]({ error: 'Request timeout. Check internet connection.' });
+        delete window[callbackName];
+        if (document.body.contains(script)) document.body.removeChild(script);
+      }
+    }, 15000);
+    
     window[callbackName] = function(data) {
+      clearTimeout(timeoutId);
       delete window[callbackName];
       if (document.body.contains(script)) document.body.removeChild(script);
       resolve(data);
     };
+    
     const script = document.createElement('script');
     const url = new URL(API_BASE);
     url.searchParams.set('action', action);
     for (let k in payload) {
-      if (payload[k] !== undefined && payload[k] !== null) url.searchParams.set(k, payload[k]);
+      if (payload[k] !== undefined && payload[k] !== null) {
+        url.searchParams.set(k, payload[k]);
+      }
     }
     url.searchParams.set('callback', callbackName);
     script.src = url.toString();
-    document.body.appendChild(script);
-    setTimeout(() => {
+    script.onerror = function() {
+      clearTimeout(timeoutId);
       if (window[callbackName]) {
-        window[callbackName]({ error: 'Request timeout. Check API URL.' });
+        window[callbackName]({ error: 'Network error. Please check your connection.' });
         delete window[callbackName];
-        if (document.body.contains(script)) document.body.removeChild(script);
       }
-    }, 10000);
+      if (document.body.contains(script)) document.body.removeChild(script);
+    };
+    document.body.appendChild(script);
   });
 }
 
@@ -521,14 +536,15 @@ function renderWorkLists(data) {
   } else {
     let html = '';
     pending.forEach(r => {
+      const id = r._id || r.PostName || 'form_' + Date.now();
       html += `<div class="data-item">
         <div class="main">
           <span class="title">${r.PostName || 'Untitled'}</span>
           <span class="sub">${r.FormType || ''} · ${r.DepartmentName || ''} · ${r['DEO Email'] || ''}</span>
         </div>
         <div class="action-btns">
-          <button class="btn-sm approve" onclick="approveForm('${r._id || r.PostName}')"><i class="fas fa-check"></i> Approve</button>
-          <button class="btn-sm reject" onclick="rejectForm('${r._id || r.PostName}')"><i class="fas fa-times"></i> Reject</button>
+          <button class="btn-sm approve" onclick="approveForm('${id}')"><i class="fas fa-check"></i> Approve</button>
+          <button class="btn-sm reject" onclick="rejectForm('${id}')"><i class="fas fa-times"></i> Reject</button>
         </div>
       </div>`;
     });
@@ -633,11 +649,12 @@ function renderWithdrawRequests(requests) {
     return;
   }
   pending.forEach(r => {
+    const id = r._id || 'wd_' + Date.now();
     html += `<div class="data-item">
       <div class="main"><span class="title">${r['DEO Email'] || ''}</span><span class="sub">₹${r.Amount || 0} · ${r.Date ? r.Date.slice(0,10) : ''}</span></div>
       <div class="action-btns">
-        <button class="btn-sm approve" onclick="approveWithdraw('${r._id}')"><i class="fas fa-check"></i> Pay</button>
-        <button class="btn-sm reject" onclick="rejectWithdraw('${r._id}')"><i class="fas fa-times"></i> Reject</button>
+        <button class="btn-sm approve" onclick="approveWithdraw('${id}')"><i class="fas fa-check"></i> Pay</button>
+        <button class="btn-sm reject" onclick="rejectWithdraw('${id}')"><i class="fas fa-times"></i> Reject</button>
       </div>
     </div>`;
   });
@@ -687,6 +704,7 @@ function updateChart() {
     },
     options: {
       responsive: true,
+      maintainAspectRatio: true,
       plugins: {
         legend: {
           position: 'bottom',
@@ -709,7 +727,7 @@ function updateChart() {
 }
 
 // =============================================================
-// WORK ACTIONS (Approve/Reject Forms)
+// WORK ACTIONS
 // =============================================================
 window.approveForm = async function(id) {
   if (!confirm('Approve this form? This will add ₹3 to DEO earnings.')) return;
@@ -744,7 +762,7 @@ window.rejectForm = async function(id) {
 };
 
 // =============================================================
-// WITHDRAW ACTIONS (Super Admin)
+// WITHDRAW ACTIONS
 // =============================================================
 window.approveWithdraw = async function(id) {
   if (!confirm('Approve this withdrawal request?')) return;
@@ -919,7 +937,6 @@ async function fetchAllData() {
       totalPending.textContent = pending;
       totalPayment.textContent = '₹' + (approved * 3);
       
-      // Update chart
       updateChart();
     }
 
@@ -958,33 +975,40 @@ async function handleLogin() {
   loginBtn.disabled = true;
   loginBtn.innerHTML = '<span class="spinner"></span> Logging in...';
   
-  const resp = await callApi('verifyLogin', { email, password });
-  loginBtn.disabled = false;
-  loginBtn.innerHTML = '<i class="fas fa-sign-in-alt"></i> Login';
-  
-  if (resp && resp.success && resp.user) {
-    currentUser = resp.user;
-    isLoggedIn = true;
-    localStorage.setItem('rk_user', JSON.stringify(currentUser));
+  try {
+    const resp = await callApi('verifyLogin', { email, password });
+    loginBtn.disabled = false;
+    loginBtn.innerHTML = '<i class="fas fa-sign-in-alt"></i> Login';
     
-    userName.textContent = currentUser.name || currentUser.email;
-    userRole.textContent = currentUser.role || 'DEO';
-    profDisplayName.textContent = currentUser.name || currentUser.email;
-    profDisplayEmail.textContent = currentUser.email || '';
-    profDisplayRole.textContent = currentUser.role || 'DEO';
-    profName.value = currentUser.name || '';
-    profEmail.value = currentUser.email || '';
-    profRole.value = currentUser.role || 'DEO';
-    
-    updateNavVisibility();
-    
-    loginPage.style.display = 'none';
-    dashboard.style.display = 'block';
-    loginError.textContent = '';
-    await fetchAllData();
-    showToast('Welcome, ' + (currentUser.name || currentUser.email) + '!', 2000);
-  } else {
-    loginError.textContent = 'Login failed: ' + (resp?.message || 'Invalid credentials');
+    if (resp && resp.success && resp.user) {
+      currentUser = resp.user;
+      isLoggedIn = true;
+      localStorage.setItem('rk_user', JSON.stringify(currentUser));
+      
+      userName.textContent = currentUser.name || currentUser.email;
+      userRole.textContent = currentUser.role || 'DEO';
+      profDisplayName.textContent = currentUser.name || currentUser.email;
+      profDisplayEmail.textContent = currentUser.email || '';
+      profDisplayRole.textContent = currentUser.role || 'DEO';
+      profName.value = currentUser.name || '';
+      profEmail.value = currentUser.email || '';
+      profRole.value = currentUser.role || 'DEO';
+      
+      updateNavVisibility();
+      
+      loginPage.style.display = 'none';
+      dashboard.style.display = 'block';
+      loginError.textContent = '';
+      await fetchAllData();
+      showToast('Welcome, ' + (currentUser.name || currentUser.email) + '!', 2000);
+    } else {
+      loginError.textContent = 'Login failed: ' + (resp?.message || 'Invalid credentials');
+    }
+  } catch (error) {
+    loginBtn.disabled = false;
+    loginBtn.innerHTML = '<i class="fas fa-sign-in-alt"></i> Login';
+    loginError.textContent = 'Network error. Please check your connection.';
+    console.error('Login error:', error);
   }
 }
 
