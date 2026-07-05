@@ -1,6 +1,0 @@
-{
-  "name": "SarkariSetu",
-  "description": "A comprehensive portal for government job notifications, exam updates, and real-time alerts.",
-  "requestFramePermissions": [],
-  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
-}

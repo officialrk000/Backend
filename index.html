@@ -1,377 +1,645 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Sarkari Setu | Admin Panel</title>
-    <script src="https://unpkg.com/lucide@latest"></script>
-    <link rel="stylesheet" href="/src/index.css">
-  </head>
-  <body class="bg-slate-50 text-slate-900 font-sans antialiased selection:bg-blue-500/30 transition-colors duration-300">
-    <!-- App Container -->
-    <div id="app" class="min-h-screen bg-slate-50 dark:bg-[#020617] text-[11px]">
-      <!-- Login View -->
-      <div id="login-view" class="min-h-screen flex items-center justify-center p-4 bg-slate-100 dark:bg-[radial-gradient(circle_at_top_right,_var(--tw-gradient-stops))] dark:from-slate-900 dark:via-[#020617] dark:to-black">
-        <div class="w-full max-w-sm bg-white dark:bg-slate-900/50 backdrop-blur-xl rounded-[2rem] shadow-xl border border-slate-200 dark:border-slate-800 p-8 text-center relative overflow-hidden group">
-          <div class="absolute -top-24 -right-24 w-48 h-48 bg-blue-500/10 blur-3xl rounded-full"></div>
-          <div class="w-14 h-14 bg-gradient-to-br from-blue-500 to-indigo-600 text-white rounded-xl flex items-center justify-center mx-auto mb-5 shadow-lg shadow-blue-900/20">
-            <i data-lucide="shield-check" class="w-7 h-7"></i>
-          </div>
-          <h1 class="text-xl font-black text-slate-900 dark:text-white mb-1 tracking-tight">Sarkari Setu</h1>
-          <p class="text-[9px] text-slate-500 mb-6 font-black uppercase tracking-[0.2em]">Admin Control System</p>
-          <div id="login-error" class="hidden mb-6 p-3 bg-red-500/10 text-red-600 dark:text-red-400 rounded-xl text-[10px] font-bold border border-red-500/20 flex items-center gap-2">
-            <div class="w-2 h-2 rounded-full bg-red-500"></div>
-            <span id="error-message"></span>
-          </div>
-          <form id="login-form" class="space-y-3.5">
-            <input type="tel" id="mobile" placeholder="Mobile Number" required class="w-full px-4 py-3 bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 rounded-xl outline-none focus:border-blue-500 transition-all font-bold text-[10px] text-slate-900 dark:text-white placeholder:text-slate-400">
-            <input type="password" id="password" placeholder="Access Key" required class="w-full px-4 py-3 bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 rounded-xl outline-none focus:border-blue-500 transition-all font-bold text-[10px] text-slate-900 dark:text-white placeholder:text-slate-400">
-            <button type="submit" id="login-btn" class="w-full flex items-center justify-center gap-2 bg-blue-600 hover:bg-blue-500 text-white font-black py-3.5 rounded-xl transition-all shadow-lg shadow-blue-900/20 active:scale-[0.98] text-[11px]">
-              <i data-lucide="terminal" id="login-icon" class="w-3.5 h-3.5"></i>
-              <span id="login-text">Initialize Session</span>
-            </button>
-          </form>
-        </div>
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SarkariSetu · Admin Panel</title>
+  <!-- Font Awesome (free icons) -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Inter', -apple-system, system-ui, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      transition: background 0.2s ease, color 0.15s ease, border-color 0.15s ease;
+    }
+
+    body {
+      background: #f4f7fc;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 24px;
+    }
+
+    /* ----- DASHBOARD CARD (glassmorphism light) ----- */
+    .dashboard {
+      max-width: 1440px;
+      width: 100%;
+      background: rgba(255, 255, 255, 0.7);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border-radius: 40px;
+      padding: 28px 32px 36px;
+      box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.15);
+      border: 1px solid rgba(255, 255, 255, 0.5);
+    }
+
+    /* ----- DARK THEME (applied to .dark) ----- */
+    .dark {
+      background: #0c0f15;
+    }
+    .dark .dashboard {
+      background: rgba(18, 22, 30, 0.85);
+      backdrop-filter: blur(14px);
+      -webkit-backdrop-filter: blur(14px);
+      border-color: rgba(255, 255, 255, 0.06);
+      box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.8);
+    }
+    .dark .dashboard * {
+      color: #eef2f6;
+    }
+    .dark .stat-card {
+      background: rgba(30, 36, 48, 0.7);
+      border-color: rgba(255, 255, 255, 0.04);
+    }
+    .dark .stat-card .stat-icon {
+      background: rgba(255, 255, 255, 0.04);
+      color: #b9c8ff;
+    }
+    .dark .stat-card .stat-change.positive {
+      color: #7ddfb0;
+    }
+    .dark .stat-card .stat-change.negative {
+      color: #ff8a8a;
+    }
+    .dark .section-title {
+      color: #d6dfeb;
+    }
+    .dark .chart-placeholder {
+      background: rgba(40, 48, 64, 0.5);
+      border-color: rgba(255, 255, 255, 0.05);
+    }
+    .dark .chart-bar {
+      background: #4b6af5;
+    }
+    .dark .legend-item {
+      color: #c8d2e0;
+    }
+    .dark .recent-table {
+      border-color: rgba(255, 255, 255, 0.05);
+    }
+    .dark .recent-table th {
+      background: #1e2533;
+      color: #bcc9db;
+    }
+    .dark .recent-table td {
+      border-color: rgba(255, 255, 255, 0.04);
+    }
+    .dark .recent-table tr:hover td {
+      background: #252d3e;
+    }
+    .dark .badge-pending {
+      background: #3d2e1e;
+      color: #f5b56b;
+    }
+    .dark .badge-progress {
+      background: #1d344a;
+      color: #7db8f5;
+    }
+    .dark .badge-completed {
+      background: #1e3a2a;
+      color: #7ddfb0;
+    }
+    .dark .badge-paid {
+      background: #1e3a2a;
+      color: #7ddfb0;
+    }
+    .dark .btn-outline {
+      border-color: rgba(255, 255, 255, 0.15);
+      color: #d6dfeb;
+    }
+    .dark .btn-outline:hover {
+      background: rgba(255, 255, 255, 0.04);
+    }
+    .dark .greeting-sub {
+      color: #a2b3cc;
+    }
+    .dark .theme-toggle {
+      background: #1e2533;
+      border-color: #2e384a;
+      color: #d6dfeb;
+    }
+    .dark .theme-toggle i {
+      color: #f5d742;
+    }
+    .dark .annotation {
+      background: #1e2533;
+      color: #bcc9db;
+    }
+
+    /* ----- header / top bar ----- */
+    .topbar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 28px;
+      flex-wrap: wrap;
+      gap: 14px;
+    }
+    .logo-area {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .logo-area i {
+      font-size: 28px;
+      background: #1e3a8a;
+      background: linear-gradient(145deg, #2563eb, #1e3a8a);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+    .dark .logo-area i {
+      background: linear-gradient(145deg, #7aa2ff, #4b6af5);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+    .logo-area h1 {
+      font-weight: 700;
+      font-size: 24px;
+      letter-spacing: -0.3px;
+      background: linear-gradient(145deg, #1e3a8a, #2563eb);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+    .dark .logo-area h1 {
+      background: linear-gradient(145deg, #b9c8ff, #7aa2ff);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+    .greeting {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+    .greeting h2 {
+      font-weight: 600;
+      font-size: 22px;
+      color: #0b1e3a;
+    }
+    .dark .greeting h2 {
+      color: #eef2f6;
+    }
+    .greeting-sub {
+      color: #4a5a72;
+      font-size: 15px;
+      font-weight: 450;
+    }
+    .theme-toggle {
+      background: #ffffff;
+      border: 1px solid #dde3ed;
+      border-radius: 60px;
+      padding: 8px 16px;
+      font-size: 15px;
+      font-weight: 500;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      cursor: pointer;
+      color: #1f2a44;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.02);
+    }
+    .theme-toggle i {
+      color: #f5b342;
+      font-size: 18px;
+    }
+    .theme-toggle:hover {
+      background: #f0f4ff;
+    }
+    .dark .theme-toggle:hover {
+      background: #2a3348;
+    }
+
+    /* ----- stats grid ----- */
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(170px, 1fr));
+      gap: 18px;
+      margin-bottom: 32px;
+    }
+    .stat-card {
+      background: rgba(255, 255, 255, 0.6);
+      backdrop-filter: blur(6px);
+      -webkit-backdrop-filter: blur(6px);
+      border: 1px solid rgba(255, 255, 255, 0.7);
+      border-radius: 28px;
+      padding: 18px 18px 16px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.02);
+    }
+    .stat-card .stat-label {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      color: #33435c;
+      font-weight: 500;
+      font-size: 14px;
+      letter-spacing: 0.2px;
+    }
+    .dark .stat-card .stat-label {
+      color: #bcc9db;
+    }
+    .stat-card .stat-number {
+      font-size: 28px;
+      font-weight: 700;
+      color: #0b1e3a;
+      margin: 6px 0 4px;
+    }
+    .dark .stat-card .stat-number {
+      color: #eef2f6;
+    }
+    .stat-card .stat-change {
+      font-size: 13px;
+      font-weight: 500;
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+    }
+    .stat-card .stat-change.positive {
+      color: #0d7a4a;
+    }
+    .stat-card .stat-change.negative {
+      color: #b53b3b;
+    }
+    .stat-icon {
+      background: rgba(37, 99, 235, 0.08);
+      width: 32px;
+      height: 32px;
+      border-radius: 40px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #2563eb;
+    }
+
+    /* ----- charts section ----- */
+    .charts-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 24px;
+      margin-bottom: 32px;
+    }
+    .chart-box {
+      flex: 1 1 260px;
+      background: rgba(255, 255, 255, 0.3);
+      backdrop-filter: blur(6px);
+      -webkit-backdrop-filter: blur(6px);
+      border-radius: 28px;
+      padding: 18px 18px 12px;
+      border: 1px solid rgba(255, 255, 255, 0.3);
+    }
+    .dark .chart-box {
+      background: rgba(30, 36, 48, 0.3);
+      border-color: rgba(255, 255, 255, 0.04);
+    }
+    .chart-box h4 {
+      font-weight: 600;
+      font-size: 16px;
+      margin-bottom: 12px;
+      color: #1a2b44;
+    }
+    .dark .chart-box h4 {
+      color: #d6dfeb;
+    }
+    .chart-placeholder {
+      background: rgba(235, 242, 255, 0.4);
+      border-radius: 24px;
+      padding: 14px 8px 8px;
+      border: 1px solid rgba(255, 255, 255, 0.4);
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+    .chart-row {
+      display: flex;
+      align-items: flex-end;
+      justify-content: space-around;
+      gap: 6px;
+      height: 140px;
+      padding: 0 4px;
+    }
+    .chart-bar {
+      flex: 1;
+      background: #2563eb;
+      border-radius: 20px 20px 6px 6px;
+      min-height: 12px;
+      height: var(--h, 80px);
+      max-width: 32px;
+      transition: height 0.2s;
+    }
+    .chart-bar:nth-child(1) { --h: 70px; }
+    .chart-bar:nth-child(2) { --h: 110px; }
+    .chart-bar:nth-child(3) { --h: 140px; }
+    .chart-bar:nth-child(4) { --h: 90px; }
+    .chart-bar:nth-child(5) { --h: 120px; }
+    .chart-bar:nth-child(6) { --h: 60px; }
+    .chart-bar:nth-child(7) { --h: 100px; }
+    .dark .chart-bar {
+      background: #4b6af5;
+    }
+    .chart-labels {
+      display: flex;
+      justify-content: space-around;
+      font-size: 11px;
+      color: #4a5a72;
+      padding-top: 6px;
+    }
+    .dark .chart-labels {
+      color: #a2b3cc;
+    }
+    .legend {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 16px;
+      padding-top: 8px;
+      font-size: 13px;
+      color: #1f2a44;
+    }
+    .legend-item i {
+      color: #2563eb;
+      margin-right: 4px;
+    }
+    .dark .legend-item i {
+      color: #7aa2ff;
+    }
+    .annotation {
+      background: rgba(255, 255, 255, 0.4);
+      border-radius: 40px;
+      padding: 4px 14px;
+      display: inline-block;
+      font-size: 12px;
+      font-weight: 500;
+      color: #1a2b44;
+    }
+
+    /* ----- recent activity / tables ----- */
+    .recent-grid {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 24px;
+      margin-top: 8px;
+    }
+    .recent-card {
+      flex: 1 1 300px;
+      background: rgba(255, 255, 255, 0.2);
+      backdrop-filter: blur(4px);
+      -webkit-backdrop-filter: blur(4px);
+      border-radius: 28px;
+      padding: 18px 16px 18px;
+      border: 1px solid rgba(255, 255, 255, 0.2);
+    }
+    .dark .recent-card {
+      background: rgba(30, 36, 48, 0.2);
+      border-color: rgba(255, 255, 255, 0.04);
+    }
+    .recent-card .card-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 14px;
+    }
+    .recent-card .card-header h4 {
+      font-weight: 600;
+      color: #1a2b44;
+    }
+    .dark .recent-card .card-header h4 {
+      color: #d6dfeb;
+    }
+    .btn-outline {
+      background: transparent;
+      border: 1px solid #cbd5e1;
+      border-radius: 60px;
+      padding: 4px 14px;
+      font-size: 13px;
+      font-weight: 500;
+      color: #1f2a44;
+      cursor: default;
+    }
+    .activity-item {
+      display: flex;
+      justify-content: space-between;
+      padding: 10px 0;
+      border-bottom: 1px solid rgba(0,0,0,0.03);
+    }
+    .dark .activity-item {
+      border-bottom-color: rgba(255,255,255,0.03);
+    }
+    .activity-item:last-child {
+      border-bottom: none;
+    }
+    .activity-item .left {
+      display: flex;
+      gap: 10px;
+      align-items: center;
+    }
+    .activity-item i {
+      color: #2563eb;
+      width: 20px;
+    }
+    .dark .activity-item i {
+      color: #7aa2ff;
+    }
+    .activity-item .time {
+      color: #6b7d99;
+      font-size: 13px;
+    }
+    .dark .activity-item .time {
+      color: #889bb3;
+    }
+
+    /* table */
+    .table-wrap {
+      overflow-x: auto;
+      margin-top: 6px;
+    }
+    .recent-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 14px;
+      border: 1px solid rgba(0,0,0,0.02);
+      border-radius: 20px;
+      overflow: hidden;
+    }
+    .recent-table th {
+      text-align: left;
+      padding: 12px 10px;
+      background: #f0f4fe;
+      color: #1a2b44;
+      font-weight: 600;
+      font-size: 12px;
+      letter-spacing: 0.3px;
+      text-transform: uppercase;
+    }
+    .recent-table td {
+      padding: 12px 10px;
+      border-bottom: 1px solid rgba(0,0,0,0.04);
+      color: #1f2a44;
+    }
+    .dark .recent-table td {
+      color: #d6dfeb;
+    }
+    .badge {
+      background: #eef2f6;
+      padding: 4px 12px;
+      border-radius: 40px;
+      font-size: 12px;
+      font-weight: 500;
+      display: inline-block;
+    }
+    .badge-pending { background: #fef3e2; color: #9b6f2c; }
+    .badge-progress { background: #e1edff; color: #1f5bb5; }
+    .badge-completed { background: #ddf4e4; color: #0d7a4a; }
+    .badge-paid { background: #ddf4e4; color: #0d7a4a; }
+
+    .text-muted { color: #6b7d99; }
+    .dark .text-muted { color: #889bb3; }
+    .mt-2 { margin-top: 10px; }
+    .flex { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
+
+    @media (max-width: 600px) {
+      .dashboard { padding: 18px; }
+      .stats-grid { grid-template-columns: 1fr 1fr; }
+    }
+  </style>
+</head>
+<body>
+  <div class="dashboard" id="app">
+    <!-- TOP BAR -->
+    <div class="topbar">
+      <div class="logo-area">
+        <i class="fas fa-bridge"></i>
+        <h1>SarkariSetu</h1>
+        <span style="font-size: 13px; background: #eef2f6; padding: 2px 12px; border-radius: 40px; color: #1f2a44;">Admin</span>
       </div>
-
-      <!-- Admin View -->
-      <div id="admin-view" class="hidden min-h-screen flex bg-slate-50 dark:bg-[#020617]">
-        <!-- Sidebar -->
-        <aside id="sidebar" class="fixed inset-y-0 left-0 z-50 w-64 bg-white dark:bg-[#020617] border-r border-slate-200 dark:border-slate-800/50 transition-transform duration-300 lg:translate-x-0 lg:static -translate-x-full">
-          <div class="h-full flex flex-col p-5">
-            <div class="flex items-center gap-3 mb-8 px-2">
-              <div class="w-9 h-9 bg-blue-600 rounded-lg flex items-center justify-center text-white shadow-md shadow-blue-900/10">
-                <i data-lucide="hexagon" class="w-5 h-5"></i>
-              </div>
-              <div>
-                <h2 class="text-sm font-black text-slate-900 dark:text-white leading-tight">SarkariSetu</h2>
-                <p class="text-[8px] text-slate-500 font-black uppercase tracking-widest">Admin Panel</p>
-              </div>
-            </div>
-
-            <nav class="flex-1 space-y-1">
-              <button data-tab="dashboard" class="tab-btn w-full flex items-center gap-3 p-3 rounded-lg font-bold transition-all text-[10px] bg-blue-600 text-white shadow-md shadow-blue-900/10">
-                <i data-lucide="home" class="w-4 h-4"></i> Home
-              </button>
-              <button data-tab="new_post" class="tab-btn w-full flex items-center gap-3 p-3 rounded-lg font-bold transition-all text-[10px] text-slate-500 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800/50 hover:text-slate-900 dark:hover:text-white">
-                <i data-lucide="briefcase" class="w-4 h-4"></i> Work
-              </button>
-              <button data-tab="payout" class="tab-btn w-full flex items-center gap-3 p-3 rounded-lg font-bold transition-all text-[10px] text-slate-500 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800/50 hover:text-slate-900 dark:hover:text-white">
-                <i data-lucide="wallet" class="w-4 h-4"></i> Payout
-              </button>
-
-              <div class="pt-5 pb-1 text-[8px] font-black text-slate-400 dark:text-slate-600 uppercase tracking-[0.2em] px-3">Manage</div>
-              <button data-tab="records" class="tab-btn w-full flex items-center gap-3 p-3 rounded-lg font-bold transition-all text-[10px] text-slate-500 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800/50 hover:text-slate-900 dark:hover:text-white">
-                <i data-lucide="users" class="w-4 h-4"></i> Users
-              </button>
-              <button class="w-full flex items-center gap-3 p-3 rounded-lg font-bold transition-all text-[10px] text-slate-300 dark:text-slate-600 opacity-50 cursor-not-allowed">
-                <i data-lucide="bar-chart-3" class="w-4 h-4"></i> Reports
-              </button>
-              <button class="w-full flex items-center gap-3 p-3 rounded-lg font-bold transition-all text-[10px] text-slate-300 dark:text-slate-600 opacity-50 cursor-not-allowed">
-                <i data-lucide="settings" class="w-4 h-4"></i> Settings
-              </button>
-            </nav>
-
-            <div class="pt-5 border-t border-slate-200 dark:border-slate-800/50">
-              <button id="logout-btn" class="w-full flex items-center gap-3 p-3 rounded-lg text-slate-500 hover:bg-red-50 dark:hover:bg-red-500/10 hover:text-red-500 font-bold transition-all text-[10px]">
-                <i data-lucide="log-out" class="w-4 h-4"></i> Logout
-              </button>
-            </div>
-          </div>
-        </aside>
-
-        <!-- Main Body -->
-        <main class="flex-1 h-screen overflow-y-auto bg-slate-50 dark:bg-[#020617]">
-          <!-- Top Header -->
-          <header class="sticky top-0 z-30 bg-white/80 dark:bg-[#020617]/80 backdrop-blur-xl border-b border-slate-200 dark:border-slate-800/50 px-6 py-3 flex items-center justify-between">
-            <div class="flex items-center gap-4 flex-1">
-              <button id="menu-toggle" class="lg:hidden p-2 text-slate-500"><i data-lucide="menu" class="w-5 h-5"></i></button>
-              <div class="relative w-full max-w-md hidden md:block">
-                <i data-lucide="search" class="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400"></i>
-                <input type="text" id="record-search" placeholder="Search here..." class="w-full bg-slate-100 dark:bg-slate-800/30 border border-slate-200 dark:border-slate-700/50 rounded-lg py-2 pl-10 pr-4 text-[11px] font-bold text-slate-900 dark:text-white outline-none focus:border-blue-500 transition-all">
-              </div>
-            </div>
-            <div class="flex items-center gap-4">
-              <button id="theme-toggle" class="p-2 text-slate-500 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg transition-all" title="Toggle Theme">
-                <i data-lucide="sun" id="theme-icon-light" class="w-4 h-4 hidden dark:block"></i>
-                <i data-lucide="moon" id="theme-icon-dark" class="w-4 h-4 block dark:hidden"></i>
-              </button>
-              <button id="refresh-stats" class="p-2 text-slate-500 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg transition-all">
-                <i data-lucide="rotate-ccw" id="refresh-icon" class="w-4 h-4"></i>
-              </button>
-              <div class="relative">
-                <button class="p-2 text-slate-500 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg transition-all">
-                  <i data-lucide="bell" class="w-4 h-4"></i>
-                </button>
-                <span class="absolute top-1.5 right-1.5 w-3.5 h-3.5 bg-red-500 text-white text-[8px] font-black rounded-full flex items-center justify-center border-2 border-white dark:border-[#020617]">8</span>
-              </div>
-              <div class="flex items-center gap-3 pl-2 border-l border-slate-200 dark:border-slate-800">
-                <div class="text-right hidden sm:block">
-                  <p id="admin-display-name" class="text-[11px] font-black text-slate-900 dark:text-white">Ranjeet Kushwaha</p>
-                  <p class="text-[9px] text-slate-500 font-bold">Super Admin</p>
-                </div>
-                <div class="w-9 h-9 bg-slate-200 dark:bg-slate-800 rounded-lg flex items-center justify-center border border-slate-300 dark:border-slate-700 overflow-hidden">
-                  <img src="https://api.dicebear.com/7.x/avataaars/svg?seed=Ranjeet" alt="User" class="w-full h-full object-cover">
-                </div>
-              </div>
-            </div>
-          </header>
-
-          <div class="p-6 lg:p-6">
-            <!-- Dashboard Content -->
-            <div id="dashboard-content" class="space-y-6">
-              <div class="flex flex-col sm:flex-row sm:items-end justify-between gap-4">
-                <div>
-                  <h1 id="view-title" class="text-xl font-black text-slate-900 dark:text-white tracking-tight">Dashboard</h1>
-                  <p class="text-[11px] text-slate-500 font-bold mt-0.5">Welcome back, Ranjeet! Here's what's happening today.</p>
-                </div>
-                <div class="flex items-center gap-3">
-                  <button class="px-3.5 py-2 bg-white dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 rounded-lg text-[10px] font-bold text-slate-600 dark:text-white flex items-center gap-2 shadow-sm">
-                    <i data-lucide="calendar" class="w-3.5 h-3.5 text-slate-400"></i>
-                    7 May 2025
-                    <i data-lucide="chevron-down" class="w-3.5 h-3.5 text-slate-400 ml-1"></i>
-                  </button>
-                </div>
-              </div>
-
-              <!-- Stats Grid -->
-              <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4">
-                <div class="bg-white dark:bg-blue-600/10 border border-slate-200 dark:border-blue-500/20 p-4 rounded-xl shadow-sm">
-                  <div class="flex items-center justify-between mb-3">
-                    <div class="w-8 h-8 bg-blue-100 dark:bg-blue-600 rounded-lg flex items-center justify-center text-blue-600 dark:text-white"><i data-lucide="users" class="w-4 h-4"></i></div>
-                  </div>
-                  <p class="text-[9px] font-black text-slate-400 uppercase tracking-widest mb-0.5">Total Users</p>
-                  <h4 id="stat-total" class="text-xl font-black text-slate-900 dark:text-white mb-1">0</h4>
-                  <p class="text-[8px] font-bold text-emerald-500 flex items-center gap-1"><i data-lucide="trending-up" class="w-2.5 h-2.5"></i> +12.5% <span class="text-slate-400">from last month</span></p>
-                </div>
-                <div class="bg-white dark:bg-emerald-600/10 border border-slate-200 dark:border-emerald-500/20 p-4 rounded-xl shadow-sm">
-                  <div class="flex items-center justify-between mb-3">
-                    <div class="w-8 h-8 bg-emerald-100 dark:bg-emerald-600 rounded-lg flex items-center justify-center text-emerald-600 dark:text-white"><i data-lucide="briefcase" class="w-4 h-4"></i></div>
-                  </div>
-                  <p class="text-[8px] font-black text-slate-400 uppercase tracking-widest mb-0.5">Active Work</p>
-                  <h4 class="text-xl font-black text-slate-900 dark:text-white mb-1">356</h4>
-                  <p class="text-[8px] font-bold text-emerald-500 flex items-center gap-1"><i data-lucide="trending-up" class="w-2.5 h-2.5"></i> +8.2% <span class="text-slate-400">from yesterday</span></p>
-                </div>
-                <div class="bg-white dark:bg-purple-600/10 border border-slate-200 dark:border-purple-500/20 p-4 rounded-xl shadow-sm">
-                  <div class="flex items-center justify-between mb-3">
-                    <div class="w-8 h-8 bg-purple-100 dark:bg-purple-600 rounded-lg flex items-center justify-center text-purple-600 dark:text-white"><i data-lucide="indian-rupee" class="w-4 h-4"></i></div>
-                  </div>
-                  <p class="text-[8px] font-black text-slate-400 uppercase tracking-widest mb-0.5">Total Payout</p>
-                  <h4 class="text-xl font-black text-slate-900 dark:text-white mb-1">₹4,85,000</h4>
-                  <p class="text-[8px] font-bold text-emerald-500 flex items-center gap-1"><i data-lucide="trending-up" class="w-2.5 h-2.5"></i> +15.3% <span class="text-slate-400">from last month</span></p>
-                </div>
-                <div class="bg-white dark:bg-orange-600/10 border border-slate-200 dark:border-orange-500/20 p-4 rounded-xl shadow-sm">
-                  <div class="flex items-center justify-between mb-3">
-                    <div class="w-8 h-8 bg-orange-100 dark:bg-orange-600 rounded-lg flex items-center justify-center text-orange-600 dark:text-white"><i data-lucide="clock" class="w-4 h-4"></i></div>
-                  </div>
-                  <p class="text-[8px] font-black text-slate-400 uppercase tracking-widest mb-0.5">Pending Payout</p>
-                  <h4 class="text-xl font-black text-slate-900 dark:text-white mb-1">₹42,500</h4>
-                  <p class="text-[8px] font-bold text-red-500 flex items-center gap-1"><i data-lucide="trending-down" class="w-2.5 h-2.5"></i> -3.6% <span class="text-slate-400">from yesterday</span></p>
-                </div>
-                <div class="bg-white dark:bg-cyan-600/10 border border-slate-200 dark:border-cyan-500/20 p-4 rounded-xl shadow-sm">
-                  <div class="flex items-center justify-between mb-3">
-                    <div class="w-8 h-8 bg-cyan-100 dark:bg-cyan-600 rounded-lg flex items-center justify-center text-cyan-600 dark:text-white"><i data-lucide="check-circle" class="w-4 h-4"></i></div>
-                  </div>
-                  <p class="text-[8px] font-black text-slate-400 uppercase tracking-widest mb-0.5">Completed Tasks</p>
-                  <h4 class="text-xl font-black text-slate-900 dark:text-white mb-1">2,150</h4>
-                  <p class="text-[8px] font-bold text-emerald-500 flex items-center gap-1"><i data-lucide="trending-up" class="w-2.5 h-2.5"></i> +10.7% <span class="text-slate-400">from last week</span></p>
-                </div>
-              </div>
-
-              <!-- Tables Section -->
-              <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                <div class="bg-white dark:bg-slate-900/50 border border-slate-200 dark:border-slate-800/50 rounded-xl overflow-hidden shadow-sm">
-                  <div class="p-5 border-b border-slate-100 dark:border-slate-800/50 flex items-center justify-between">
-                    <h3 class="text-[11px] font-black text-slate-900 dark:text-white tracking-tight">Recent Work</h3>
-                    <button class="text-[8px] font-black text-blue-600 uppercase tracking-widest px-2.5 py-1.5 bg-blue-50 dark:bg-blue-500/10 rounded-md">View All</button>
-                  </div>
-                  <div class="overflow-x-auto">
-                    <table class="w-full text-left">
-                      <thead class="bg-slate-50 dark:bg-slate-950/30">
-                        <tr>
-                          <th class="px-5 py-3 text-[8px] font-black text-slate-400 dark:text-slate-500 uppercase tracking-widest">Worker</th>
-                          <th class="px-5 py-3 text-[8px] font-black text-slate-400 dark:text-slate-500 uppercase tracking-widest">Task</th>
-                          <th class="px-5 py-3 text-[8px] font-black text-slate-400 dark:text-slate-500 uppercase tracking-widest">Status</th>
-                        </tr>
-                      </thead>
-                      <tbody id="recent-table-body" class="divide-y divide-slate-100 dark:divide-slate-800/30 text-[10px] font-bold text-slate-600 dark:text-slate-300">
-                      </tbody>
-                    </table>
-                  </div>
-                </div>
-
-                <div class="bg-white dark:bg-slate-900/50 border border-slate-200 dark:border-slate-800/50 rounded-xl overflow-hidden shadow-sm">
-                  <div class="p-5 border-b border-slate-100 dark:border-slate-800/50 flex items-center justify-between">
-                    <h3 class="text-[11px] font-black text-slate-900 dark:text-white tracking-tight">Recent Payouts</h3>
-                    <button class="text-[8px] font-black text-blue-600 uppercase tracking-widest px-2.5 py-1.5 bg-blue-50 dark:bg-blue-500/10 rounded-md">View All</button>
-                  </div>
-                  <div class="overflow-x-auto">
-                    <table class="w-full text-left">
-                      <thead class="bg-slate-50 dark:bg-slate-950/30">
-                        <tr>
-                          <th class="px-5 py-3 text-[8px] font-black text-slate-400 dark:text-slate-500 uppercase tracking-widest">User</th>
-                          <th class="px-5 py-3 text-[8px] font-black text-slate-400 dark:text-slate-500 uppercase tracking-widest">Amount</th>
-                          <th class="px-5 py-3 text-[8px] font-black text-slate-400 dark:text-slate-500 uppercase tracking-widest">Status</th>
-                        </tr>
-                      </thead>
-                      <tbody id="payout-table-body" class="divide-y divide-slate-100 dark:divide-slate-800/30 text-[10px] font-bold text-slate-600 dark:text-slate-300">
-                      </tbody>
-                    </table>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            <!-- Publish Post Content -->
-            <div id="new-post-content" class="hidden max-w-4xl mx-auto space-y-5">
-              <div class="bg-white dark:bg-slate-900/50 border border-slate-200 dark:border-slate-800/50 rounded-2xl p-6 lg:p-8 shadow-sm">
-                <div class="mb-8">
-                  <h2 class="text-lg font-black text-slate-900 dark:text-white tracking-tight">Post Deployment</h2>
-                  <p class="text-[11px] text-slate-500 font-bold mt-0.5">Configure and publish new government job details to the main database.</p>
-                </div>
-                <form id="admin-form" class="grid grid-cols-1 md:grid-cols-2 gap-5">
-                  <div class="space-y-1.5">
-                    <label class="text-[9px] font-black text-slate-400 dark:text-slate-500 uppercase tracking-widest ml-1">Classification</label>
-                    <select name="formType" class="w-full bg-slate-50 dark:bg-slate-800/30 border border-slate-200 dark:border-slate-700/50 rounded-lg px-3.5 py-2.5 text-xs font-bold text-slate-900 dark:text-white focus:border-blue-500 outline-none appearance-none">
-                      <option value="Latest Job">Latest Job</option>
-                      <option value="Admit Card">Admit Card</option>
-                      <option value="Result">Result</option>
-                      <option value="Admission">Admission</option>
-                    </select>
-                  </div>
-                  <div class="space-y-1.5">
-                    <label class="text-[9px] font-black text-slate-400 dark:text-slate-500 uppercase tracking-widest ml-1">Official Post Title</label>
-                    <input type="text" name="postName" required class="w-full bg-slate-50 dark:bg-slate-800/30 border border-slate-200 dark:border-slate-700/50 rounded-lg px-3.5 py-2.5 text-xs font-bold text-slate-900 dark:text-white focus:border-blue-500 outline-none">
-                  </div>
-                  <div class="space-y-1.5">
-                    <label class="text-[9px] font-black text-slate-400 dark:text-slate-500 uppercase tracking-widest ml-1">Department</label>
-                    <input type="text" name="departmentName" class="w-full bg-slate-50 dark:bg-slate-800/30 border border-slate-200 dark:border-slate-700/50 rounded-lg px-3.5 py-2.5 text-xs font-bold text-slate-900 dark:text-white">
-                  </div>
-                  <div class="space-y-1.5">
-                    <label class="text-[9px] font-black text-slate-400 dark:text-slate-500 uppercase tracking-widest ml-1">Timeline (Dates)</label>
-                    <input type="text" name="importantDates" class="w-full bg-slate-50 dark:bg-slate-800/30 border border-slate-200 dark:border-slate-700/50 rounded-lg px-3.5 py-2.5 text-xs font-bold text-slate-900 dark:text-white" placeholder="Start Date - End Date">
-                  </div>
-                  <div class="space-y-1.5">
-                    <label class="text-[9px] font-black text-slate-400 dark:text-slate-500 uppercase tracking-widest ml-1">Application Fees</label>
-                    <input type="text" name="applicationFees" class="w-full bg-slate-50 dark:bg-slate-800/30 border border-slate-200 dark:border-slate-700/50 rounded-lg px-3.5 py-2.5 text-xs font-bold text-slate-900 dark:text-white">
-                  </div>
-                  <div class="space-y-1.5">
-                    <label class="text-[9px] font-black text-slate-400 dark:text-slate-500 uppercase tracking-widest ml-1">Age Limit</label>
-                    <input type="text" name="ageLimit" class="w-full bg-slate-50 dark:bg-slate-800/30 border border-slate-200 dark:border-slate-700/50 rounded-lg px-3.5 py-2.5 text-xs font-bold text-slate-900 dark:text-white">
-                  </div>
-                  <div class="space-y-1.5">
-                    <label class="text-[9px] font-black text-slate-400 dark:text-slate-500 uppercase tracking-widest ml-1">Eligibility Criteria</label>
-                    <input type="text" name="eligibility" class="w-full bg-slate-50 dark:bg-slate-800/30 border border-slate-200 dark:border-slate-700/50 rounded-lg px-3.5 py-2.5 text-xs font-bold text-slate-900 dark:text-white">
-                  </div>
-                  <div class="space-y-1.5">
-                    <label class="text-[9px] font-black text-slate-400 dark:text-slate-500 uppercase tracking-widest ml-1">Apply Online Link</label>
-                    <input type="url" name="applyLink" class="w-full bg-slate-50 dark:bg-slate-800/30 border border-slate-200 dark:border-slate-700/50 rounded-lg px-3.5 py-2.5 text-xs font-bold text-slate-900 dark:text-white">
-                  </div>
-                  <div class="space-y-1.5">
-                    <label class="text-[9px] font-black text-slate-400 dark:text-slate-500 uppercase tracking-widest ml-1">Download Notification Link</label>
-                    <input type="url" name="notificationLink" class="w-full bg-slate-50 dark:bg-slate-800/30 border border-slate-200 dark:border-slate-700/50 rounded-lg px-3.5 py-2.5 text-xs font-bold text-slate-900 dark:text-white">
-                  </div>
-                  <div class="space-y-1.5">
-                    <label class="text-[9px] font-black text-slate-400 dark:text-slate-500 uppercase tracking-widest ml-1">Official Website Link</label>
-                    <input type="url" name="officialWebsite" class="w-full bg-slate-50 dark:bg-slate-800/30 border border-slate-200 dark:border-slate-700/50 rounded-lg px-3.5 py-2.5 text-xs font-bold text-slate-900 dark:text-white">
-                  </div>
-
-                  <div class="md:col-span-2 space-y-1.5">
-                    <label class="text-[9px] font-black text-slate-400 dark:text-slate-500 uppercase tracking-widest ml-1">Job Details / Vacancy Breakdown</label>
-                    <textarea name="postWiseDetails" rows="3" class="w-full bg-slate-50 dark:bg-slate-800/30 border border-slate-200 dark:border-slate-700/50 rounded-xl px-4 py-2.5 text-xs font-bold text-slate-900 dark:text-white outline-none focus:border-blue-500 resize-none"></textarea>
-                  </div>
-
-                  <div class="md:col-span-2 space-y-1.5">
-                    <label class="text-[9px] font-black text-slate-400 dark:text-slate-500 uppercase tracking-widest ml-1">How to Fill Instructions</label>
-                    <textarea name="howToFill" rows="3" class="w-full bg-slate-50 dark:bg-slate-800/30 border border-slate-200 dark:border-slate-700/50 rounded-xl px-4 py-2.5 text-xs font-bold text-slate-900 dark:text-white outline-none focus:border-blue-500 resize-none" placeholder="Step by step guide..."></textarea>
-                  </div>
-
-                  <div class="md:col-span-2 space-y-1.5">
-                    <label class="text-[9px] font-black text-slate-400 dark:text-slate-500 uppercase tracking-widest ml-1">Internal Remarks</label>
-                    <input type="text" name="remark" class="w-full bg-slate-50 dark:bg-slate-800/30 border border-slate-200 dark:border-slate-700/50 rounded-lg px-3.5 py-2.5 text-xs font-bold text-slate-900 dark:text-white">
-                  </div>
-
-                  <div class="md:col-span-2 flex items-center justify-end pt-3 gap-4 border-t border-slate-100 dark:border-slate-800/50">
-                    <div id="form-status" class="hidden text-[9px] font-black px-3 py-1.5 rounded-md">
-                      <span id="form-status-text"></span>
-                    </div>
-                    <button type="submit" id="submit-btn" class="bg-blue-600 hover:bg-blue-500 text-white font-black px-6 py-2.5 rounded-lg transition-all shadow-md shadow-blue-900/10 text-xs flex items-center gap-2">
-                      <i data-lucide="upload-cloud" id="submit-icon" class="w-3.5 h-3.5"></i> 
-                      <span id="submit-text">Execute Deployment</span>
-                    </button>
-                  </div>
-                </form>
-              </div>
-            </div>
-
-            <!-- Records/Users View -->
-            <div id="records-content" class="hidden space-y-6">
-               <div class="grid grid-cols-1 sm:grid-cols-4 gap-4">
-                 <div class="bg-white dark:bg-slate-900/50 border border-slate-200 dark:border-slate-800/50 p-4 rounded-xl shadow-sm">
-                   <p class="text-[8px] font-black text-slate-400 uppercase tracking-widest mb-1">Total Posts</p>
-                   <h4 id="record-stat-total" class="text-lg font-black text-slate-900 dark:text-white">0</h4>
-                 </div>
-                 <div class="bg-white dark:bg-slate-900/50 border border-slate-200 dark:border-slate-800/50 p-4 rounded-xl shadow-sm">
-                   <p class="text-[8px] font-black text-slate-400 uppercase tracking-widest mb-1">Latest Jobs</p>
-                   <h4 id="record-stat-jobs" class="text-lg font-black text-slate-900 dark:text-white">0</h4>
-                 </div>
-                 <div class="bg-white dark:bg-slate-900/50 border border-slate-200 dark:border-slate-800/50 p-4 rounded-xl shadow-sm">
-                   <p class="text-[8px] font-black text-slate-400 uppercase tracking-widest mb-1">Admit Cards</p>
-                   <h4 id="record-stat-admit" class="text-lg font-black text-slate-900 dark:text-white">0</h4>
-                 </div>
-                 <div class="bg-white dark:bg-slate-900/50 border border-slate-200 dark:border-slate-800/50 p-4 rounded-xl shadow-sm">
-                   <p class="text-[8px] font-black text-slate-400 uppercase tracking-widest mb-1">Results</p>
-                   <h4 id="record-stat-results" class="text-lg font-black text-slate-900 dark:text-white">0</h4>
-                 </div>
-               </div>
-
-               <div class="bg-white dark:bg-slate-900/50 border border-slate-200 dark:border-slate-800/50 rounded-xl overflow-hidden shadow-sm">
-                  <div class="p-5 border-b border-slate-100 dark:border-slate-800/50 flex items-center justify-between">
-                    <div>
-                      <h3 class="text-[11px] font-black text-slate-900 dark:text-white tracking-tight">Post Registry</h3>
-                      <p class="text-[8px] text-slate-500 font-bold">Comprehensive list of all deployed content</p>
-                    </div>
-                    <button id="export-csv" class="flex items-center gap-2 px-3 py-1.5 bg-emerald-500 hover:bg-emerald-600 text-white text-[9px] font-black rounded-lg transition-all shadow-sm">
-                      <i data-lucide="download" class="w-3 h-3"></i> Export CSV
-                    </button>
-                  </div>
-                  <div class="overflow-x-auto">
-                    <table class="w-full text-left">
-                      <thead class="bg-slate-50 dark:bg-slate-950/30">
-                        <tr>
-                          <th class="px-5 py-3 text-[8px] font-black text-slate-400 dark:text-slate-500 uppercase tracking-widest">Post Name</th>
-                          <th class="px-5 py-3 text-[8px] font-black text-slate-400 dark:text-slate-500 uppercase tracking-widest">Type</th>
-                          <th class="px-5 py-3 text-[8px] font-black text-slate-400 dark:text-slate-500 uppercase tracking-widest">Author</th>
-                          <th class="px-5 py-3 text-[8px] font-black text-slate-400 dark:text-slate-500 uppercase tracking-widest">Date</th>
-                          <th class="px-5 py-3 text-[8px] font-black text-slate-400 dark:text-slate-500 uppercase tracking-widest text-right">Actions</th>
-                        </tr>
-                      </thead>
-                      <tbody id="all-records-table-body" class="divide-y divide-slate-100 dark:divide-slate-800/30 text-[10px] font-bold text-slate-600 dark:text-slate-300">
-                      </tbody>
-                    </table>
-                  </div>
-               </div>
-            </div>
-
-            <!-- Payouts Detail View -->
-            <div id="payout-content" class="hidden space-y-6">
-              <div class="grid grid-cols-1 sm:grid-cols-3 gap-6">
-                <div class="p-5 bg-blue-50 dark:bg-blue-600/10 border border-blue-100 dark:border-blue-500/20 rounded-xl shadow-sm">
-                  <p class="text-[9px] font-black text-slate-400 dark:text-slate-500 uppercase tracking-widest mb-1">Total Disbursed</p>
-                  <h4 id="est-earnings" class="text-2xl font-black text-slate-900 dark:text-white">₹ 0</h4>
-                </div>
-              </div>
-            </div>
-          </div>
-        </main>
+      <div class="greeting">
+        <div>
+          <h2>Hi, Ranjeet <span style="font-weight: 400; font-size: 16px; color: #4a5a72;">👋</span></h2>
+          <div class="greeting-sub">Here's what's happening today.</div>
+        </div>
+        <button class="theme-toggle" id="themeToggle"><i class="fas fa-moon"></i> <span id="themeLabel">Dark</span></button>
       </div>
     </div>
 
-    <!-- Mobile Sidebar Overlay -->
-    <div id="sidebar-overlay" class="hidden fixed inset-0 bg-black/60 backdrop-blur-sm z-40 lg:hidden"></div>
+    <!-- STATS -->
+    <div class="stats-grid">
+      <div class="stat-card"><div class="stat-label"><span>Total Users</span><span class="stat-icon"><i class="fas fa-users"></i></span></div><div class="stat-number">1,245</div><div class="stat-change positive"><i class="fas fa-arrow-up"></i> +12.5%</div></div>
+      <div class="stat-card"><div class="stat-label"><span>Active Work</span><span class="stat-icon"><i class="fas fa-tasks"></i></span></div><div class="stat-number">356</div><div class="stat-change positive"><i class="fas fa-arrow-up"></i> +8.2%</div></div>
+      <div class="stat-card"><div class="stat-label"><span>Total Payout</span><span class="stat-icon"><i class="fas fa-credit-card"></i></span></div><div class="stat-number">₹4,85,000</div><div class="stat-change positive"><i class="fas fa-arrow-up"></i> +15.3%</div></div>
+      <div class="stat-card"><div class="stat-label"><span>Pending Payout</span><span class="stat-icon"><i class="fas fa-clock"></i></span></div><div class="stat-number">₹42,500</div><div class="stat-change negative"><i class="fas fa-arrow-down"></i> -3.6%</div></div>
+      <div class="stat-card"><div class="stat-label"><span>Completed Tasks</span><span class="stat-icon"><i class="fas fa-check-circle"></i></span></div><div class="stat-number">2,150</div><div class="stat-change positive"><i class="fas fa-arrow-up"></i> +10.7%</div></div>
+      <div class="stat-card"><div class="stat-label"><span>Today's Work</span><span class="stat-icon"><i class="fas fa-calendar-day"></i></span></div><div class="stat-number">78</div><div class="stat-change positive"><i class="fas fa-arrow-up"></i> +5.4%</div></div>
+    </div>
 
+    <!-- CHARTS ROW -->
+    <div class="charts-row">
+      <div class="chart-box">
+        <h4>Overview <span style="font-weight: 400; font-size: 13px; margin-left: 8px;">This Week</span></h4>
+        <div class="chart-placeholder">
+          <div class="chart-row">
+            <div class="chart-bar" style="--h:70px"></div>
+            <div class="chart-bar" style="--h:110px"></div>
+            <div class="chart-bar" style="--h:140px"></div>
+            <div class="chart-bar" style="--h:90px"></div>
+            <div class="chart-bar" style="--h:120px"></div>
+            <div class="chart-bar" style="--h:60px"></div>
+            <div class="chart-bar" style="--h:100px"></div>
+          </div>
+          <div class="chart-labels"><span>Mon</span><span>Tue</span><span>Wed</span><span>Thu</span><span>Fri</span><span>Sat</span><span>Sun</span></div>
+          <div class="flex" style="justify-content: space-between; padding: 6px 2px 0;">
+            <div class="legend"><span class="legend-item"><i class="fas fa-circle"></i> New User Joined · Amit Kumar</span></div>
+            <div class="annotation"><i class="far fa-calendar-alt"></i> Wed 320 Work</div>
+          </div>
+        </div>
+      </div>
+      <!-- additional mini chart -->
+      <div class="chart-box">
+        <h4>Monthly Payout</h4>
+        <div class="chart-placeholder">
+          <div class="chart-row"><div class="chart-bar" style="--h:50px"></div><div class="chart-bar" style="--h:100px"></div><div class="chart-bar" style="--h:140px"></div><div class="chart-bar" style="--h:80px"></div><div class="chart-bar" style="--h:110px"></div></div>
+          <div class="chart-labels"><span>1st</span><span>2nd</span><span>3rd</span><span>4th</span><span>5th</span></div>
+        </div>
+      </div>
+      <div class="chart-box">
+        <h4>User Growth</h4>
+        <div class="chart-placeholder">
+          <div class="chart-row"><div class="chart-bar" style="--h:60px"></div><div class="chart-bar" style="--h:120px"></div><div class="chart-bar" style="--h:100px"></div><div class="chart-bar" style="--h:140px"></div><div class="chart-bar" style="--h:130px"></div></div>
+          <div class="chart-labels"><span>1st</span><span>2nd</span><span>3rd</span><span>4th</span><span>5th</span></div>
+        </div>
+      </div>
+    </div>
 
-    <script type="module" src="/src/main.js"></script>
-  </body>
+    <!-- RECENT ACTIVITY + TABLES -->
+    <div class="recent-grid">
+      <div class="recent-card">
+        <div class="card-header"><h4><i class="far fa-bell" style="margin-right: 8px;"></i>Recent Activity</h4><span class="btn-outline">View All</span></div>
+        <div class="activity-item"><div class="left"><i class="fas fa-user-plus"></i> New User Joined</div><span class="time">2 min ago</span></div>
+        <div class="activity-item"><div class="left"><i class="fas fa-file-alt"></i> Work Submitted</div><span class="time">15 min ago</span></div>
+        <div class="activity-item"><div class="left"><i class="fas fa-rupee-sign"></i> Payout Released</div><span class="time">1 hr ago</span></div>
+        <div class="activity-item"><div class="left"><i class="fas fa-rupee-sign"></i> Payment ₹2,500 to Rahul Verma</div><span class="time">2 hr ago</span></div>
+      </div>
+
+      <div class="recent-card" style="flex: 2 1 400px;">
+        <div class="card-header"><h4><i class="fas fa-list-ul" style="margin-right: 8px;"></i>Recent Work</h4><span class="btn-outline">View All</span></div>
+        <div class="table-wrap">
+          <table class="recent-table">
+            <thead><tr><th>ID</th><th>Worker</th><th>Task</th><th>Date</th><th>Status</th></tr></thead>
+            <tbody>
+              <tr><td>#1258</td><td>Amit Kumar</td><td>Image Labeling</td><td>7 May 2025</td><td><span class="badge badge-pending">Pending</span></td></tr>
+              <tr><td>#1257</td><td>Rahul Verma</td><td>Data Collection</td><td>7 May 2025</td><td><span class="badge badge-progress">In Progress</span></td></tr>
+              <tr><td>#1256</td><td>Neha Singh</td><td>Content Review</td><td>6 May 2025</td><td><span class="badge badge-completed">Completed</span></td></tr>
+              <tr><td>#1255</td><td>Sanjay Yadav</td><td>Form Filling</td><td>6 May 2025</td><td><span class="badge badge-pending">Pending</span></td></tr>
+              <tr><td>#1254</td><td>Pooja Sharma</td><td>Verification</td><td>6 May 2025</td><td><span class="badge badge-completed">Completed</span></td></tr>
+            </tbody>
+          </table>
+        </div>
+        <div style="margin-top: 14px; font-size: 13px; color: #4a5a72;"><i class="fas fa-credit-card"></i> Payouts: #P1258 ₹2,500 Paid · #P1257 ₹1,800 Paid · #P1256 ₹2,000 Pending</div>
+      </div>
+    </div>
+
+    <div style="margin-top: 18px; text-align: right; font-size: 13px; color: #6b7d99; border-top: 1px solid rgba(0,0,0,0.02); padding-top: 16px;">
+      <i class="fas fa-shield-alt"></i> Admin · SarkariSetu v2
+    </div>
+  </div>
+
+  <script>
+    (function() {
+      const toggleBtn = document.getElementById('themeToggle');
+      const themeLabel = document.getElementById('themeLabel');
+      const body = document.body;
+
+      // check stored preference
+      const stored = localStorage.getItem('sarkariTheme');
+      if (stored === 'dark') {
+        body.classList.add('dark');
+        themeLabel.textContent = 'Light';
+        toggleBtn.innerHTML = '<i class="fas fa-sun"></i> Light';
+      } else {
+        body.classList.remove('dark');
+        themeLabel.textContent = 'Dark';
+        toggleBtn.innerHTML = '<i class="fas fa-moon"></i> Dark';
+      }
+
+      toggleBtn.addEventListener('click', function(e) {
+        e.preventDefault();
+        if (body.classList.contains('dark')) {
+          body.classList.remove('dark');
+          localStorage.setItem('sarkariTheme', 'light');
+          toggleBtn.innerHTML = '<i class="fas fa-moon"></i> Dark';
+          themeLabel.textContent = 'Dark';
+        } else {
+          body.classList.add('dark');
+          localStorage.setItem('sarkariTheme', 'dark');
+          toggleBtn.innerHTML = '<i class="fas fa-sun"></i> Light';
+          themeLabel.textContent = 'Light';
+        }
+      });
+    })();
+  </script>
+</body>
 </html>
-
