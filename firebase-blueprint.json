@@ -1,0 +1,19 @@
+{
+  "collections": {
+    "jobs": {
+      "id": "string",
+      "title": "string",
+      "organization": "string",
+      "postDate": "string",
+      "deadline": "string",
+      "officialLink": "string",
+      "category": "string",
+      "description": "string",
+      "imageUrl": "string"
+    },
+    "subscribers": {
+      "token": "string",
+      "createdAt": "number"
+    }
+  }
+}

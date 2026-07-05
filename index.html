@@ -1,0 +1,206 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Sarkari Setu | Admin Panel</title>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <link rel="stylesheet" href="/src/index.css">
+  </head>
+  <body class="bg-[#f8fafc] font-sans antialiased">
+    <!-- App Container -->
+    <div id="app">
+      <!-- Login View -->
+      <div id="login-view" class="min-h-screen flex items-center justify-center p-4">
+        <div class="w-full max-w-xs bg-white rounded-[2rem] shadow-2xl shadow-blue-900/10 border border-gray-100 p-8 text-center">
+          <div class="w-12 h-12 bg-blue-600 text-white rounded-xl flex items-center justify-center mx-auto mb-4 shadow-lg shadow-blue-100">
+            <i data-lucide="shield" class="w-6 h-6"></i>
+          </div>
+          <h1 class="text-lg font-black text-gray-900 mb-0.5">Admin Login</h1>
+          <p class="text-[10px] text-gray-400 mb-6 font-black uppercase tracking-widest">Sign in to continue</p>
+          
+          <div id="login-error" class="hidden mb-4 p-2.5 bg-red-50 text-red-600 rounded-lg text-[10px] font-bold border border-red-100 flex items-center gap-2">
+            <div class="w-1.5 h-1.5 rounded-full bg-red-600 animate-pulse flex-shrink-0"></div>
+            <span id="error-message"></span>
+          </div>
+
+          <form id="login-form" class="space-y-3">
+            <div class="relative group">
+              <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+                <i data-lucide="phone" class="w-3.5 h-3.5 text-gray-400 group-focus-within:text-blue-600 transition-colors"></i>
+              </div>
+              <input type="tel" id="mobile" placeholder="Mobile Number" required class="w-full pl-10 pr-4 py-2.5 bg-gray-50 border-2 border-transparent rounded-xl outline-none focus:bg-white focus:border-blue-600 transition-all font-bold text-xs text-gray-900 placeholder:text-gray-300">
+            </div>
+            <div class="relative group">
+              <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+                <i data-lucide="lock" class="w-3.5 h-3.5 text-gray-400 group-focus-within:text-blue-600 transition-colors"></i>
+              </div>
+              <input type="password" id="password" placeholder="Password" required class="w-full pl-10 pr-4 py-2.5 bg-gray-50 border-2 border-transparent rounded-xl outline-none focus:bg-white focus:border-blue-600 transition-all font-bold text-xs text-gray-900 placeholder:text-gray-300">
+            </div>
+            <button type="submit" id="login-btn" class="w-full flex items-center justify-center gap-2 bg-blue-600 hover:bg-blue-700 text-white font-black py-3 rounded-xl transition-all shadow-lg shadow-blue-100 active:scale-95 mt-1 text-xs disabled:bg-blue-400">
+              <i data-lucide="log-in" id="login-icon" class="w-4 h-4"></i>
+              <span id="login-text">Login</span>
+            </button>
+          </form>
+        </div>
+      </div>
+
+      <!-- Admin View -->
+      <div id="admin-view" class="hidden min-h-screen flex">
+        <!-- Sidebar -->
+        <aside id="sidebar" class="fixed inset-y-0 left-0 z-50 w-64 bg-white border-r border-gray-100 transition-transform duration-300 lg:translate-x-0 lg:static -translate-x-full">
+          <div class="h-full flex flex-col p-4">
+            <div class="flex items-center gap-2 mb-8 px-2">
+              <div class="w-8 h-8 bg-blue-600 rounded-lg flex items-center justify-center text-white shadow-lg shadow-blue-200">
+                <i data-lucide="shield" class="w-5 h-5"></i>
+              </div>
+              <div>
+                <h2 class="text-sm font-black text-gray-900 leading-tight">Admin</h2>
+                <p class="text-[8px] text-gray-400 font-black uppercase tracking-widest">Sarkari Setu</p>
+              </div>
+            </div>
+            <nav class="flex-1 space-y-1">
+              <button data-tab="dashboard" class="tab-btn w-full flex items-center gap-2 p-3 rounded-xl font-bold transition-all text-xs bg-blue-600 text-white shadow-lg shadow-blue-100">
+                <i data-lucide="layout-dashboard" class="w-4 h-4"></i>
+                Dashboard
+              </button>
+              <button data-tab="new_post" class="tab-btn w-full flex items-center gap-2 p-3 rounded-xl font-bold transition-all text-xs text-gray-500 hover:bg-gray-50 hover:text-blue-600">
+                <i data-lucide="plus" class="w-4 h-4"></i>
+                New Entry
+              </button>
+              <button data-tab="records" class="tab-btn w-full flex items-center gap-2 p-3 rounded-xl font-bold transition-all text-xs text-gray-500 hover:bg-gray-50 hover:text-blue-600">
+                <i data-lucide="database" class="w-4 h-4"></i>
+                Records
+              </button>
+            </nav>
+            <div class="pt-4 border-t border-gray-100">
+              <button id="logout-btn" class="w-full flex items-center gap-2 p-3 rounded-xl text-gray-500 hover:bg-red-50 hover:text-red-600 font-bold transition-all text-xs">
+                <i data-lucide="log-out" class="w-4 h-4"></i>
+                Sign Out
+              </button>
+            </div>
+          </div>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="flex-1 h-screen overflow-y-auto">
+          <header class="sticky top-0 z-30 bg-white/80 backdrop-blur-md border-b border-gray-100 px-6 py-3 flex items-center justify-between">
+            <div class="flex items-center gap-3">
+              <button id="menu-toggle" class="lg:hidden p-1.5 hover:bg-gray-100 rounded-lg transition-colors">
+                <i data-lucide="menu" class="w-5 h-5 text-gray-600"></i>
+              </button>
+              <h1 id="view-title" class="text-sm font-black text-gray-900">Overview</h1>
+            </div>
+            <div class="flex items-center gap-3">
+              <button id="refresh-stats" class="p-2 text-gray-400 hover:text-blue-600 transition-colors">
+                <i data-lucide="refresh-ccw" id="refresh-icon" class="w-4 h-4"></i>
+              </button>
+              <div class="w-8 h-8 bg-gray-100 rounded-lg flex items-center justify-center">
+                <i data-lucide="users" class="w-4 h-4 text-gray-400"></i>
+              </div>
+            </div>
+          </header>
+
+          <div class="p-4 md:p-6 max-w-5xl">
+            <!-- Dashboard Content -->
+            <div id="dashboard-content" class="space-y-6">
+              <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                <div class="p-4 rounded-2xl border bg-blue-50 text-blue-600 border-blue-100 shadow-sm">
+                  <div class="flex items-center gap-3">
+                    <div class="p-2 bg-white/50 rounded-lg"><i data-lucide="file-text" class="w-4 h-4"></i></div>
+                    <div>
+                      <p class="text-[10px] font-black uppercase tracking-widest opacity-60">Total Entries</p>
+                      <h4 id="stat-total" class="text-xl font-black">0</h4>
+                    </div>
+                  </div>
+                </div>
+                <!-- More stat cards can be added here -->
+              </div>
+
+              <div class="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden">
+                <div class="p-4 border-b border-gray-50 flex items-center justify-between">
+                  <h3 class="text-xs font-black text-gray-900 uppercase tracking-widest">Recent Submissions</h3>
+                  <button class="text-[10px] font-bold text-blue-600 hover:underline">View All</button>
+                </div>
+                <div class="overflow-x-auto">
+                  <table class="w-full text-left">
+                    <thead class="bg-gray-50/50">
+                      <tr>
+                        <th class="px-4 py-3 text-[10px] font-black text-gray-400 uppercase tracking-wider">Post Name</th>
+                        <th class="px-4 py-3 text-[10px] font-black text-gray-400 uppercase tracking-wider">Category</th>
+                        <th class="px-4 py-3 text-[10px] font-black text-gray-400 uppercase tracking-wider">Admin</th>
+                        <th class="px-4 py-3 text-[10px] font-black text-gray-400 uppercase tracking-wider">Status</th>
+                      </tr>
+                    </thead>
+                    <tbody id="recent-table-body" class="divide-y divide-gray-50 text-xs font-bold">
+                      <!-- Table rows will be injected here -->
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            </div>
+
+            <!-- New Entry Content -->
+            <div id="new-post-content" class="hidden bg-white rounded-2xl shadow-sm p-6 border border-gray-100">
+              <div class="mb-6">
+                <h2 class="text-sm font-black text-gray-900">Entry Form</h2>
+                <p class="text-[10px] text-gray-400 font-bold uppercase tracking-widest mt-1">Exporting to "data" sheet</p>
+              </div>
+              <form id="admin-form" class="space-y-4">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div class="space-y-1">
+                    <label class="text-[10px] font-black text-gray-400 uppercase tracking-widest">Form Type</label>
+                    <select name="formType" class="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-2 text-xs font-bold focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition-all">
+                      <option value="Latest Job">Latest Job</option>
+                      <option value="Admit Card">Admit Card</option>
+                      <option value="Result">Result</option>
+                      <option value="Admission">Admission</option>
+                      <option value="Answer Key">Answer Key</option>
+                      <option value="Syllabus">Syllabus</option>
+                      <option value="Scholarship">Scholarship</option>
+                      <option value="Important Update">Important Update</option>
+                    </select>
+                  </div>
+                  <div class="space-y-1">
+                    <label class="text-[10px] font-black text-gray-400 uppercase tracking-widest">Post Name</label>
+                    <input type="text" name="postName" required class="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-2 text-xs font-bold focus:ring-2 focus:ring-blue-500 outline-none">
+                  </div>
+                  <div class="space-y-1"><label class="text-[10px] font-black text-gray-400 uppercase tracking-widest">Department Name</label><input type="text" name="departmentName" class="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-2 text-xs font-bold focus:ring-2 focus:ring-blue-500 outline-none"></div>
+                  <div class="space-y-1"><label class="text-[10px] font-black text-gray-400 uppercase tracking-widest">Important Dates</label><input type="text" name="importantDates" class="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-2 text-xs font-bold focus:ring-2 focus:ring-blue-500 outline-none"></div>
+                  <div class="space-y-1"><label class="text-[10px] font-black text-gray-400 uppercase tracking-widest">Application Fees</label><input type="text" name="applicationFees" class="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-2 text-xs font-bold focus:ring-2 focus:ring-blue-500 outline-none"></div>
+                  <div class="space-y-1"><label class="text-[10px] font-black text-gray-400 uppercase tracking-widest">Age Limit</label><input type="text" name="age" class="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-2 text-xs font-bold focus:ring-2 focus:ring-blue-500 outline-none"></div>
+                  <div class="space-y-1"><label class="text-[10px] font-black text-gray-400 uppercase tracking-widest">Eligibility</label><input type="text" name="eligibility" class="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-2 text-xs font-bold focus:ring-2 focus:ring-blue-500 outline-none"></div>
+                  <div class="space-y-1"><label class="text-[10px] font-black text-gray-400 uppercase tracking-widest">Apply Link</label><input type="text" name="applyLink" class="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-2 text-xs font-bold focus:ring-2 focus:ring-blue-500 outline-none"></div>
+                  <div class="space-y-1"><label class="text-[10px] font-black text-gray-400 uppercase tracking-widest">Notification Link</label><input type="text" name="notificationLink" class="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-2 text-xs font-bold focus:ring-2 focus:ring-blue-500 outline-none"></div>
+                  <div class="space-y-1"><label class="text-[10px] font-black text-gray-400 uppercase tracking-widest">Official Website</label><input type="text" name="officialWebsiteLink" class="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-2 text-xs font-bold focus:ring-2 focus:ring-blue-500 outline-none"></div>
+                  <div class="space-y-1"><label class="text-[10px] font-black text-gray-400 uppercase tracking-widest">Remark</label><input type="text" name="remark" class="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-2 text-xs font-bold focus:ring-2 focus:ring-blue-500 outline-none"></div>
+                  <div class="md:col-span-2 space-y-1">
+                    <label class="text-[10px] font-black text-gray-400 uppercase tracking-widest">Post Wise Details</label>
+                    <textarea name="postWiseDetails" rows="2" class="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-2 text-xs font-bold focus:ring-2 focus:ring-blue-500 outline-none resize-none"></textarea>
+                  </div>
+                  <div class="md:col-span-2 space-y-1">
+                    <label class="text-[10px] font-black text-gray-400 uppercase tracking-widest">How To Fill</label>
+                    <textarea name="howToFill" rows="2" class="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-2 text-xs font-bold focus:ring-2 focus:ring-blue-500 outline-none resize-none"></textarea>
+                  </div>
+                </div>
+                <div class="pt-4 flex items-center justify-end gap-3">
+                  <div id="form-status" class="hidden flex items-center gap-1.5 font-bold text-[10px]"></div>
+                  <button type="submit" id="submit-btn" class="flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white font-black px-6 py-3 rounded-xl shadow-lg shadow-blue-200 transition-all active:scale-95 text-xs disabled:bg-blue-400">
+                    <i data-lucide="save" id="submit-icon" class="w-4 h-4"></i>
+                    <span id="submit-text">Export to Sheet</span>
+                  </button>
+                </div>
+              </form>
+            </div>
+          </div>
+        </main>
+      </div>
+    </div>
+
+    <!-- Mobile Overlay -->
+    <div id="sidebar-overlay" class="hidden fixed inset-0 bg-black/20 backdrop-blur-sm z-40 lg:hidden"></div>
+
+    <script type="module" src="/src/main.js"></script>
+  </body>
+</html>
+
