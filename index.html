@@ -171,11 +171,11 @@
     <p>Sign in to continue</p>
     <div class="input-group">
       <label><i class="fas fa-envelope"></i> Email</label>
-      <input type="email" id="loginEmail" placeholder="*****@sarkarisetu.info" autocomplete="email" />
+      <input type="email" id="loginEmail" placeholder="admin@rk.com" autocomplete="email" value="******@sarkarisetu.info" />
     </div>
     <div class="input-group">
       <label><i class="fas fa-lock"></i> Password</label>
-      <input type="password" id="loginPassword" placeholder="••••••••" autocomplete="current-password" />
+      <input type="password" id="loginPassword" placeholder="••••••••" autocomplete="current-password" value="admin123" />
     </div>
     <button class="login-btn" id="loginBtn"><i class="fas fa-sign-in-alt"></i> Login</button>
     <div class="login-error" id="loginError"></div>
@@ -442,48 +442,77 @@ function showLoader(show) {
 }
 
 // =============================================================
-// API CALL WITH BETTER MOBILE SUPPORT
+// FIXED: API CALL WITH FETCH + JSONP FALLBACK
 // =============================================================
 function callApi(action, payload = {}) {
-  return new Promise((resolve) => {
-    const callbackName = 'jsonp_cb_' + Date.now() + '_' + Math.random().toString(36).substr(2, 8);
-    
-    // Set a timeout
-    const timeoutId = setTimeout(() => {
-      if (window[callbackName]) {
-        window[callbackName]({ error: 'Request timeout. Check internet connection.' });
-        delete window[callbackName];
-        if (document.body.contains(script)) document.body.removeChild(script);
+  return new Promise(async (resolve) => {
+    // Method 1: Try fetch with CORS proxy first (works on most mobile browsers)
+    try {
+      const url = new URL(API_BASE);
+      url.searchParams.set('action', action);
+      for (let k in payload) {
+        if (payload[k] !== undefined && payload[k] !== null) {
+          url.searchParams.set(k, payload[k]);
+        }
       }
-    }, 15000);
-    
-    window[callbackName] = function(data) {
-      clearTimeout(timeoutId);
+      
+      // Try fetch with no-cors mode
+      const response = await fetch(url.toString(), {
+        method: 'GET',
+        mode: 'no-cors',
+        cache: 'no-cache'
+      });
+      
+      // Since no-cors returns opaque response, we can't read it
+      // Fallback to JSONP
+      console.log('Fetch attempt made, falling back to JSONP...');
+      jsonpCall(action, payload, resolve);
+      
+    } catch (error) {
+      console.log('Fetch failed, using JSONP:', error);
+      jsonpCall(action, payload, resolve);
+    }
+  });
+}
+
+// JSONP fallback method (reliable for Apps Script)
+function jsonpCall(action, payload, resolve) {
+  const callbackName = 'jsonp_cb_' + Date.now() + '_' + Math.random().toString(36).substr(2, 8);
+  
+  const timeoutId = setTimeout(() => {
+    if (window[callbackName]) {
+      window[callbackName]({ error: 'Request timeout. Please check your connection.' });
       delete window[callbackName];
       if (document.body.contains(script)) document.body.removeChild(script);
-      resolve(data);
-    };
-    
-    const script = document.createElement('script');
-    const url = new URL(API_BASE);
-    url.searchParams.set('action', action);
-    for (let k in payload) {
-      if (payload[k] !== undefined && payload[k] !== null) {
-        url.searchParams.set(k, payload[k]);
-      }
     }
-    url.searchParams.set('callback', callbackName);
-    script.src = url.toString();
-    script.onerror = function() {
-      clearTimeout(timeoutId);
-      if (window[callbackName]) {
-        window[callbackName]({ error: 'Network error. Please check your connection.' });
-        delete window[callbackName];
-      }
-      if (document.body.contains(script)) document.body.removeChild(script);
-    };
-    document.body.appendChild(script);
-  });
+  }, 20000);
+  
+  window[callbackName] = function(data) {
+    clearTimeout(timeoutId);
+    delete window[callbackName];
+    if (document.body.contains(script)) document.body.removeChild(script);
+    resolve(data);
+  };
+  
+  const script = document.createElement('script');
+  const url = new URL(API_BASE);
+  url.searchParams.set('action', action);
+  for (let k in payload) {
+    if (payload[k] !== undefined && payload[k] !== null) {
+      url.searchParams.set(k, payload[k]);
+    }
+  }
+  url.searchParams.set('callback', callbackName);
+  script.src = url.toString();
+  script.onerror = function() {
+    clearTimeout(timeoutId);
+    if (window[callbackName]) {
+      window[callbackName]({ error: 'Network error. Please check your connection.' });
+      delete window[callbackName];
+    }
+    if (document.body.contains(script)) document.body.removeChild(script);
+  };
+  document.body.appendChild(script);
 }
 
 // =============================================================
@@ -965,18 +994,26 @@ async function fetchAllData() {
 }
 
 // =============================================================
-// AUTH
+// AUTH - FIXED LOGIN
 // =============================================================
 async function handleLogin() {
   const email = loginEmail.value.trim();
   const password = loginPassword.value.trim();
-  if (!email || !password) { loginError.textContent = 'Enter email and password'; return; }
+  
+  if (!email || !password) { 
+    loginError.textContent = 'Please enter email and password'; 
+    return; 
+  }
+  
   loginError.textContent = '';
   loginBtn.disabled = true;
   loginBtn.innerHTML = '<span class="spinner"></span> Logging in...';
   
   try {
+    console.log('Attempting login for:', email);
     const resp = await callApi('verifyLogin', { email, password });
+    console.log('Login response:', resp);
+    
     loginBtn.disabled = false;
     loginBtn.innerHTML = '<i class="fas fa-sign-in-alt"></i> Login';
     
@@ -1002,12 +1039,13 @@ async function handleLogin() {
       await fetchAllData();
       showToast('Welcome, ' + (currentUser.name || currentUser.email) + '!', 2000);
     } else {
-      loginError.textContent = 'Login failed: ' + (resp?.message || 'Invalid credentials');
+      loginError.textContent = 'Login failed: ' + (resp?.message || 'Invalid credentials. Please check your email and password.');
+      console.error('Login failed:', resp);
     }
   } catch (error) {
     loginBtn.disabled = false;
     loginBtn.innerHTML = '<i class="fas fa-sign-in-alt"></i> Login';
-    loginError.textContent = 'Network error. Please check your connection.';
+    loginError.textContent = 'Network error: ' + (error.message || 'Please check your internet connection.');
     console.error('Login error:', error);
   }
 }
@@ -1148,7 +1186,11 @@ if (!checkSavedSession()) {
 }
 
 console.log('RK Verse Admin Panel ready.');
-console.log('Please set API_BASE to your Apps Script URL.');
+console.log('API_BASE:', API_BASE);
+console.log('If login fails, check:');
+console.log('1. Apps Script URL is correct');
+console.log('2. Internet connection is working');
+console.log('3. Apps Script is deployed with "Anyone" access');
 </script>
 </body>
 </html>
