@@ -1,13 +1,15 @@
-import { APPS_SCRIPT_URL } from './lib/config';
+import { db } from './lib/firebase';
+import { collection, addDoc, updateDoc, deleteDoc, doc, getDocs, query, orderBy, limit } from 'firebase/firestore';
 
 // State management
 let state = {
   isLoggedIn: false,
   activeTab: 'dashboard',
   sidebarOpen: false,
-  stats: { total: 0, recent: [] },
+  stats: { total: 0, recent: [], all: [] },
   loading: false,
   submitting: false,
+  editingId: null,
   adminName: localStorage.getItem('admin_name') || ''
 };
 
@@ -44,6 +46,12 @@ const elements = {
   refreshStats: document.getElementById('refresh-stats'),
   refreshIcon: document.getElementById('refresh-icon'),
   themeToggle: document.getElementById('theme-toggle'),
+  exportCsv: document.getElementById('export-csv'),
+  
+  recordStatTotal: document.getElementById('record-stat-total'),
+  recordStatJobs: document.getElementById('record-stat-jobs'),
+  recordStatAdmit: document.getElementById('record-stat-admit'),
+  recordStatResults: document.getElementById('record-stat-results'),
   
   adminForm: document.getElementById('admin-form'),
   submitBtn: document.getElementById('submit-btn'),
@@ -56,7 +64,9 @@ const elements = {
 // Initialize
 function init() {
   const savedTheme = localStorage.getItem('theme') || 'light';
-  document.documentElement.classList.toggle('dark', savedTheme === 'dark');
+  const isDark = savedTheme === 'dark';
+  document.documentElement.classList.toggle('dark', isDark);
+  document.documentElement.setAttribute('data-theme', isDark ? 'dark' : 'light');
 
   const session = localStorage.getItem('admin_session');
   if (session) {
@@ -90,6 +100,11 @@ function showView(view) {
 }
 
 function switchTab(tabId) {
+  if (tabId === 'new_post' && !state.editingId) {
+    elements.adminForm.reset();
+    elements.submitText.textContent = 'Execute Deployment';
+  }
+  
   state.activeTab = tabId;
   
   // Update UI
@@ -215,36 +230,112 @@ function handleLogout() {
 
 // Logic: Stats
 async function fetchStats() {
-  if (state.loading) return;
-  state.loading = true;
+  if (!state.isLoggedIn) return;
+  
   elements.refreshIcon.classList.add('animate-spin');
   
   try {
-    const response = await fetch(APPS_SCRIPT_URL, {
-      method: 'POST',
-      body: JSON.stringify({ action: 'getStats' })
+    const q = query(collection(db, 'submissions'), orderBy('timestamp', 'desc'));
+    const querySnapshot = await getDocs(q);
+    const records = [];
+    querySnapshot.forEach((doc) => {
+      records.push({ id: doc.id, ...doc.data() });
     });
-    const data = await response.json();
-    state.stats = data;
+    
+    state.stats.all = records;
+    state.stats.recent = records.slice(0, 5);
+    state.stats.total = records.length;
+    
     renderStats();
     renderAllRecords();
     renderPayouts();
   } catch (err) {
-    console.error('Failed to fetch stats:', err);
+    console.error('Fetch error:', err);
   } finally {
-    state.loading = false;
     elements.refreshIcon.classList.remove('animate-spin');
   }
 }
 
 function toggleTheme() {
   const isDark = document.documentElement.classList.toggle('dark');
+  document.documentElement.setAttribute('data-theme', isDark ? 'dark' : 'light');
   localStorage.setItem('theme', isDark ? 'dark' : 'light');
   lucide.createIcons();
 }
 
+function updateRecordStats() {
+  if (!state.stats.all) return;
+  
+  const all = state.stats.all;
+  elements.recordStatTotal.textContent = all.length;
+  elements.recordStatJobs.textContent = all.filter(r => r.formType === 'Latest Job').length;
+  elements.recordStatAdmit.textContent = all.filter(r => r.formType === 'Admit Card').length;
+  elements.recordStatResults.textContent = all.filter(r => r.formType === 'Result').length;
+}
+
+async function handleDelete(id) {
+  if (!confirm('Are you sure you want to delete this record?')) return;
+  
+  try {
+    const docRef = doc(db, 'submissions', id);
+    await deleteDoc(docRef);
+    fetchStats(); // Refresh
+  } catch (err) {
+    console.error('Delete failed:', err);
+    alert('Failed to delete record');
+  }
+}
+
+function handleEdit(id) {
+  const record = state.stats.all.find(r => r.id === id);
+  if (!record) return;
+  
+  // Fill form
+  const form = elements.adminForm;
+  form.formType.value = record.formType || 'Latest Job';
+  form.postName.value = record.postName || '';
+  form.departmentName.value = record.departmentName || '';
+  form.importantDates.value = record.importantDates || '';
+  form.applicationFees.value = record.applicationFees || '';
+  form.ageLimit.value = record.ageLimit || '';
+  form.eligibility.value = record.eligibility || '';
+  form.applyLink.value = record.applyLink || '';
+  form.notificationLink.value = record.notificationLink || '';
+  form.officialWebsite.value = record.officialWebsite || '';
+  form.postWiseDetails.value = record.postWiseDetails || '';
+  form.howToFill.value = record.howToFill || '';
+  form.remark.value = record.remark || '';
+  
+  // Set editing state
+  state.editingId = id;
+  elements.submitText.textContent = 'Update Deployment';
+  switchTab('new_post');
+}
+
+function exportToCSV() {
+  if (!state.stats.all || state.stats.all.length === 0) return;
+  
+  const headers = ['Post Name', 'Type', 'Department', 'Author', 'Date'];
+  const rows = state.stats.all.map(r => [
+    `"${r.postName}"`,
+    `"${r.formType}"`,
+    `"${r.departmentName}"`,
+    `"${r.submittedBy}"`,
+    `"${new Date(r.timestamp).toLocaleDateString()}"`
+  ]);
+  
+  const csvContent = [headers.join(','), ...rows.map(r => r.join(','))].join('\n');
+  const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+  const url = URL.createObjectURL(blob);
+  const link = document.createElement('a');
+  link.setAttribute('href', url);
+  link.setAttribute('download', `SarkariSetu_Records_${new Date().toISOString().split('T')[0]}.csv`);
+  link.click();
+}
+
 function renderStats() {
   elements.statTotal.textContent = state.stats.total || 0;
+  updateRecordStats();
   
   if (state.stats.recent && state.stats.recent.length > 0) {
     elements.recentTableBody.innerHTML = state.stats.recent.map(entry => `
@@ -284,18 +375,35 @@ function renderAllRecords() {
   if (filtered.length > 0) {
     elements.allRecordsTableBody.innerHTML = filtered.map(entry => `
       <tr class="hover:bg-slate-50 dark:hover:bg-slate-800/40 transition-colors border-b border-slate-100 dark:border-slate-800/30">
-        <td class="px-6 py-4"><p class="line-clamp-1 text-slate-900 dark:text-white font-bold text-[10px]">${entry.postName || 'N/A'}</p></td>
-        <td class="px-6 py-4"><span class="px-2 py-0.5 rounded-md bg-emerald-500/10 text-emerald-600 dark:text-emerald-500 text-[8px] font-black uppercase tracking-wider border border-emerald-500/20">${entry.formType || 'N/A'}</span></td>
-        <td class="px-6 py-4 text-slate-400 dark:text-slate-500 font-bold text-[10px]">${entry.submittedBy || 'N/A'}</td>
-        <td class="px-6 py-4 text-slate-400 dark:text-slate-500 font-bold text-[9px] uppercase tracking-widest">${entry.timestamp ? new Date(entry.timestamp).toLocaleDateString() : 'N/A'}</td>
+        <td class="px-5 py-3"><p class="line-clamp-1 text-slate-900 dark:text-white font-bold text-[10px]">${entry.postName || 'N/A'}</p></td>
+        <td class="px-5 py-3"><span class="px-2 py-0.5 rounded-md bg-emerald-500/10 text-emerald-600 dark:text-emerald-500 text-[8px] font-black uppercase tracking-wider border border-emerald-500/20">${entry.formType || 'N/A'}</span></td>
+        <td class="px-5 py-3 text-slate-400 dark:text-slate-500 font-bold text-[10px]">${entry.submittedBy || 'N/A'}</td>
+        <td class="px-5 py-3 text-slate-400 dark:text-slate-500 font-bold text-[9px] uppercase tracking-widest">${entry.timestamp ? new Date(entry.timestamp).toLocaleDateString() : 'N/A'}</td>
+        <td class="px-5 py-3 text-right">
+          <div class="flex items-center justify-end gap-2">
+            <button onclick="window.adminActions.edit('${entry.id}')" class="p-1.5 hover:bg-blue-50 dark:hover:bg-blue-500/10 rounded-md text-blue-600 dark:text-blue-400 transition-colors" title="Edit">
+              <i data-lucide="edit-3" class="w-3.5 h-3.5"></i>
+            </button>
+            <button onclick="window.adminActions.delete('${entry.id}')" class="p-1.5 hover:bg-red-50 dark:hover:bg-red-500/10 rounded-md text-red-600 dark:text-red-400 transition-colors" title="Delete">
+              <i data-lucide="trash-2" class="w-3.5 h-3.5"></i>
+            </button>
+          </div>
+        </td>
       </tr>
     `).join('');
   } else {
     elements.allRecordsTableBody.innerHTML = `
-      <tr><td colspan="4" class="p-16 text-center text-slate-400 font-black uppercase tracking-widest text-[9px]">Zero matches in registry.</td></tr>
+      <tr><td colspan="5" class="p-16 text-center text-slate-400 font-black uppercase tracking-widest text-[9px]">Zero matches in registry.</td></tr>
     `;
   }
+  lucide.createIcons();
 }
+
+// Expose actions to global scope for onclick handlers
+window.adminActions = {
+  edit: handleEdit,
+  delete: handleDelete
+};
 
 function renderPayouts() {
   const records = state.stats.allRecords || [];
@@ -341,35 +449,32 @@ async function handleFormSubmit(e) {
   if (state.submitting) return;
   
   const formData = new FormData(elements.adminForm);
-  const data = Object.fromEntries(formData.entries());
+  const session = JSON.parse(localStorage.getItem('admin_session') || '{}');
+  
+  const data = {
+    ...Object.fromEntries(formData),
+    submittedBy: session.name || 'Admin',
+    timestamp: state.editingId ? (state.stats.all.find(r => r.id === state.editingId)?.timestamp || Date.now()) : Date.now()
+  };
   
   state.submitting = true;
   setFormSubmitting(true);
   hideFormStatus();
   
   try {
-    const session = JSON.parse(localStorage.getItem('admin_session') || '{}');
-    const response = await fetch(APPS_SCRIPT_URL, {
-      method: 'POST',
-      body: JSON.stringify({
-        action: 'submitData',
-        data: {
-          ...data,
-          submittedBy: session.name || 'Unknown',
-          timestamp: new Date().toISOString()
-        }
-      })
-    });
-    
-    const result = await response.json();
-    if (result.success) {
-      showFormStatus('DATA DEPLOYED SUCCESSFULLY', 'emerald');
-      elements.adminForm.reset();
+    if (state.editingId) {
+      await updateDoc(doc(db, 'submissions', state.editingId), data);
+      state.editingId = null;
     } else {
-      showFormStatus('DEPLOYMENT FAILED', 'red');
+      await addDoc(collection(db, 'submissions'), data);
     }
+    
+    elements.adminForm.reset();
+    elements.submitText.textContent = 'Execute Deployment';
+    showFormStatus('DEPLOYMENT SUCCESSFUL', 'emerald');
+    fetchStats();
   } catch (err) {
-    showFormStatus('NETWORK ERROR', 'red');
+    showFormStatus('DEPLOYMENT FAILED', 'red');
     console.error(err);
   } finally {
     state.submitting = false;
@@ -408,6 +513,7 @@ elements.menuToggle.addEventListener('click', () => toggleSidebar(true));
 elements.sidebarOverlay.addEventListener('click', () => toggleSidebar(false));
 elements.refreshStats.addEventListener('click', fetchStats);
 elements.themeToggle.addEventListener('click', toggleTheme);
+elements.exportCsv.addEventListener('click', exportToCSV);
 elements.adminForm.addEventListener('submit', handleFormSubmit);
 elements.recordSearch.addEventListener('input', renderAllRecords);
 
