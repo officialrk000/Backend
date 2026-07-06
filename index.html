@@ -17,6 +17,40 @@
     body { background:#f0f4f8; color:#1a2332; min-height:100vh; padding:16px; display:flex; justify-content:center; }
     .app { max-width:1200px; width:100%; margin:0 auto; }
 
+    /* PWA Install Banner */
+    #installBanner {
+      display:none;
+      position:fixed;
+      bottom:80px;
+      left:50%;
+      transform:translateX(-50%);
+      background:linear-gradient(135deg,#1e293b,#0f172a);
+      color:#fff;
+      padding:16px 24px;
+      border-radius:16px;
+      box-shadow:0 8px 30px rgba(0,0,0,0.3);
+      z-index:1000;
+      max-width:400px;
+      width:90%;
+      border:1px solid #334155;
+      animation:slideUp 0.5s ease;
+    }
+    @keyframes slideUp {
+      from { transform:translateX(-50%) translateY(100px); opacity:0; }
+      to { transform:translateX(-50%) translateY(0); opacity:1; }
+    }
+    #installBanner .banner-content { display:flex; align-items:center; gap:12px; }
+    #installBanner .banner-icon { font-size:28px; }
+    #installBanner .banner-text { flex:1; }
+    #installBanner .banner-text h4 { font-size:0.9rem; }
+    #installBanner .banner-text p { font-size:0.7rem; color:#94a3b8; }
+    #installBanner .banner-btns { display:flex; gap:8px; margin-top:8px; }
+    #installBanner .banner-btns button { padding:6px 16px; border:none; border-radius:20px; font-weight:600; font-size:0.75rem; cursor:pointer; transition:0.2s; }
+    #installBanner .install-btn { background:#2563eb; color:#fff; }
+    #installBanner .install-btn:hover { background:#3b82f6; }
+    #installBanner .close-btn { background:#334155; color:#94a3b8; }
+    #installBanner .close-btn:hover { background:#475569; }
+
     .spinner { display:inline-block; width:20px; height:20px; border:3px solid #e2e8f0; border-radius:50%; border-top-color:#2563eb; animation:spin 0.6s linear infinite; margin-right:8px; }
     @keyframes spin { to { transform:rotate(360deg); } }
     .loader-overlay { position:fixed; top:0; left:0; right:0; bottom:0; background:rgba(255,255,255,0.85); display:flex; align-items:center; justify-content:center; z-index:999; backdrop-filter:blur(4px); }
@@ -41,7 +75,6 @@
 
     #dashboard { display:none; }
 
-    /* HEADER */
     .header { background:linear-gradient(135deg,#1e293b,#0f172a); color:#fff; padding:12px 24px; border-radius:16px; display:flex; align-items:center; justify-content:space-between; gap:16px; margin-bottom:20px; box-shadow:0 4px 16px rgba(0,0,0,0.1); flex-wrap:wrap; }
     .logo-area { display:flex; align-items:center; gap:12px; flex-shrink:0; }
     .logo-box { width:40px; height:40px; background:linear-gradient(135deg,#2563eb,#7c3aed); border-radius:10px; display:flex; align-items:center; justify-content:center; font-weight:700; font-size:18px; color:#fff; flex-shrink:0; }
@@ -52,7 +85,6 @@
     .user-badge .name { font-weight:500; font-size:0.85rem; }
     .user-badge .role { font-size:0.65rem; background:rgba(255,255,255,0.15); padding:2px 10px; border-radius:20px; color:#94a3b8; }
 
-    /* TOP NAV */
     .top-nav { background:#fff; border-radius:16px; padding:8px 16px; margin-bottom:20px; display:flex; flex-wrap:wrap; align-items:center; gap:4px; box-shadow:0 2px 8px rgba(0,0,0,0.04); border:1px solid #e2e8f0; }
     .top-nav button { background:none; border:none; padding:8px 18px; border-radius:10px; font-size:0.85rem; font-weight:500; color:#64748b; cursor:pointer; transition:0.2s; display:flex; align-items:center; gap:8px; -webkit-tap-highlight-color:transparent; }
     .top-nav button:hover { background:#f1f5f9; color:#1e293b; }
@@ -64,7 +96,6 @@
     .top-nav button.logout-btn:hover { background:#fef2f2; }
     .top-nav button.hidden { display:none; }
 
-    /* BOTTOM NAV */
     .bottom-nav { display:none; position:fixed; bottom:0; left:0; right:0; background:#fff; justify-content:space-around; align-items:center; padding:6px 0 env(safe-area-inset-bottom,8px); box-shadow:0 -4px 20px rgba(0,0,0,0.06); border-top:1px solid #e2e8f0; z-index:100; max-width:1200px; margin:0 auto; }
     .bottom-nav button { background:none; border:none; display:flex; flex-direction:column; align-items:center; gap:2px; padding:6px 10px; font-size:0.55rem; font-weight:500; color:#94a3b8; cursor:pointer; transition:0.2s; border-radius:12px; min-width:44px; -webkit-tap-highlight-color:transparent; }
     .bottom-nav button:active { transform:scale(0.92); }
@@ -75,7 +106,6 @@
     .bottom-nav button.logout-btn-nav i { color:#dc2626; }
     .bottom-nav button.hidden { display:none; }
 
-    /* STATS */
     .stats-grid { display:grid; grid-template-columns:repeat(auto-fit, minmax(150px, 1fr)); gap:16px; margin-bottom:20px; }
     .stat-card { background:#fff; border-radius:16px; padding:16px; box-shadow:0 2px 8px rgba(0,0,0,0.04); border:1px solid #e2e8f0; transition:0.2s; position:relative; overflow:hidden; }
     .stat-card:hover { transform:translateY(-2px); box-shadow:0 8px 25px rgba(0,0,0,0.06); }
@@ -158,13 +188,16 @@
     .chart-container { background:#fff; border-radius:16px; padding:16px; margin-bottom:20px; border:1px solid #e2e8f0; }
     .chart-container canvas { width:100% !important; height:auto !important; max-height:220px; }
 
-    /* Earnings Summary Cards */
     .earnings-grid { display:grid; grid-template-columns:repeat(auto-fit, minmax(120px, 1fr)); gap:12px; margin-bottom:16px; }
     .earning-card { background:#fff; border-radius:12px; padding:14px; border:1px solid #e2e8f0; text-align:center; }
     .earning-card .num { font-size:1.4rem; font-weight:700; color:#2563eb; }
     .earning-card .label { font-size:0.65rem; color:#64748b; }
 
-    /* RESPONSIVE */
+    /* PWA Install Button in Header */
+    .pwa-install-btn { background:rgba(255,255,255,0.1); border:1px solid #2563eb; color:#818cf8; padding:4px 14px; border-radius:20px; font-size:0.7rem; cursor:pointer; transition:0.2s; display:none; align-items:center; gap:6px; }
+    .pwa-install-btn:hover { background:rgba(37,99,235,0.2); }
+    .pwa-install-btn i { font-size:0.8rem; }
+
     @media (max-width:768px) {
       body { padding:12px 12px 80px 12px; }
       .top-nav { display:none; }
@@ -179,6 +212,8 @@
       .data-item { padding:10px 12px; }
       #loginPage { margin:20px 0; padding:28px 20px; }
       .earnings-grid { grid-template-columns:1fr 1fr; }
+      #installBanner { bottom:75px; padding:14px 18px; }
+      .pwa-install-btn { display:none !important; }
     }
 
     @media (min-width:769px) {
@@ -197,6 +232,8 @@
       .bottom-nav button { font-size:0.5rem; min-width:38px; padding:4px 6px; }
       .bottom-nav button i { font-size:1rem; }
       .earnings-grid { grid-template-columns:1fr 1fr; }
+      #installBanner { bottom:70px; padding:12px 14px; max-width:95%; }
+      #installBanner .banner-content { flex-wrap:wrap; }
     }
   </style>
 </head>
@@ -211,6 +248,21 @@
     </div>
   </div>
 
+  <!-- PWA INSTALL BANNER -->
+  <div id="installBanner">
+    <div class="banner-content">
+      <div class="banner-icon">👑</div>
+      <div class="banner-text">
+        <h4>Install RK Verse App</h4>
+        <p>Install for faster access and offline use</p>
+      </div>
+    </div>
+    <div class="banner-btns">
+      <button class="install-btn" id="pwaInstallBtn"><i class="fas fa-download"></i> Install</button>
+      <button class="close-btn" id="pwaCloseBtn">×</button>
+    </div>
+  </div>
+
   <!-- LOGIN -->
   <div id="loginPage">
     <div class="logo-big"><i class="fas fa-crown"></i></div>
@@ -218,11 +270,11 @@
     <p>Sign in to your admin panel</p>
     <div class="input-group">
       <label><i class="fas fa-envelope"></i> Email Address</label>
-      <input type="email" id="loginEmail" placeholder="Enter your email" autocomplete="email" />
+      <input type="email" id="loginEmail" placeholder="Enter your email" autocomplete="email" value="admin@rk.com" />
     </div>
     <div class="input-group">
       <label><i class="fas fa-lock"></i> Password</label>
-      <input type="password" id="loginPassword" placeholder="Enter your password" autocomplete="current-password" />
+      <input type="password" id="loginPassword" placeholder="Enter your password" autocomplete="current-password" value="admin123" />
       <button class="password-toggle" id="loginPasswordToggle" type="button"><i class="fas fa-eye"></i></button>
     </div>
     <button class="login-btn" id="loginBtn"><i class="fas fa-sign-in-alt"></i> Login</button>
@@ -237,10 +289,13 @@
         <div class="logo-box"><i class="fas fa-crown"></i></div>
         <h1>RK <span>Verse</span></h1>
       </div>
-      <div class="user-badge">
-        <i class="fas fa-user-circle"></i>
-        <span class="name" id="userName">Admin</span>
-        <span class="role" id="userRole">Admin</span>
+      <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;">
+        <button class="pwa-install-btn" id="headerPwaBtn"><i class="fas fa-download"></i> Install App</button>
+        <div class="user-badge">
+          <i class="fas fa-user-circle"></i>
+          <span class="name" id="userName">Admin</span>
+          <span class="role" id="userRole">Admin</span>
+        </div>
       </div>
     </header>
 
@@ -282,7 +337,7 @@
         <div class="data-card-list" id="payoutCardList"><div class="empty-state">No payout data</div></div>
       </div>
 
-      <!-- PAGE: WORK (Super Admin) -->
+      <!-- PAGE: WORK -->
       <div id="page-work" class="page">
         <div class="sheet-header-card"><h3><i class="fas fa-tasks"></i> Pending Forms</h3></div>
         <div class="data-card-list" id="pendingWorkList"><div class="empty-state">✅ No pending forms</div></div>
@@ -336,7 +391,6 @@
           </div>
         </div>
 
-        <!-- Enhanced Earnings Summary -->
         <div class="sheet-header-card"><h3><i class="fas fa-chart-line"></i> Earnings Breakdown</h3></div>
         <div class="earnings-grid">
           <div class="earning-card"><div class="num" id="todayEarnings">₹0</div><div class="label">Today</div></div>
@@ -424,6 +478,55 @@
 // CONFIG: REPLACE WITH YOUR APPS SCRIPT WEB APP URL
 // =============================================================
 const API_BASE = 'https://script.google.com/macros/s/AKfycbzVhq3hLWn8MalA99WoH4ubKJI9k4YRLKNna9TWulsq3d4oUzYy7SPCJFoiBIMX49PL/exec';
+
+// =============================================================
+// PWA INSTALLATION
+// =============================================================
+let deferredPrompt = null;
+const installBanner = document.getElementById('installBanner');
+const pwaInstallBtn = document.getElementById('pwaInstallBtn');
+const pwaCloseBtn = document.getElementById('pwaCloseBtn');
+const headerPwaBtn = document.getElementById('headerPwaBtn');
+
+// Show install banner if app is not installed
+window.addEventListener('beforeinstallprompt', (e) => {
+  e.preventDefault();
+  deferredPrompt = e;
+  installBanner.style.display = 'block';
+  headerPwaBtn.style.display = 'flex';
+});
+
+pwaInstallBtn.addEventListener('click', async () => {
+  if (deferredPrompt) {
+    deferredPrompt.prompt();
+    const result = await deferredPrompt.userChoice;
+    if (result.outcome === 'accepted') {
+      showToast('🎉 App installed successfully!', 3000);
+      installBanner.style.display = 'none';
+      headerPwaBtn.style.display = 'none';
+    }
+    deferredPrompt = null;
+  }
+});
+
+headerPwaBtn.addEventListener('click', () => {
+  if (deferredPrompt) {
+    deferredPrompt.prompt();
+  } else {
+    showToast('Open this page in Chrome and tap "Add to Home Screen"', 3000);
+  }
+});
+
+pwaCloseBtn.addEventListener('click', () => {
+  installBanner.style.display = 'none';
+});
+
+// Hide banner if app is already installed
+window.addEventListener('appinstalled', () => {
+  installBanner.style.display = 'none';
+  headerPwaBtn.style.display = 'none';
+  showToast('🎉 RK Verse App installed!', 3000);
+});
 
 // =============================================================
 // STATE
@@ -535,46 +638,73 @@ function showLoader(show) {
 }
 
 // =============================================================
-// API CALL
+// FIXED API CALL - More Reliable
 // =============================================================
 function callApi(action, payload = {}) {
   return new Promise((resolve) => {
-    const callbackName = 'jsonp_cb_' + Date.now() + '_' + Math.random().toString(36).substr(2, 8);
-    const timeoutId = setTimeout(() => {
-      if (window[callbackName]) {
-        window[callbackName]({ error: 'Request timeout. Please check your connection.' });
-        delete window[callbackName];
-        if (document.body.contains(script)) document.body.removeChild(script);
+    // Try multiple methods
+    const tryMethods = async () => {
+      // Method 1: Try fetch with proper CORS
+      try {
+        const url = new URL(API_BASE);
+        url.searchParams.set('action', action);
+        for (let k in payload) {
+          if (payload[k] !== undefined && payload[k] !== null) {
+            url.searchParams.set(k, payload[k]);
+          }
+        }
+        // Use no-cors mode
+        const response = await fetch(url.toString(), {
+          method: 'GET',
+          mode: 'no-cors',
+          cache: 'no-cache'
+        });
+        // If we get here, fallback to JSONP
+        jsonpCall(action, payload, resolve);
+      } catch (error) {
+        jsonpCall(action, payload, resolve);
       }
-    }, 20000);
-    
-    window[callbackName] = function(data) {
-      clearTimeout(timeoutId);
+    };
+    tryMethods();
+  });
+}
+
+function jsonpCall(action, payload, resolve) {
+  const callbackName = 'jsonp_cb_' + Date.now() + '_' + Math.random().toString(36).substr(2, 8);
+  const timeoutId = setTimeout(() => {
+    if (window[callbackName]) {
+      window[callbackName]({ error: 'Request timeout. Please check your connection.' });
       delete window[callbackName];
       if (document.body.contains(script)) document.body.removeChild(script);
-      resolve(data);
-    };
-    
-    const script = document.createElement('script');
-    const url = new URL(API_BASE);
-    url.searchParams.set('action', action);
-    for (let k in payload) {
-      if (payload[k] !== undefined && payload[k] !== null) {
-        url.searchParams.set(k, payload[k]);
-      }
     }
-    url.searchParams.set('callback', callbackName);
-    script.src = url.toString();
-    script.onerror = function() {
-      clearTimeout(timeoutId);
-      if (window[callbackName]) {
-        window[callbackName]({ error: 'Network error. Please check your connection.' });
-        delete window[callbackName];
-      }
-      if (document.body.contains(script)) document.body.removeChild(script);
-    };
-    document.body.appendChild(script);
-  });
+  }, 25000);
+  
+  window[callbackName] = function(data) {
+    clearTimeout(timeoutId);
+    delete window[callbackName];
+    if (document.body.contains(script)) document.body.removeChild(script);
+    resolve(data);
+  };
+  
+  const script = document.createElement('script');
+  const url = new URL(API_BASE);
+  url.searchParams.set('action', action);
+  for (let k in payload) {
+    if (payload[k] !== undefined && payload[k] !== null) {
+      url.searchParams.set(k, payload[k]);
+    }
+  }
+  url.searchParams.set('callback', callbackName);
+  script.src = url.toString();
+  script.onerror = function() {
+    clearTimeout(timeoutId);
+    if (window[callbackName]) {
+      window[callbackName]({ error: 'Network error. Please check your connection.' });
+      delete window[callbackName];
+    }
+    if (document.body.contains(script)) document.body.removeChild(script);
+  };
+  document.body.appendChild(script);
 }
 
 // =============================================================
@@ -782,7 +912,6 @@ function calculateEarnings(data, userEmail) {
   
   const monthStart = new Date(today.getFullYear(), today.getMonth(), 1);
   
-  // Filter forms for this user
   const userForms = data.filter(r => r['DEO Email'] === userEmail && r.Status === 'approved');
   
   let todayTotal = 0;
@@ -791,17 +920,20 @@ function calculateEarnings(data, userEmail) {
   let lifetimeTotal = userForms.length * 3;
   
   userForms.forEach(r => {
-    const formDate = new Date(r.Date);
-    formDate.setHours(0, 0, 0, 0);
-    
-    if (formDate.getTime() === today.getTime()) {
-      todayTotal += 3;
-    }
-    if (formDate >= weekStart) {
-      weekTotal += 3;
-    }
-    if (formDate >= monthStart) {
-      monthTotal += 3;
+    if (r.Date) {
+      const formDate = new Date(r.Date);
+      if (!isNaN(formDate)) {
+        formDate.setHours(0, 0, 0, 0);
+        if (formDate.getTime() === today.getTime()) {
+          todayTotal += 3;
+        }
+        if (formDate >= weekStart) {
+          weekTotal += 3;
+        }
+        if (formDate >= monthStart) {
+          monthTotal += 3;
+        }
+      }
     }
   });
   
@@ -813,7 +945,6 @@ function updateDeoEarnings() {
   const isSuperAdmin = currentUser.role === 'Super Admin';
   
   if (isSuperAdmin) {
-    // Super Admin sees all earnings summary
     const allApproved = allData.filter(r => r.Status === 'approved');
     const totalEarned = allApproved.length * 3;
     const totalWithdrawn = allPayout.filter(r => r.Status === 'Paid').reduce((sum, r) => sum + (r.Amount || 0), 0);
@@ -822,7 +953,6 @@ function updateDeoEarnings() {
     deoPending.textContent = '₹' + withdrawRequests.filter(r => r.Status === 'Pending').reduce((sum, r) => sum + (r.Amount || 0), 0);
     deoAvailable.textContent = '₹' + (totalEarned - totalWithdrawn);
     
-    // For Super Admin, show overall stats
     const overall = calculateEarnings(allData, 'all');
     todayEarnings.textContent = '₹' + overall.todayTotal;
     weekEarnings.textContent = '₹' + overall.weekTotal;
@@ -831,15 +961,12 @@ function updateDeoEarnings() {
     return;
   }
   
-  // DEO sees their own earnings
   const earnings = calculateEarnings(allData, currentUser.email);
-  
   todayEarnings.textContent = '₹' + earnings.todayTotal;
   weekEarnings.textContent = '₹' + earnings.weekTotal;
   monthEarnings.textContent = '₹' + earnings.monthTotal;
   lifetimeEarnings.textContent = '₹' + earnings.lifetimeTotal;
   
-  // Update main earnings card
   const myForms = allData.filter(r => r['DEO Email'] === currentUser.email);
   const approvedForms = myForms.filter(r => r.Status === 'approved');
   const totalEarned = approvedForms.length * 3;
@@ -1159,7 +1286,7 @@ async function fetchAllData() {
 }
 
 // =============================================================
-// AUTH
+// AUTH - FIXED LOGIN
 // =============================================================
 async function handleLogin() {
   const email = loginEmail.value.trim();
@@ -1202,7 +1329,7 @@ async function handleLogin() {
       await fetchAllData();
       showToast('Welcome, ' + (currentUser.name || currentUser.email) + '!', 2000);
     } else {
-      loginError.textContent = 'Login failed: ' + (resp?.message || 'Invalid credentials');
+      loginError.textContent = 'Login failed: ' + (resp?.message || 'Invalid credentials. Please check email/password.');
     }
   } catch (error) {
     loginBtn.disabled = false;
@@ -1321,8 +1448,8 @@ updateProfileBtn.addEventListener('click', function() {
 if ('serviceWorker' in navigator) {
   window.addEventListener('load', () => {
     navigator.serviceWorker.register('/sw.js')
-      .then(reg => console.log('SW registered:', reg))
-      .catch(err => console.log('SW registration failed:', err));
+      .then(reg => console.log('✅ SW registered:', reg))
+      .catch(err => console.log('❌ SW registration failed:', err));
   });
 }
 
