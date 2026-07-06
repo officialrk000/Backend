@@ -1,7 +1,7 @@
 {
-  "name": "RK Verse Admin",
+  "name": "RK Verse Admin Panel",
   "short_name": "RK Verse",
-  "start_url": ".",
+  "start_url": "/",
   "display": "standalone",
   "background_color": "#1e293b",
   "theme_color": "#1e293b",
@@ -10,6 +10,11 @@
     {
       "src": "data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>👑</text></svg>",
       "sizes": "192x192",
+      "type": "image/svg+xml"
+    },
+    {
+      "src": "data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>👑</text></svg>",
+      "sizes": "512x512",
       "type": "image/svg+xml"
     }
   ]
